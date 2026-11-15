@@ -67,6 +67,9 @@ $shortcut.Name = 'DesktopShortcut'; $shortcut.Text = 'Create a desktop shortcut'
 $shortcut.Checked = $true; $shortcut.Location = New-Object Drawing.Point(28, 248); $shortcut.Size = New-Object Drawing.Size(450, 28)
 $form.Controls.Add($shortcut)
 $note = Label 'Setup uses your own game image. Your image is not changed.' 28 291 640 28
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'download-build-tools.flag') -PathType Leaf) {
+    $note.Text = 'Internet is required to download the build tools during setup.'
+}
 $form.Controls.Add($note)
 $status = Label 'Ready to install.' 28 323 640 43
 $status.Name = 'Status'; $form.Controls.Add($status)

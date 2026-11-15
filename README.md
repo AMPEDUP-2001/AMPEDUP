@@ -8,9 +8,14 @@ An unofficial static recompilation of the original Xbox version of *Amped: Frees
 
 ## Play on Windows
 
-1. Download and open `Setup-AMPEDUP-0.5.exe` from [Releases](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest).
+Choose a Windows installer from the [0.5 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.5).
+
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.5-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.5/Setup-AMPEDUP-0.5-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.5.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.5/Setup-AMPEDUP-0.5.exe)
+
+1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
-3. Click **Install**. Setup checks the disc's SHA-256, extracts the game data and compiles the game on your PC. The build takes several minutes.
+3. Click **Install**. Setup checks the disc's SHA-256, extracts the game data and compiles the game on your PC. The build takes several minutes, plus download time with the online installer.
 4. Start `AMPEDUP!.exe` from the shortcut or the installation folder.
 
 Use your own European multilingual retail disc image. The supported XISO has SHA‑256 `1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0`. Other editions and disc layouts are unverified. The repository contains the runtime, patch recipes and build tools. Bring your own disc to generate the executable and install game content.

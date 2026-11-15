@@ -1,8 +1,9 @@
 # Build from source on Windows
 
-The [Windows installer](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest)
-bundles these tools and compiles the game during installation. Follow this guide
-if you want to work on the source or reproduce the release yourself.
+The [Windows installers](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest)
+compile the game during installation. Choose the online download to fetch the
+build tools during setup or the all-in-one download to install offline.
+Follow this guide to work on the source or reproduce the release.
 
 Build on 64-bit Windows. Install Python 3.11 or newer, CMake 3.20 or newer and Ninja. Make them available on PATH. Install the disassembly dependency in the Python environment you pass to the build.
 
@@ -41,3 +42,18 @@ Extract your own supported XISO with `extract-xiso.exe -x -d <disc-folder> <imag
 Regeneration checks the SHA-256 of the input and the generated C files against the preview recipe. It builds the game and packages `Amped-Host/dist/AMPEDUP-Private/Setup-AMPEDUP.exe`. The `-ReuseGenerated` switch resumes compilation after successful regeneration. The `Analysis/` and `Amped-Host/build/` directories hold local build output.
 
 Run the standalone setup and select the matching XISO, installation folder and desktop shortcut option. The install keeps saves and settings in its `profile/` subdirectory. Windows may show a publisher prompt because this preview is unsigned.
+
+## Package the public installers
+
+From a clean, committed checkout, run the package builder with the dependency
+directory above.
+
+```powershell
+./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-Online -DependencyRoot C:/AmpedDeps -Online
+./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-Offline -DependencyRoot C:/AmpedDeps -ToolArchives C:/AmpedToolArchives
+```
+
+The download URLs and SHA-256 hashes are listed in
+[`build-tool-archives.json`](../Amped-Host/packaging/windows/build-tool-archives.json).
+For the all-in-one build, put the LLVM-MinGW zip in `windows-deps/dl/` and
+the other listed files in the directory passed to `-ToolArchives`.

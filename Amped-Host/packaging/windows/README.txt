@@ -11,6 +11,8 @@ Other editions or differently packaged images have not been validated.
    must not already exist; Browse chooses a parent and appends 'AMPEDUP'.
    For now, use short ASCII-only image and installation paths without commas.
    The public setup builds the game from your disc, which takes several minutes.
+   The online setup needs internet access to download the build tools. The
+   all-in-one setup can run offline.
 2. Start AMPEDUP! from the desktop shortcut or installed AMPEDUP!.exe.
 
 F1 or Xbox View/Back + Menu/Start opens the graphics settings. The default

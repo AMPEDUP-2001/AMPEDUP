@@ -4,6 +4,7 @@ param(
     [string]$ExecutablePath,
     [ValidatePattern('^[a-fA-F0-9]{64}$')][string]$ExpectedExecutableSha256,
     [string]$ToolArchives,
+    [switch]$Online,
     [switch]$SnowGather = $true
 )
 $ErrorActionPreference = 'Stop'
@@ -15,12 +16,12 @@ if (-not (Test-Path -LiteralPath $winDeps -PathType Container)) {
 }
 $target = Join-Path $hostDir ('dist\' + $PackageName)
 if (Test-Path -LiteralPath $target) { throw "Package already exists: $target" }
-$sourceSetup = [bool]$ToolArchives
-if ($sourceSetup -eq [bool]$ExecutablePath) {
-    throw 'Select either ToolArchives for public setup or ExecutablePath for a local package.'
+$sourceSetup = $Online -or $ToolArchives
+if ($sourceSetup -eq [bool]$ExecutablePath -or ($Online -and $ToolArchives)) {
+    throw 'Choose one package mode: Online, ToolArchives, or ExecutablePath.'
 }
 if ($sourceSetup) {
-    $archiveRoot = (Resolve-Path -LiteralPath $ToolArchives).Path
+    if ($ToolArchives) { $archiveRoot = (Resolve-Path -LiteralPath $ToolArchives).Path }
     $sdl = Join-Path $winDeps 'SDL2/x86_64-w64-mingw32/bin/SDL2.dll'
 } else {
     if (-not $ExpectedExecutableSha256) { throw 'Provide ExpectedExecutableSha256 when selecting a game executable.' }
@@ -53,7 +54,7 @@ Copy-Item (Join-Path $PSScriptRoot 'launcher-wizard.ps1') $payload
 Copy-Item (Join-Path $PSScriptRoot 'prepare-assets.ps1') $payload
 Copy-Item (Join-Path $PSScriptRoot 'hud-patches.json') $payload
 if ($sourceSetup) {
-    & (Join-Path $PSScriptRoot 'stage-build-tools.ps1') -Bundle $target -Archives $archiveRoot -WindowsDeps $winDeps
+    & (Join-Path $PSScriptRoot 'stage-build-tools.ps1') -Bundle $target -Archives $archiveRoot -WindowsDeps $winDeps -Online:$Online
 } else {
     Copy-Item -LiteralPath $exe -Destination (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe')
     if ((Get-FileHash -LiteralPath (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe') -Algorithm SHA256).Hash -ne $ExpectedExecutableSha256) { throw 'Packaged executable hash does not match.' }
@@ -94,5 +95,5 @@ $files = @(Get-ChildItem -LiteralPath $target -Recurse -File | Sort-Object FullN
     @{ path = $_.FullName.Substring($target.Length + 1).Replace('\','/'); size = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
 })
 $exeHash = if ($sourceSetup) { $null } else { $ExpectedExecutableSha256.ToUpperInvariant() }
-@{ schema = 1; executable_sha256 = $exeHash; build_from_disc = $sourceSetup; snow_gather = [bool]$SnowGather; files = $files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $target 'package-manifest.json') -Encoding Ascii
+@{ schema = 1; executable_sha256 = $exeHash; build_from_disc = $sourceSetup; download_build_tools = [bool]$Online; snow_gather = [bool]$SnowGather; files = $files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $target 'package-manifest.json') -Encoding Ascii
 Get-ChildItem $target -Recurse -File | Measure-Object Length -Sum | Format-List Count,Sum

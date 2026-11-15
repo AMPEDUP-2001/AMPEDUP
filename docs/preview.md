@@ -1,6 +1,6 @@
 # AMPEDUP! 0.5
 
-- First public release. The Windows setup includes the build tools and regenerates the game on the installing PC from the selected disc image.
+- First public release. Both Windows installers compile the game locally from the selected disc image. The online installer downloads the build tools during setup, and the all-in-one installer bundles them.
 
 - Tested on Windows with an Xbox USB controller. Quick Start, Career reload and replay playback have been playtested. The Brighton 1 music fix was also playtested with audio on.
 - 4× internal rendering and the 60 FPS limiter are available. Snow Summit can miss display refreshes, especially in the first half of a run.

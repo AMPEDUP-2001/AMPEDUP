@@ -47,6 +47,11 @@ try {
     }
     $extractor = Join-Path $sourceRoot 'tools\extract-xiso.exe'
     if (-not (Test-Path -LiteralPath $extractor -PathType Leaf)) { throw 'The extractor is missing from the package.' }
+    $sourceBuilder = Join-Path $sourceRoot 'build-from-disc.ps1'
+    $buildFromDisc = Test-Path -LiteralPath $sourceBuilder -PathType Leaf
+    if ($buildFromDisc) {
+        & (Join-Path $sourceRoot 'get-build-tools.ps1') -ReportStatus ${function:Set-InstallStatus}
+    }
     [void](New-Item -ItemType Directory -Path $Destination -ErrorAction Stop)
     $createdDestination = $true
     Set-InstallStatus 'Copying program files...'
@@ -72,15 +77,16 @@ try {
         if ($verified % 25 -eq 0) { Set-InstallStatus "Verifying game files ($verified / $(@($manifest.files).Count))..." }
     }
     if (@(Get-ChildItem -LiteralPath $game -File -Recurse -Force).Count -ne @($manifest.files).Count) { throw 'Extracted game file count did not match.' }
-    $sourceBuilder = Join-Path $sourceRoot 'build-from-disc.ps1'
     $installedExe = Join-Path $Destination 'Amped-Host\bin\amped_recomp.exe'
-    if (Test-Path -LiteralPath $sourceBuilder -PathType Leaf) {
+    if ($buildFromDisc) {
         Set-InstallStatus 'Building AMPEDUP! from your disc. This takes several minutes...'
         $buildLog = Join-Path $Destination 'setup-build.log'
         try {
             & $sourceBuilder -Xbe $xbe -Executable $installedExe -BuildLog $buildLog
         } catch {
-            throw "Could not build the game. See $buildLog. $($_.Exception.Message)"
+            $detail = $_.Exception.Message
+            if (Test-Path -LiteralPath $buildLog -PathType Leaf) { $detail += " See $buildLog." }
+            throw $detail
         }
     }
     if (-not (Test-Path -LiteralPath $installedExe -PathType Leaf)) { throw 'The game executable is missing from the installation.' }
