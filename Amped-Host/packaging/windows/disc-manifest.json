@@ -1,0 +1,3054 @@
+{
+ "files": [
+  {
+   "path": "AmpedFiles.idx",
+   "size": 57550,
+   "sha256": "ab0973996435317594fba8c17a8e34d5c157a3dcacdd961661c6de600acb9a35"
+  },
+  {
+   "path": "Boom.xbe",
+   "size": 159744,
+   "sha256": "be74d508f38c20addb05509359e4663c230b18f736780592d46033cc0041f81d"
+  },
+  {
+   "path": "default.xbe",
+   "size": 1687552,
+   "sha256": "d825274c3a52b203e6065ef7b0109bcfffdc175fe8b826fac215a2adb779e58e"
+  },
+  {
+   "path": "font.xpr",
+   "size": 69632,
+   "sha256": "2c918f390beb29127bfc947777614a765084c9bb0becc885247a191deee0f68d"
+  },
+  {
+   "path": "MemoryPictures/career.tga",
+   "size": 12332,
+   "sha256": "05e522fc0db3304ee2722e88ef1669bb8970d2b1e18f7218a71416b129fd7129"
+  },
+  {
+   "path": "MemoryPictures/Career.xpr",
+   "size": 4132,
+   "sha256": "963f6b6d91d5e946a9089efa3e525c7cbec6a4a1c41a7a8180abe7f3935b016b"
+  },
+  {
+   "path": "MemoryPictures/Career_o.tga",
+   "size": 12332,
+   "sha256": "d3e8b219091703b2e8af51fc48bd635f87e6de91d24c103fd4b50a33006d1bd9"
+  },
+  {
+   "path": "MemoryPictures/CreatePicks.bat",
+   "size": 83,
+   "sha256": "ece2effb6d9393668f6343e030a37f9890c3eeec3f1a3aed83d278a23ed5f5a0"
+  },
+  {
+   "path": "MemoryPictures/MemoryPictures.rdf",
+   "size": 613,
+   "sha256": "b3ce2134154c5ec71459f3ce608870a1e617a45a14d8d650d35d2439f7795117"
+  },
+  {
+   "path": "MemoryPictures/Replay.tga",
+   "size": 12332,
+   "sha256": "6cf47e51077edb0f2347b4500b176050655219f7b072eb4547b7c9cb13e4a747"
+  },
+  {
+   "path": "MemoryPictures/Replay.xpr",
+   "size": 4132,
+   "sha256": "c8f36b1879bcd04cdedb0c9f7acd009bd43d680348ea773ecc5271703a5daa4d"
+  },
+  {
+   "path": "MemoryPictures/titleimage.tga",
+   "size": 49196,
+   "sha256": "01e7aeb99f0027c0dc07771d790783b9282b9067a410526ee651489765a4ea6d"
+  },
+  {
+   "path": "MemoryPictures/titleimage.xpr",
+   "size": 12324,
+   "sha256": "8d1dec2131f5f2bd7d8ba4b9726a05d96c7edca346d96ebbf6af84279b5bb911"
+  },
+  {
+   "path": "Movie/A0.bik",
+   "size": 58324496,
+   "sha256": "a92eb192347630a9a4a03fd8f430100d1e6e19518e3d39fa4adaa62f4dd318a7"
+  },
+  {
+   "path": "Movie/A1.bik",
+   "size": 30545892,
+   "sha256": "6177b3ec1c77f5748209efc7fcf7f8d5a997c50312676029b10d7a719e1acb03"
+  },
+  {
+   "path": "Movie/A2.bik",
+   "size": 30697276,
+   "sha256": "64cfdc389c1a701b9a904563594f0bc0244a166eec4e287f2191dd0548648cc0"
+  },
+  {
+   "path": "Movie/A3.bik",
+   "size": 149972644,
+   "sha256": "93769715310729abfc8d6d2f6de41f2949c463821dafdfbc556776949fef8090"
+  },
+  {
+   "path": "Movie/A5.bik",
+   "size": 149972644,
+   "sha256": "93769715310729abfc8d6d2f6de41f2949c463821dafdfbc556776949fef8090"
+  },
+  {
+   "path": "Movie/Audio.bik",
+   "size": 750400,
+   "sha256": "acc249e80f2a6369a5b37b4dab34f2c7f2c93a76d281324327a6e6bf2f892f1c"
+  },
+  {
+   "path": "Movie/Career.bik",
+   "size": 724060,
+   "sha256": "0884f67662764103767d9c5f060ec74593ec96bfc1ca589d3a472383f892b078"
+  },
+  {
+   "path": "Movie/Cheats.bik",
+   "size": 147232,
+   "sha256": "cf6a7ae5e96e331cec395ec471eb60f8a52535586b1e8d0ca1c9f52a534e99d8"
+  },
+  {
+   "path": "Movie/Clothing.bik",
+   "size": 752844,
+   "sha256": "cce333b8f4f7c46772e87de8a41b59771d794b78143fe3852dab5cb7ee02fa10"
+  },
+  {
+   "path": "Movie/Controller.bik",
+   "size": 750460,
+   "sha256": "7c9b664bd9d314b0d82a10b27c7d323843da623707052e3d318559ab94497a95"
+  },
+  {
+   "path": "Movie/GameDemos.bik",
+   "size": 670736,
+   "sha256": "e5738b4fbf2238c22bb62732ad84c4a5499b1ed87bfd5d5b7b3b8d16863d76e5"
+  },
+  {
+   "path": "Movie/Gear.bik",
+   "size": 750480,
+   "sha256": "915088c34f222bb9a9dfff0968393504903a2c21df21a44ae5d14a404c5e3f4f"
+  },
+  {
+   "path": "Movie/HighlightReel.bik",
+   "size": 1250624,
+   "sha256": "b272459854c2681a1fb47a8fba44d08dbfa70ad2c38adf822bfef12f7e7ebdd2"
+  },
+  {
+   "path": "Movie/level_loading.bik",
+   "size": 21928,
+   "sha256": "9ad37ac78d4caf99e84646fbb8f3e129a519786666eb3b729e441c3de29f12f9"
+  },
+  {
+   "path": "Movie/LevelSelect.bik",
+   "size": 493656,
+   "sha256": "b776704fea4996cc67a88ca8ed53b4abda0deee7c8a91722461f76f71df09524"
+  },
+  {
+   "path": "Movie/LoadCareer.bik",
+   "size": 689232,
+   "sha256": "7562b3daecf9a0f620abfb327c65ec28e0e061b3574357c75e5fd2730a2da594"
+  },
+  {
+   "path": "Movie/loading_eng.bik",
+   "size": 40708,
+   "sha256": "82366aef806c9f86858feecc3190b99ed45a48095fee59fc72cc42e4ad42c1b8"
+  },
+  {
+   "path": "Movie/loading_fre.bik",
+   "size": 39496,
+   "sha256": "1ac4f58dcf81b555a3af156850c08531d5907877169901e3c543a16b19ac8fb0"
+  },
+  {
+   "path": "Movie/loading_ger.bik",
+   "size": 40320,
+   "sha256": "f24e6056b7299dcf01a7ab26518ed1dc222c1bbed9ab0203df7a4939071f1216"
+  },
+  {
+   "path": "Movie/loading_ita.bik",
+   "size": 40720,
+   "sha256": "c691b5de67448e4be5b7d33513f605787be72482900975f989a2299418a686d0"
+  },
+  {
+   "path": "Movie/loading_jap.bik",
+   "size": 40708,
+   "sha256": "82366aef806c9f86858feecc3190b99ed45a48095fee59fc72cc42e4ad42c1b8"
+  },
+  {
+   "path": "Movie/loading_spa.bik",
+   "size": 38336,
+   "sha256": "9012cb2cc134bc28679580830d7d7ab301fb6cec479af8c086b95c90e5a7ae0d"
+  },
+  {
+   "path": "Movie/MainMenu.bik",
+   "size": 425220,
+   "sha256": "ade0d825bbdd3a666b192d340315447fe9a8a2cfb463d6ca17e2dfda73b14e94"
+  },
+  {
+   "path": "Movie/media01.bik",
+   "size": 702628,
+   "sha256": "9a7f2f4903855788edfcd7d04482bd4003f20128ab54a159440e4f13d14a6c03"
+  },
+  {
+   "path": "Movie/media02.bik",
+   "size": 767736,
+   "sha256": "1ad5fac0805076f2c56c3fa9333f2ad255ac2232912a6536522ea8733abbfb70"
+  },
+  {
+   "path": "Movie/media03.bik",
+   "size": 566588,
+   "sha256": "256ad9b35829983f83616fb135011b94b1ec06371cb6b90d22ead2df68514dc0"
+  },
+  {
+   "path": "Movie/media04.bik",
+   "size": 913256,
+   "sha256": "2b3a5adc8117b2d85a3f7dd2c0c7ae7bd88d6dd5f050048230452ecb81fe3109"
+  },
+  {
+   "path": "Movie/media05.bik",
+   "size": 795072,
+   "sha256": "54b7240b3df911862ef42d40150733cccc404136091d744e1c4ebc7ae866445a"
+  },
+  {
+   "path": "Movie/media06.bik",
+   "size": 928616,
+   "sha256": "1b01c6044236ccca27648d3c9f49da91a9a07ca7419795b51fa70041b8349651"
+  },
+  {
+   "path": "Movie/media07.bik",
+   "size": 946856,
+   "sha256": "5282db0968b7e7682a3c5111cf3a88502eb70ca2e01b1f387d1cf8d72053d6b4"
+  },
+  {
+   "path": "Movie/media08.bik",
+   "size": 1436348,
+   "sha256": "63bb6a39cce343c19716267786cc9623d45c86350dddcd8ca3bd5613204ed294"
+  },
+  {
+   "path": "Movie/media09.bik",
+   "size": 1373124,
+   "sha256": "139196f1d95896d312cfa69d57fa170569fd468b9cf7897d816b2e2b0b4c0ac6"
+  },
+  {
+   "path": "Movie/media10.bik",
+   "size": 1074056,
+   "sha256": "97f2115129d273fd6d603731cd19d537b985f73a956dc58115ef21334c6b71b6"
+  },
+  {
+   "path": "Movie/media11.bik",
+   "size": 1028324,
+   "sha256": "de7850829ea9160e0a8a164c06708876ee4df509f61bc4591170927444170b74"
+  },
+  {
+   "path": "Movie/media12.bik",
+   "size": 958320,
+   "sha256": "d751c5071bf5a5668db1e45aed2d976900fb49142cfb435d177f393a78db4171"
+  },
+  {
+   "path": "Movie/media13.bik",
+   "size": 574684,
+   "sha256": "c4b7d9f69c057e6eedf3d03723b628e49c4ddb58d884aa9315e8eb2f384b65d4"
+  },
+  {
+   "path": "Movie/media14.bik",
+   "size": 2437504,
+   "sha256": "87a01ced334d8db621aed156401fa1554f42c61689a6c10218745272bbd9ff4e"
+  },
+  {
+   "path": "Movie/media15.bik",
+   "size": 269920,
+   "sha256": "d60ed030ba820b8f03fdd2080bfe3daec7e846b76cf2204b9041a318905cbd46"
+  },
+  {
+   "path": "Movie/media16.bik",
+   "size": 266912,
+   "sha256": "bcd55d4899618369048cfe4f7a47a871c247b57cbf6f960129b8fdd1356135ea"
+  },
+  {
+   "path": "Movie/media17.bik",
+   "size": 2605416,
+   "sha256": "76ded37d015c09a9fd11809dd2572d073347e955180edf9ff11e4e64ff83b22f"
+  },
+  {
+   "path": "Movie/media18.bik",
+   "size": 3148440,
+   "sha256": "f3a2691e2155ccd8087e2a62cdd842a73433e0bb183457f058c121a86302b0be"
+  },
+  {
+   "path": "Movie/media19.bik",
+   "size": 1316644,
+   "sha256": "d3fd3bc61cffe7ce6830c79841fae418730a0020eb572d480484fc8d5d5faa94"
+  },
+  {
+   "path": "Movie/media20.bik",
+   "size": 1657004,
+   "sha256": "b9620abede964cd9a96e613aefbedfa98ca36913a87babb76e14ac4d26b31014"
+  },
+  {
+   "path": "Movie/media21.bik",
+   "size": 3253872,
+   "sha256": "572231792fc438f478d03272df471e16ea18635c2782575ab008b187f4dce47d"
+  },
+  {
+   "path": "Movie/media22.bik",
+   "size": 5456520,
+   "sha256": "92787c7e0017ade806ee33e4660ce97f9fd0d0638985975ae126453fa98ee839"
+  },
+  {
+   "path": "Movie/media23.bik",
+   "size": 2187152,
+   "sha256": "8b0735113c143037d54d794e3ac2e61936565ec6c86ddac9b51701681d02f0cf"
+  },
+  {
+   "path": "Movie/media24.bik",
+   "size": 5696832,
+   "sha256": "d2df10ea75829370da673ec65c490484a9bcc10a46e6dd1c829feb81d3f2a54a"
+  },
+  {
+   "path": "Movie/media25.bik",
+   "size": 1141800,
+   "sha256": "101a34d41a6fb5d30cdc99881e50877b39be51df017be8637ebacb3224a87c34"
+  },
+  {
+   "path": "Movie/media26.bik",
+   "size": 1367348,
+   "sha256": "1edf48bd7971ea39bf3ad81f95a117e05fe736d3ca492c4fb7d7c03af23ee7ab"
+  },
+  {
+   "path": "Movie/media27.bik",
+   "size": 1889932,
+   "sha256": "ca93eca4ff452262d893d34ed3866a50d408ed308c5eea3bd6e91f234f9ce5c5"
+  },
+  {
+   "path": "Movie/MICROSOFT.bik",
+   "size": 261468,
+   "sha256": "97e7092f4ba2d678d8cf0e5a808c6220df5b94abd2172d5ff74cae7b62575aff"
+  },
+  {
+   "path": "Movie/microsoft_in.bik",
+   "size": 122824,
+   "sha256": "d8b7b467a29e88b29a9b56501c20103c7730fbd34aae348155c93fe0f725c549"
+  },
+  {
+   "path": "Movie/microsoft_middle.bik",
+   "size": 6596,
+   "sha256": "bd28790655d736c504170791ecc504ba9d73b6af8fe24743f20735e9cf1dea44"
+  },
+  {
+   "path": "Movie/microsoft_out.bik",
+   "size": 128308,
+   "sha256": "f000b4b74e8b854775485184cbe6ce01488c4165dfc52823efdc11e2d3e8d44e"
+  },
+  {
+   "path": "Movie/movingPano.bik",
+   "size": 1717596,
+   "sha256": "6d27e713f151e1b13b79cb5bd9cd1beaba1f63f2b2c5e5b6b2b06abf7bc1348d"
+  },
+  {
+   "path": "Movie/Multiplayer.bik",
+   "size": 750532,
+   "sha256": "ee90d0fd1d39643158c51733ec9722bafd3c238e6d2d0aa104cec9ee5bb08ed9"
+  },
+  {
+   "path": "Movie/NewCareer.bik",
+   "size": 42380,
+   "sha256": "7af2418a4e5f26bcf2e76524766249cc45b1e6c65be6539dc510d9c594355d16"
+  },
+  {
+   "path": "Movie/newrun.bik",
+   "size": 600796,
+   "sha256": "6cb89c2c37e910eeba6a9f65b4e780a0e22f469079a3aa471b9b6f4e33e11131"
+  },
+  {
+   "path": "Movie/Options.bik",
+   "size": 750572,
+   "sha256": "ea46317960d3e3898c97b9c3bb56a732d34bd72b611394a97bef762c438d38a3"
+  },
+  {
+   "path": "Movie/portfolio.bik",
+   "size": 622892,
+   "sha256": "d6cdf1c5236c0df21717af0642ea2631729dcefb9c072ad0ff8df7b071db1bff"
+  },
+  {
+   "path": "Movie/QuickStart.bik",
+   "size": 714204,
+   "sha256": "caae24d5380bdeff9884bf0b73ebe680ff861e175931ffec9a5d2d0a2c7862b8"
+  },
+  {
+   "path": "Movie/Replay.bik",
+   "size": 202028,
+   "sha256": "baaee6604f638403372befba75194c77defc0cda584435f047ff0dc5d71d8c24"
+  },
+  {
+   "path": "Movie/savereplay.bik",
+   "size": 261780,
+   "sha256": "a8dc14a86db4952c2b256bede086a8075f5b0b1d12476c0c8414fd4dff5bdb81"
+  },
+  {
+   "path": "Movie/Scrapbook.bik",
+   "size": 622892,
+   "sha256": "d6cdf1c5236c0df21717af0642ea2631729dcefb9c072ad0ff8df7b071db1bff"
+  },
+  {
+   "path": "Movie/Soundtracks.bik",
+   "size": 751092,
+   "sha256": "558bc2173ab949ba1f8c0dc1286816ee770bf95488bfaac29686ab5398e8918a"
+  },
+  {
+   "path": "Movie/startcareer.bik",
+   "size": 2251248,
+   "sha256": "0e11041a115eb9b35133c63459282b74172860b52e6d1fa43ef46b844f40fb9e"
+  },
+  {
+   "path": "Movie/status01.bik",
+   "size": 1095828,
+   "sha256": "8d249dc680629778a41bfde173b14d475d42733f8b426ad2b4ed393bdc9d49ed"
+  },
+  {
+   "path": "Movie/status02.bik",
+   "size": 2226564,
+   "sha256": "22971efaf4b897a72a6a08bbd5a7dc59dda77bf20a019fefec9180e4a787273c"
+  },
+  {
+   "path": "Movie/status03.bik",
+   "size": 1812068,
+   "sha256": "3540c0391b64785f19dcc4df8b02ed2ae56c290e6b3490a02405bf5560436966"
+  },
+  {
+   "path": "Movie/status04.bik",
+   "size": 118639916,
+   "sha256": "d624d060c2639e05a0fd27a8b3299898972f3f5bd42b30228e823567eb987dd5"
+  },
+  {
+   "path": "Movie/watchreplay.bik",
+   "size": 610904,
+   "sha256": "96812a662ea3ea1f27de6b114784ec704ab46f333f9c35c08a2ef08a1bda26cb"
+  },
+  {
+   "path": "Music/10 Seconds Too Late.wma",
+   "size": 2270786,
+   "sha256": "12ebfbd4820bde320a6abd867b68fa0c52688b37db89e57c97ef32b8957beb5c"
+  },
+  {
+   "path": "Music/25 Years.wma",
+   "size": 5353370,
+   "sha256": "58d0c15d34203ee9e90f50d335313498bfe1e47e42cc53b17bcba59c987da766"
+  },
+  {
+   "path": "Music/2600 Funk.wma",
+   "size": 5102462,
+   "sha256": "6391c6764d35b90e2a4294a35317142e6149d796b078c2d9393fbff1ec986888"
+  },
+  {
+   "path": "Music/6 Wheels.wma",
+   "size": 4289998,
+   "sha256": "6b0e5f823ce15674d5f983c004b5fb689979b9e32a78d9ade18d57f5ac8e021f"
+  },
+  {
+   "path": "Music/90 Percent Chance of Fun.wma",
+   "size": 2348448,
+   "sha256": "5c0a462f6da63f696cab80ca77c57de40ab44ab42d16fb73dc80f96f009e5e8a"
+  },
+  {
+   "path": "Music/90 Thin.wma",
+   "size": 2957796,
+   "sha256": "101b38d3462ca4bdd67dd810d30238489694e1c8718616237ed71b1cc63a26dd"
+  },
+  {
+   "path": "Music/A Hole in the World.wma",
+   "size": 3298314,
+   "sha256": "bff0d08b9b5254f643a04fa6cb54f7e034b5f6d2aa5d1e6a36ed31533c8c32ad"
+  },
+  {
+   "path": "Music/A New Chapter.wma",
+   "size": 2665070,
+   "sha256": "962eeee5edc33fb46a79f5d65da44c608a8c5657a2047cebcabe80a478376b67"
+  },
+  {
+   "path": "Music/A Sad History.wma",
+   "size": 1762996,
+   "sha256": "effa7d6298d52289b9297efe6e77639b8112178ce48f09df04f75c574a49dffc"
+  },
+  {
+   "path": "Music/A Stale Goodbye.wma",
+   "size": 3770260,
+   "sha256": "9ede8cd49541ec2594019eb520786dc59762efd1978abe0aaf6349f3e001b6f6"
+  },
+  {
+   "path": "Music/A.W.O.L..wma",
+   "size": 2886108,
+   "sha256": "43427dff91240b6d844fad0ad5d1319341ed6826c990402ddcd6ad167c34bfd8"
+  },
+  {
+   "path": "Music/Aargh St..wma",
+   "size": 9236470,
+   "sha256": "f4caa368c0a17dc21bfddf3b5893e001cb3c9e291258f9ef93d88e13b9f8a6c4"
+  },
+  {
+   "path": "Music/Action & Action.wma",
+   "size": 3979350,
+   "sha256": "69d765baa42f94e1277995a1d4e670e141a9fafebb0e014fe7c8781e9f0570b8"
+  },
+  {
+   "path": "Music/After the Fight.wma",
+   "size": 3148964,
+   "sha256": "600520f11e31dfd346524531487615e5b9181e4930fcd26a3a56e69d167cb9fd"
+  },
+  {
+   "path": "Music/Agress.wma",
+   "size": 3519352,
+   "sha256": "a0f23901c42c36d3ca5eef9ea0d21aeac2f68dd0e785c2eeb082f0cb38de65ab"
+  },
+  {
+   "path": "Music/All Time Low.wma",
+   "size": 3047406,
+   "sha256": "c71546058bc46c0a1eded4669af2a61c4ee3696efba279508a8a2014820edb66"
+  },
+  {
+   "path": "Music/Always Be Closing.wma",
+   "size": 4009220,
+   "sha256": "bb121aa4c5cdc571a0761f424f7cd45ebf95c29e6925a65c8f7968016c8af5f6"
+  },
+  {
+   "path": "Music/Amnesia.wma",
+   "size": 2778576,
+   "sha256": "d066b5a60c39d5a7cc1980cbf1781fcbe3b9b4de5edfafee1ab7595b25068cbc"
+  },
+  {
+   "path": "Music/Amped.wma",
+   "size": 3943506,
+   "sha256": "5fef32fbb482d37467f1abeae3aa790c8cc10e25cc6b2ce4c0daa67be6e482be"
+  },
+  {
+   "path": "Music/An Open Invitation.wma",
+   "size": 3160912,
+   "sha256": "c06555b7c5ccf43c940ff207f1157972037576121bef07c21e87d36b25cc214d"
+  },
+  {
+   "path": "Music/Angels on the Wing.wma",
+   "size": 3543248,
+   "sha256": "d86580bff635f83175dd0c4dcb7e79d76882936112e73eb30167e661995240fe"
+  },
+  {
+   "path": "Music/As Well As I Do.wma",
+   "size": 3543248,
+   "sha256": "bb87c463321662c69f5e16fe417996c285d429f9f4b3886ae45a31a123ea573f"
+  },
+  {
+   "path": "Music/Backstreets.wma",
+   "size": 2653122,
+   "sha256": "7fdd6e0e842ebf9b96407e30debe492b6938b1c638cf4e385feae08f1abdc5a8"
+  },
+  {
+   "path": "Music/Balance .wma",
+   "size": 5215968,
+   "sha256": "90abaeddb062c211d230e9850232a75f12ff8827e70fa28765730dee216a6436"
+  },
+  {
+   "path": "Music/Before Me.wma",
+   "size": 3483508,
+   "sha256": "dee624803303893a4b30a51285aae4803191c29a5a6f29e341c66071570264e8"
+  },
+  {
+   "path": "Music/Big Apple Heartbreak.wma",
+   "size": 3573118,
+   "sha256": "6dd609812ecb18e1b1333b1e6c931f38892bc3f831a5a70864ce5f953c1bfb04"
+  },
+  {
+   "path": "Music/Bittersweet.wma",
+   "size": 4009220,
+   "sha256": "89eda03ba853f7458441687e44e5d1cf1e46bceed2ee3a538bc3e669c2883ddd"
+  },
+  {
+   "path": "Music/Blinded.wma",
+   "size": 1978060,
+   "sha256": "f74af38bc958db77fe1bb120ddd67de63bd8f4c75a1e02239b4b7639f4fd90d1"
+  },
+  {
+   "path": "Music/Blitzkrieg.wma",
+   "size": 5365318,
+   "sha256": "39e3d9c9870f74b98cfc81373c41d75ceb72f9f115982c73f2a549443af21458"
+  },
+  {
+   "path": "Music/Blue Glitter.wma",
+   "size": 3095198,
+   "sha256": "391fa6723cc046999f5a1651b979f0f01edfa44c45b8c1637bc2f1fcbfc30353"
+  },
+  {
+   "path": "Music/Blunt.wma",
+   "size": 3740390,
+   "sha256": "cc279635ba4763041fce5a98d743acc71749029e8258068d85eefc66940c2377"
+  },
+  {
+   "path": "Music/Bonus Track2.wma",
+   "size": 5646096,
+   "sha256": "d7273cf00510c00f10333b7a532bd451eb9b59a124edea42aeaefc03c3482d32"
+  },
+  {
+   "path": "Music/Brake Lights On.wma",
+   "size": 2109488,
+   "sha256": "161ec9bb7bfa7ad25a95b438badf4b617f5a3861e7c89b802cbbceff843780fb"
+  },
+  {
+   "path": "Music/Broken Necklace.wma",
+   "size": 2987666,
+   "sha256": "dfa5e5f8ab0a2d42799ecc95ae9add6f0b278f3738809ce6941ec143f6c66cd9"
+  },
+  {
+   "path": "Music/Bubble Gum Revolution.wma",
+   "size": 4170518,
+   "sha256": "7c9daa638efd6caaf8442b783ee47f6a0aab7f3a05dd03f8be2764e95e2e45bb"
+  },
+  {
+   "path": "Music/Burpin' USA.wma",
+   "size": 1912346,
+   "sha256": "a6144b78bccf0014dd88859466af36f0653fcfb9a04d3624a8b5edf230ff43b1"
+  },
+  {
+   "path": "Music/Came Up Short.wma",
+   "size": 1261180,
+   "sha256": "004b929f1a42d7db5a03a3c069761911de89c1d368c36649c063807814a32228"
+  },
+  {
+   "path": "Music/Can'tWeAllJustGetALongboard.wma",
+   "size": 2438058,
+   "sha256": "f8c525cf30b446f30ea80d83d395fa790a2beb294666bfefd2d06337840c663c"
+  },
+  {
+   "path": "Music/Carve.wma",
+   "size": 2790524,
+   "sha256": "7949f8393fcefc558544e2be72f0599e86a25ce0264fdbe5bac071a3059ac700"
+  },
+  {
+   "path": "Music/Castle.wma",
+   "size": 3172860,
+   "sha256": "8b5a31a4ec1e53bfa628bc86040d43d12e7683de22ec5ba9ab050cc4681874bd"
+  },
+  {
+   "path": "Music/Character.wma",
+   "size": 3071302,
+   "sha256": "a7b005b3e78ec633847bedeed77f2797ed6849a557a39ccfc0c5cb5396e24c3a"
+  },
+  {
+   "path": "Music/City of Kron.wma",
+   "size": 3722468,
+   "sha256": "7efabf8198a213f3ce00fb5f6a9e042c922792044a91c4174c58f72447bc919e"
+  },
+  {
+   "path": "Music/Cleaner.wma",
+   "size": 2515720,
+   "sha256": "df55e07ba84e98957fccefad20302b066057102480c8419b1d5406b5f95318a6"
+  },
+  {
+   "path": "Music/Corpuscle.wma",
+   "size": 4738048,
+   "sha256": "3506882523821247201d4025b50ebb45bbc7db662782e1042335ca5bd2bf72bb"
+  },
+  {
+   "path": "Music/Crushed Beneath.wma",
+   "size": 3788182,
+   "sha256": "5e8c2635b617bc3e8200f88add66e46926281e7d63e4f0bb746279094bba5932"
+  },
+  {
+   "path": "Music/D-Term Nation.wma",
+   "size": 2856238,
+   "sha256": "da386d1cb58d75743d86aa5eebc12381b4301f4b1ae38641d4e7b572752f1a1d"
+  },
+  {
+   "path": "Music/December by Chance.wma",
+   "size": 3477534,
+   "sha256": "a7b8044af737912ca543bec3fb6b8a3387a92c976c4263bdb31bec70e323576b"
+  },
+  {
+   "path": "Music/Demo.wma",
+   "size": 1004298,
+   "sha256": "304db0936401c48d92a4a844403200cc048d46c52e260f21d16a76fd612acae2"
+  },
+  {
+   "path": "Music/Dig Deep.wma",
+   "size": 3459612,
+   "sha256": "0c03f96618e5a5139d24a22fe70efe6e2bdbe5485170d9fbcc3135d9d13765b3"
+  },
+  {
+   "path": "Music/Distance Between.wma",
+   "size": 2760654,
+   "sha256": "f3838c499718c66a1b755975c3c215d2d14fe84b058733e232f6d64e43107a6d"
+  },
+  {
+   "path": "Music/Don't Need This.wma",
+   "size": 2294682,
+   "sha256": "5d6fa7f6d71278f9c5ca7857c429f4bc5847d128a66d2f16d82711a4ce8dc080"
+  },
+  {
+   "path": "Music/Dorothy Lane.wma",
+   "size": 3758312,
+   "sha256": "e7a2475a5573ad9f62f417e1e2ce4fd3fa6aa9be818b21c9fbc98e632b7474e8"
+  },
+  {
+   "path": "Music/Dreamweaver.wma",
+   "size": 1512088,
+   "sha256": "6856f597188d861a70d0217a3973b32a31f6010f5238d313ecbdd1ca716ada32"
+  },
+  {
+   "path": "Music/Drifting.wma",
+   "size": 3316236,
+   "sha256": "00ca8c0205ac8c4620aed79995e8ae4336130a0fd600429bc71426073c490664"
+  },
+  {
+   "path": "Music/Drive In Music.wma",
+   "size": 2067670,
+   "sha256": "e57757d232d909be3cb65bab31cea2b200814572e6732f8ebde7439aa74cf1b8"
+  },
+  {
+   "path": "Music/Eight Five Three.wma",
+   "size": 2778576,
+   "sha256": "005db8efe52c1bff76d716cb26293afe62701e20a85132d30867046b48217112"
+  },
+  {
+   "path": "Music/Emma Discovery.wma",
+   "size": 3113120,
+   "sha256": "ebcf1128e7b4df8e64ecc9bedc51274ae74674a9cb2cfc94767aee21c362f61b"
+  },
+  {
+   "path": "Music/Equations.wma",
+   "size": 2951822,
+   "sha256": "e2e01fa9491762c6455228bc1d98de6605829bf39e7b75aedbd9c5f8418bfed7"
+  },
+  {
+   "path": "Music/Everybody's Hero.wma",
+   "size": 2037800,
+   "sha256": "471508c9739cac6422e23c5f5ff72d2953000175eda07661e3b2cdd214af5615"
+  },
+  {
+   "path": "Music/Exhibit A.wma",
+   "size": 4487140,
+   "sha256": "9681b7b9573a9a03b7a7aeedad2776e1cec44e4543c1dce5527ccef1db53a44e"
+  },
+  {
+   "path": "Music/Eye 2 Eye.wma",
+   "size": 4499088,
+   "sha256": "aa6d21f009550ded254e1c4fa5dbff2ab94d51addd51fa52eb0aa99b15d06fda"
+  },
+  {
+   "path": "Music/Fade.wma",
+   "size": 3137016,
+   "sha256": "006aaeedcb1c79b760f813013d4d735c1497dec40ea21f569c465f26ad8a92a5"
+  },
+  {
+   "path": "Music/Fear Factor.wma",
+   "size": 4355712,
+   "sha256": "c091dd8d0a7a97f7a2f3a5ac174d28fdd9219ac169405abd414dfcbd191996f7"
+  },
+  {
+   "path": "Music/First Straw.wma",
+   "size": 2097540,
+   "sha256": "bc454b1c5be7cb68e202c710779fe844584f80a62aee8be5634d50eaf4837da3"
+  },
+  {
+   "path": "Music/Flashy Words.wma",
+   "size": 2647148,
+   "sha256": "88c55b4a554d9b17f549a7f65b53751be4a44caf501f73b09529ce8a27ff2ded"
+  },
+  {
+   "path": "Music/For Pete's Sake.wma",
+   "size": 3704546,
+   "sha256": "d800dd295a5a2c29079114560002cebd912a86032650bc49d9fb39ccd1a690d5"
+  },
+  {
+   "path": "Music/Forgotten Ideals.wma",
+   "size": 2175202,
+   "sha256": "ae5bacc7e43e19a1c2f15a0f2d654f3d42de31a25950904dddcc3bff540e1bcf"
+  },
+  {
+   "path": "Music/Freedom.wma",
+   "size": 2211046,
+   "sha256": "252ba677fce7acf7001754b6be5b94ea0aef1fe44f249a6f2f0ceaed650c94bc"
+  },
+  {
+   "path": "Music/Fuel.wma",
+   "size": 4690256,
+   "sha256": "c03a82c45ee62754f6dd53730510e651ff6c051e7c67d61470b940c6d303d81b"
+  },
+  {
+   "path": "Music/Fusion.wma",
+   "size": 11602174,
+   "sha256": "a73c6f8a06bde045c927e74f8a9661dd25c7dacbc82259ae5c36e504dc94ae35"
+  },
+  {
+   "path": "Music/Future Age of Leisure.wma",
+   "size": 2593382,
+   "sha256": "15ea708ae74639766058d529160d1d3ccf9740b74323be07b81266bbcd0bdb57"
+  },
+  {
+   "path": "Music/Get On the Bus.wma",
+   "size": 4803762,
+   "sha256": "2bbf63d3ed92978b01c851f8dcdec84b71079d7f997b0557ce0a84b3842e5c4f"
+  },
+  {
+   "path": "Music/Glass Rose.wma",
+   "size": 4738048,
+   "sha256": "841b1275d42961ad017c8cb1ee1ab3e659fb13be79fc4f8db78bac2dc6e4d88c"
+  },
+  {
+   "path": "Music/Go to the Show.wma",
+   "size": 2109488,
+   "sha256": "a17e73eaee900003e5b0c2a0880e82a91b391df3b780a3c239327f893111bb3c"
+  },
+  {
+   "path": "Music/Goin' Richter.wma",
+   "size": 2874160,
+   "sha256": "4c8511f7f8499a633c09e9a8cb3fdb5a30c19b2fd3e1274c92af1e13cb009e63"
+  },
+  {
+   "path": "Music/Good4Nuthin.wma",
+   "size": 3770260,
+   "sha256": "4edd7e7357c1fe1be3cd8cdd43d65d6003ba692b78f95cad1c492c06c0da9e82"
+  },
+  {
+   "path": "Music/Got No Game.wma",
+   "size": 2157280,
+   "sha256": "06eb3bd15bcc2baa7bf3e9a587875476fa58c54037fdadbbf3f653bb6f32f748"
+  },
+  {
+   "path": "Music/Gotta Getaway.wma",
+   "size": 2599356,
+   "sha256": "337b8a75d555ae24f7c46c4e72b2ac2723a69d253bebf6762570445637d4099e"
+  },
+  {
+   "path": "Music/Hairtrigger.wma",
+   "size": 3561170,
+   "sha256": "1f57d002ff6b0ad1522a430070cb77471a95bc657f72f59c85198f4cb0d4d924"
+  },
+  {
+   "path": "Music/Heavy Scene.wma",
+   "size": 3477534,
+   "sha256": "fc909317a3f390e2fd0933b4c80fe0f3dd9f86f7fe657456bd58fbc4d663a23d"
+  },
+  {
+   "path": "Music/Heavy Tea.wma",
+   "size": 3537274,
+   "sha256": "5c6e029c6ee3327ff5d26fa485af75bf19b128b446b17c28d6a924975b5f5fdd"
+  },
+  {
+   "path": "Music/Here With You.wma",
+   "size": 3710520,
+   "sha256": "a3a1a2b6e46717b405d170969fe1f5191fb76c9e895efd1dca49a1b1314b7dec"
+  },
+  {
+   "path": "Music/Hold On Tight.wma",
+   "size": 2455980,
+   "sha256": "0cf27aa30476596c3e96cb61566d1454fd8a8e480aa47fc0929b21f8609063a1"
+  },
+  {
+   "path": "Music/Holiday.wma",
+   "size": 3381950,
+   "sha256": "5892888f8ac6304d741cbb3c0b4e0e25483d2d1d3f6f997003149f8ebae6c6bb"
+  },
+  {
+   "path": "Music/How Long Is the Night.wma",
+   "size": 5508694,
+   "sha256": "1dbf7943091a4eb9b965946e3aa3fb8b49d84e208c298f53b7886e9541438c11"
+  },
+  {
+   "path": "Music/I Don't Bleed.wma",
+   "size": 2981692,
+   "sha256": "6747437393ee276f483d3603e5baf78a8adde9e145b11dad049a268570a38d93"
+  },
+  {
+   "path": "Music/I Know It's Different Now.wma",
+   "size": 2915978,
+   "sha256": "0fdb74cbfd9dfb7f1a1e0e25de589d4812bc9f35f95f8bb13b1701be3f7cb66f"
+  },
+  {
+   "path": "Music/I Love You Just.wma",
+   "size": 2921952,
+   "sha256": "a2f72496500907c38bbb86c4c61dbfb65aa78660ab137b4366b91308b3e08e64"
+  },
+  {
+   "path": "Music/I Took My Mom To The Prom.wma",
+   "size": 1583776,
+   "sha256": "72bd40087232bfdee212151a3c628f56a49a673c10bdcc201d0afb7b753910b2"
+  },
+  {
+   "path": "Music/I'll Type Rhymes.wma",
+   "size": 5526616,
+   "sha256": "b5daa0afa87144b6f656194cef5b437fd85b0a3ed243997ae83b6a78bf2c71b4"
+  },
+  {
+   "path": "Music/I'm a Loner Dottie a Rebel-A.wma",
+   "size": 2838316,
+   "sha256": "3a0c3153619c60c01c1b48bd885fd09dfcb15912cbec81fec051a9e502f8de65"
+  },
+  {
+   "path": "Music/In Hope.wma",
+   "size": 3465586,
+   "sha256": "7e266317529d01c503004cb8d58e4250e9168f360a1792735331fa3541f55e77"
+  },
+  {
+   "path": "Music/Intonation.wma",
+   "size": 3077276,
+   "sha256": "56b62a30e1818fa2024768eea0776a315df9895226c9d8c0fa578a2898e2086f"
+  },
+  {
+   "path": "Music/Invasion.wma",
+   "size": 6079640,
+   "sha256": "d7b1e1a0a296f210c79127193b3a8baaabec37dffa9531e324080fdaaae88e76"
+  },
+  {
+   "path": "Music/It's All Over.wma",
+   "size": 2336500,
+   "sha256": "5db99de91e88d4ae1f4e18e25f48f0938fdd1c40874e84958b0627e04dba5e79"
+  },
+  {
+   "path": "Music/january 25.wma",
+   "size": 3794156,
+   "sha256": "f4616bcce959f2fe3438cdaa3122dc1ae282dc0c540168b2df5d023014face56"
+  },
+  {
+   "path": "Music/Jeckyl and Hyde.wma",
+   "size": 2151306,
+   "sha256": "ac97c7fa531351a200e2c71893ff97b4975b021cc562a578bf84eebddd6a39f6"
+  },
+  {
+   "path": "Music/Jump The Gun.wma",
+   "size": 1285076,
+   "sha256": "9eb79a9c3548c33bcace5abf09833c065d0b76d5b551da9e663e5b9a926a86df"
+  },
+  {
+   "path": "Music/Junipero Serra.wma",
+   "size": 2611304,
+   "sha256": "6356e067e9c85ccd598826c97441ae3b32c1806a81438c2a3cd39244fa65a3ea"
+  },
+  {
+   "path": "Music/Just A Visual.wma",
+   "size": 2240916,
+   "sha256": "490c8d7f249188b0f64f09732b200c6aa2f3417b3446ee8ab169df6b1f8ce26e"
+  },
+  {
+   "path": "Music/Kundalini Rising.wma",
+   "size": 4355712,
+   "sha256": "9dc52c7d9d23778a657c8391a2715d0aaf1eda3f0b55011b481d55c86de0c183"
+  },
+  {
+   "path": "Music/Last Forever.wma",
+   "size": 1900398,
+   "sha256": "0cd0a7fcfefe58f28b4ea8e0fd48d456cf702cfd1e5cf004ab4c54510a2d98b6"
+  },
+  {
+   "path": "Music/Last Goodbye.wma",
+   "size": 2951822,
+   "sha256": "6902c18a208d974b058115495bb1a90bebe2d684548ef8c1f6a5c29b439a7e14"
+  },
+  {
+   "path": "Music/Laughable.wma",
+   "size": 4188440,
+   "sha256": "22d735de8412241cef1afb80e75a6d15302a88368085556b2dcbb09710406cff"
+  },
+  {
+   "path": "Music/Laws Against Sleep.wma",
+   "size": 1667412,
+   "sha256": "088f683ba1236b839f90b411bb55d399d58fcfb728eee45ca9cec5ad4ae27e4c"
+  },
+  {
+   "path": "Music/Lemme Hear Ya Say.wma",
+   "size": 1942216,
+   "sha256": "0c3b069d406e931f15b708651ca4cd7bbf6353c74de3d05ffe416069afe0bd16"
+  },
+  {
+   "path": "Music/Life Goes On.wma",
+   "size": 3131042,
+   "sha256": "cc7d2adfbc48acad79f424e4a5bf6cff25f9d4ee2ffa3616c008e83c1d4708da"
+  },
+  {
+   "path": "Music/Life Will Go On.wma",
+   "size": 2921952,
+   "sha256": "848aa7ffb191aa463a2ac1bfb12f61bac70ca1b90075f40d46cc745ca593438b"
+  },
+  {
+   "path": "Music/Loose Screws.wma",
+   "size": 3292340,
+   "sha256": "7aa943f8422621ca31ff2b42188b4c1b26ad5a91fce57fa5f30542b63a859392"
+  },
+  {
+   "path": "Music/Lost Instrumental.wma",
+   "size": 6763234,
+   "sha256": "f2b39bd70cda9685aa2e58e151a6ef1b9c86522d6fb3bc17c13582ae66ac6cf0"
+  },
+  {
+   "path": "Music/Lyrical High.wma",
+   "size": 3668702,
+   "sha256": "787875cb6d83eae6832abe3d5f8efd5afa7238dd87c9c54d993d9f7e6b6ac9e8"
+  },
+  {
+   "path": "Music/Maybe Next Year.wma",
+   "size": 2121436,
+   "sha256": "c50ba83b56fc747c34c955153ea533c8e9d958996151548b3607b8649a46daa3"
+  },
+  {
+   "path": "Music/Mercy.wma",
+   "size": 4140648,
+   "sha256": "55610457caa955a315061bb4090f5ea0cfd221c0958336736cdaa43bff2588cb"
+  },
+  {
+   "path": "Music/Midnight Ridin'.wma",
+   "size": 974428,
+   "sha256": "3ad9951c4658981c2abb357ef2514714b5b1ce16709920f47c0f900d97dc9107"
+  },
+  {
+   "path": "Music/Monsters We Breed.wma",
+   "size": 4156262,
+   "sha256": "332fab55e639c15c6cc0125bf11767b32a4d1efaa2c160f96eb5e0d971d901cf"
+  },
+  {
+   "path": "Music/Montana Sky.wma",
+   "size": 3316236,
+   "sha256": "2f8d2c287d0a21ea3a49537fb4acf103066648b704d9c0dd6140f94bc4f6d009"
+  },
+  {
+   "path": "Music/Moves.wma",
+   "size": 3429742,
+   "sha256": "d9ccbf30dd3995ba2fecb5bce0960f2e9e64d096a5cc3e5d7786429a8b5de64a"
+  },
+  {
+   "path": "Music/My First Restraining Order.wma",
+   "size": 2426110,
+   "sha256": "00a875dd163eb41b44d28b0d7997217ead61c529faaea9ef94593db4b30e531a"
+  },
+  {
+   "path": "Music/Natal.wma",
+   "size": 1900398,
+   "sha256": "802ea3572e56777759a321210284d8bac04afb9322f75c20ded51a771fa13367"
+  },
+  {
+   "path": "Music/Never Again.wma",
+   "size": 1410530,
+   "sha256": "ac4a5ef37089b449762284ed663556f380e77aefc3ad8bc770da07b79c06963d"
+  },
+  {
+   "path": "Music/Never Forget.wma",
+   "size": 1488192,
+   "sha256": "6cfaa52119b6de24571ae9a3d87bb2124ea3bde698bff8cf1fe85a668725e275"
+  },
+  {
+   "path": "Music/New Landscaping.wma",
+   "size": 3734416,
+   "sha256": "ade582216e8c78f3b74d0fb113831d06ffec8ec5a10eac82de6175c7adacb761"
+  },
+  {
+   "path": "Music/No Way Out.wma",
+   "size": 2808446,
+   "sha256": "447fea692dc05b06013ab85567a1f763f29bddd1168418b058aa29697da3c280"
+  },
+  {
+   "path": "Music/Nobody Wants 2 Die Alone.wma",
+   "size": 1960138,
+   "sha256": "2995d4d23e7bc414c4d594130e549c6c630145e90696f5e477da47e8e8768df6"
+  },
+  {
+   "path": "Music/October Nights.wma",
+   "size": 3364028,
+   "sha256": "f78ed3ae3aa24df8f684c088d73ebe3ebf784d4dba9567874b39e4d67e46728d"
+  },
+  {
+   "path": "Music/Only Wanna Be a Lover 2U.wma",
+   "size": 1840658,
+   "sha256": "6657482edc183efb660109acabb93b2be221f13117d8353a1275a57c1ac3be08"
+  },
+  {
+   "path": "Music/Paper Dolls.wma",
+   "size": 4576750,
+   "sha256": "083de65b7bdb670b8592d76c38f4cd2c2d81ae6e0fc40fc6e4c7effe809cab4a"
+  },
+  {
+   "path": "Music/Paper or Plastic.wma",
+   "size": 2276760,
+   "sha256": "effc560fa00aa48ac4b56e0d0a1553eca9282de25976d9bd043ef85ea1b9fc78"
+  },
+  {
+   "path": "Music/Pawns and Kings.wma",
+   "size": 2450006,
+   "sha256": "dbff2eac06ec716afeab8331796790ff2eda62965827ba1685d63be433cad8b1"
+  },
+  {
+   "path": "Music/Pretending Life is Wonderful.wma",
+   "size": 2491824,
+   "sha256": "080f89cf26b3225b0c9136bf267341f7b6b51b30bbc5050bc6411a4d28e3227e"
+  },
+  {
+   "path": "Music/Pura Vida.wma",
+   "size": 777286,
+   "sha256": "323fcb0839b5ac61c7933da17e9d106ef27391dee80f017202a74401b9b3be62"
+  },
+  {
+   "path": "Music/Pure.wma",
+   "size": 1637542,
+   "sha256": "955ea680932a360dd31bd8bb73679adc4a05ed8ccb52bd0a32381eef1d55f8fc"
+  },
+  {
+   "path": "Music/Racin' da Clock.wma",
+   "size": 2312604,
+   "sha256": "f9cad35b4b6ac90a9ca006ab3b622c1e64a49e6e38360a9bb28a1a78d878e383"
+  },
+  {
+   "path": "Music/Radioland Murderers.wma",
+   "size": 4588698,
+   "sha256": "98eab50165191f30c572111a5aed90a6a3d6796f5276e65eebbd933ccca1d103"
+  },
+  {
+   "path": "Music/Re-Evolution RMX.wma",
+   "size": 3417794,
+   "sha256": "421f2cd47525304a51a3032c5a7e62902d57dde3d0de132da883eeea3bd50834"
+  },
+  {
+   "path": "Music/Re-Evolution.wma",
+   "size": 4881424,
+   "sha256": "53056f15cdd4d52c8bf5d435a999b9a4e001708949b40945db61d705014c2273"
+  },
+  {
+   "path": "Music/Regrets.wma",
+   "size": 1912346,
+   "sha256": "9b39355fca5de11602cb50a3c2c5d18bdbd5e5e17ff2f7ab7c54d46e0d9e5dff"
+  },
+  {
+   "path": "Music/Reliance.wma",
+   "size": 2521694,
+   "sha256": "986860eebb78a0948298d747c3b42e89b6df7eb240f58f0549bf5a2a7b62f498"
+  },
+  {
+   "path": "Music/Remind You.wma",
+   "size": 4170518,
+   "sha256": "12762bf77d51b17a64610bb94bdf4d1e0a19a977b28a3b098fb1067eada77e52"
+  },
+  {
+   "path": "Music/Resistance.wma",
+   "size": 2115462,
+   "sha256": "ba41395d9069a4c45da4c0b9dbad38fe8b177797ed3d4acd607298eefe1ab408"
+  },
+  {
+   "path": "Music/Restraints-Part2.wma",
+   "size": 1046116,
+   "sha256": "d28b5e52b83a1d9eef164586d16cd0e4a6830a6c75a0c121b22784c571c1e8bb"
+  },
+  {
+   "path": "Music/Revenge.wma",
+   "size": 5526616,
+   "sha256": "bfa94cd66bd30b928f09dfa97ac35b9700f1e3a93033aa07c332938fa1caef97"
+  },
+  {
+   "path": "Music/Right Now!.wma",
+   "size": 2563512,
+   "sha256": "bda74d16a6790f90d2f794cf0119f711965caf4609867b42bc15e8556b7deb14"
+  },
+  {
+   "path": "Music/Rip This.wma",
+   "size": 3513378,
+   "sha256": "f130f8ecde81650ba6e937b07f0b2c885e922f3611b954214a57a270200d9bbc"
+  },
+  {
+   "path": "Music/River Street.wma",
+   "size": 2790524,
+   "sha256": "782e78dcb7b45ae8d495284bfb2d2fdade616e4f4f7f846b38228aa10bffb7bd"
+  },
+  {
+   "path": "Music/Rock Star Land.wma",
+   "size": 3519352,
+   "sha256": "612ba9feefa81b8f355054363669a09926fa7823d129ab6c71250ac3fdfdd785"
+  },
+  {
+   "path": "Music/Round Two.wma",
+   "size": 3579092,
+   "sha256": "c2b952dc34b56a1ac52caf47580e2f8c55673a375bdb41b950e1d46da14c7163"
+  },
+  {
+   "path": "Music/Running of the Bulls.wma",
+   "size": 5269734,
+   "sha256": "cdd78fd06b9c13f2e90334ffd2f7d52e595ce56c7bef83efef3825ed8b4dce21"
+  },
+  {
+   "path": "Music/Sac O'tomatoes.wma",
+   "size": 3794156,
+   "sha256": "da0fc850f9dfd8d4f24fd6b300e98b6ca82b19be067da41c21073163a77fa83f"
+  },
+  {
+   "path": "Music/Sand Dune Planet.wma",
+   "size": 1458322,
+   "sha256": "e448000fbf20b40e0140f5aa6df405751013ab2b23c41dddac82c6c45258440c"
+  },
+  {
+   "path": "Music/Sci-Fidelity.wma",
+   "size": 3286366,
+   "sha256": "fb8b1d619bad036ddb8edf0efa41d34693fa04b6f2d8ad63ab8df4a4f8ec9d51"
+  },
+  {
+   "path": "Music/Selective Hearing Loss.wma",
+   "size": 3818052,
+   "sha256": "9916e689af8546b89f70e4fe36b7d6878174552194fd33d01c10abc2582c1d13"
+  },
+  {
+   "path": "Music/Self Will.wma",
+   "size": 2491824,
+   "sha256": "4ff1be3b7552aa98989a6c9b25059e20b9170681f865d9b522fd18e2935c5149"
+  },
+  {
+   "path": "Music/Seven-Day Constant.wma",
+   "size": 4522984,
+   "sha256": "c9a14c1761c1fb94a7c5eb5eb31cf09c573d8f3b72dab8545ad677b3e7497977"
+  },
+  {
+   "path": "Music/Shakemachine.wma",
+   "size": 4397530,
+   "sha256": "081545cc8e5adee1510d82acedf33b69d759243292aaa5ac4657d979065c70c7"
+  },
+  {
+   "path": "Music/Shape Shiftin.wma",
+   "size": 2306630,
+   "sha256": "78c57345aad9d2674467fefcca02b813ad8d13850ceeef26066d4aaafb2231ec"
+  },
+  {
+   "path": "Music/She Really Loved You.wma",
+   "size": 1900398,
+   "sha256": "7feed72de185a2bb6b546aedcadeebb29a0ebbbe1a24a08e381fd7f5b0f176b1"
+  },
+  {
+   "path": "Music/She Runs the Ride.wma",
+   "size": 3268444,
+   "sha256": "7fe9d0557e4184ee8376adb31dddf768abd317d2cc42ebc16b5c38b1e571be73"
+  },
+  {
+   "path": "Music/Showdown Dub.wma",
+   "size": 5209994,
+   "sha256": "d6748b93dbc2de3e09c84db349fe07c8cb56f59fccf5dcab9258bcbbbc0b9daf"
+  },
+  {
+   "path": "Music/Showdown in River City.wma",
+   "size": 4009220,
+   "sha256": "5e4897901f1307c5f557483a8fb865153952470e2d2cd26ef72be2f035801cee"
+  },
+  {
+   "path": "Music/Sigh.wma",
+   "size": 2109488,
+   "sha256": "76c5d7af21e7c7d402cec514afd8849a8e5e9d310d086bec296a785ca87805d2"
+  },
+  {
+   "path": "Music/Simple Words.wma",
+   "size": 3196756,
+   "sha256": "d94867d0a5759f37e8d0a889ac3c8d3534fd15051a21767140b1d98cdea7f5be"
+  },
+  {
+   "path": "Music/Skin Deep.wma",
+   "size": 3656754,
+   "sha256": "6291e5de6f7110d7b12e3e19d72573d5905bcf0fe03740682d74e37e1ccaec92"
+  },
+  {
+   "path": "Music/Snapshot.wma",
+   "size": 3477534,
+   "sha256": "6fcf3738a33c87f167226c867c7347bdac65585f2c1e57f1274b850af416c0b0"
+  },
+  {
+   "path": "Music/Something Of Value.wma",
+   "size": 3364028,
+   "sha256": "39e7b1eb1aec33c692fb84a6d605873af941fcf51a3ee16088b36a3145ec4a3a"
+  },
+  {
+   "path": "Music/Sometimes .wma",
+   "size": 4051038,
+   "sha256": "5fbd6db9b60c4ec3a9667843aece372c76512e8c6f72b53ef056a120e91301ae"
+  },
+  {
+   "path": "Music/Sometimes.wma",
+   "size": 3447664,
+   "sha256": "de2458a001e0e5e0209146654c477eee86d939f2a6aa2fee650066872e14611e"
+  },
+  {
+   "path": "Music/Space Age 2000.wma",
+   "size": 2808446,
+   "sha256": "3286201b8360e3130bc40d87c6f4edfed0a24c8ada3937c1fdb961ac1073219c"
+  },
+  {
+   "path": "Music/Stars Lead the Way.wma",
+   "size": 3812078,
+   "sha256": "2704efefd2733d621820249b0282b831aaddb79fef86e52522e371642c1aee7d"
+  },
+  {
+   "path": "Music/Starter.wma",
+   "size": 3859870,
+   "sha256": "6f45569543c06f3c674e49d8857e1d9a4ea78cca004375fd97c0fc0258b17948"
+  },
+  {
+   "path": "Music/Steady the Walls.wma",
+   "size": 3298314,
+   "sha256": "f3de03cad8495b283ff4d8cc90b77e2a827df1478d237839845bb15a22e6364e"
+  },
+  {
+   "path": "Music/Stranded On Clicker Island.wma",
+   "size": 3519352,
+   "sha256": "2a6fc9f31a74a5df23c706b3a62e5f3cc992e6dd8181a3d00386602527ab049d"
+  },
+  {
+   "path": "Music/Stringray's Revenge.wma",
+   "size": 5198046,
+   "sha256": "f1a401bc28ed63c908fe5f43e7cded2beed9f2a9af689276d5ed7fce777c24ab"
+  },
+  {
+   "path": "Music/Stroube St..wma",
+   "size": 2199098,
+   "sha256": "b0c7120767a702099bea9c1ae99b4f4c850232e26b01873eed6f106edd754405"
+  },
+  {
+   "path": "Music/Struck.wma",
+   "size": 2682992,
+   "sha256": "a222893b407850df0d4cef5b3eb16e78d32f4892a52c28630a954101ebfb3e0b"
+  },
+  {
+   "path": "Music/Sunshower.wma",
+   "size": 1553906,
+   "sha256": "bd0055468ec1c97568faadba9ec20de1c722e4c5c997b12b1e5aca1e80c84e26"
+  },
+  {
+   "path": "Music/Superego.wma",
+   "size": 2575460,
+   "sha256": "87a3d5c8e247b47aaca6f105385bb8052e06c48eda1896cf30e5ef1e4b37008d"
+  },
+  {
+   "path": "Music/Superstitions in Travel.wma",
+   "size": 4057012,
+   "sha256": "f3e8c99f97ca6cb379854e4c24d16ab0e712c8d97271205c48b76da2228f2d65"
+  },
+  {
+   "path": "Music/Surface.wma",
+   "size": 3071302,
+   "sha256": "a8c9c8daae4f26cea719bb58b174bf00d3a4eafbe5d595cbbad12d1d1f7de3e3"
+  },
+  {
+   "path": "Music/Surfin' Buena Park.wma",
+   "size": 3620910,
+   "sha256": "24e4ffd931868a462c02358131315988c98ec24b25cab9ae7de51312d1492e9a"
+  },
+  {
+   "path": "Music/Take My Chances.wma",
+   "size": 2587408,
+   "sha256": "4a357da9686f93728cf34b41768bcadfada7f8b9220e6d0650f6a9115150c9d2"
+  },
+  {
+   "path": "Music/Take What's Ours.wma",
+   "size": 4618780,
+   "sha256": "6973e87dfc7745adaf44ebfc2f224a927e80b607c6b26806b5d48e835a84ac97"
+  },
+  {
+   "path": "Music/Taken Down.wma",
+   "size": 2324552,
+   "sha256": "b0f7508ee2a181b8ae0d3cd6db22782b0c1b86e58ff0352725861bfef9f665bd"
+  },
+  {
+   "path": "Music/Tape Slang.wma",
+   "size": 3680650,
+   "sha256": "f78149d27ae2eaff47d1c5f1356011578fe72db699d1b1e5044de53c5c8741a1"
+  },
+  {
+   "path": "Music/Tear It Up.wma",
+   "size": 1930268,
+   "sha256": "df8cf546b8b93ade372dd10ea6ca54069296da2fc938b1b9cacee922859a340a"
+  },
+  {
+   "path": "Music/Ten Minutes.wma",
+   "size": 3095198,
+   "sha256": "6887696eacbb5f3ec18093d6c04531c7f7d3a4b1afcdd275095b32b846387f65"
+  },
+  {
+   "path": "Music/Tennessee.wma",
+   "size": 2647148,
+   "sha256": "bbc7900632958885757f95dfbe13a8b6fac9ad77222b30286e9c0155bb995645"
+  },
+  {
+   "path": "Music/The Blood of Brimstone.wma",
+   "size": 4080908,
+   "sha256": "f2c9b7f4600a7944f0567e138f72803609b85eb6be84700ac8428c1e587774d5"
+  },
+  {
+   "path": "Music/The Chase Is On.wma",
+   "size": 2055722,
+   "sha256": "a110c1062796f5e989a0bf00a74e6a5335490edf370a976680e79907365564f3"
+  },
+  {
+   "path": "Music/The City Call.wma",
+   "size": 2545590,
+   "sha256": "e024eed3c03e484a78eef40e80b3d37632edf3eac6878d8eaeb70a7662a0652b"
+  },
+  {
+   "path": "Music/The Company Dime.wma",
+   "size": 3961428,
+   "sha256": "358bd6104d0bd45d1c54111d9f776d46358c02b12a5476d98c999c7f5bb8df99"
+  },
+  {
+   "path": "Music/The Day After Tomorrow.wma",
+   "size": 2575460,
+   "sha256": "1266d1432e18f6e2c24c5d78eba5d14ecdfd6368987f74dab25555fdf9ab732b"
+  },
+  {
+   "path": "Music/The Fine Art of Original Sin.wma",
+   "size": 5908952,
+   "sha256": "5fc0e170ce7fbd28b65ed48f498cc48eed03c0638cfd2f170229cd7f09b2ba10"
+  },
+  {
+   "path": "Music/The History in Ecstasy.wma",
+   "size": 3065328,
+   "sha256": "73f093f0d8d800741aed50302b17ee4a59b30d18f3786b0694c2e3ac30d0beef"
+  },
+  {
+   "path": "Music/The Invincible.wma",
+   "size": 1607672,
+   "sha256": "48999ff80a82d220ef63a0c7275df34353f89eeb85e41746b1898cbfe3a394f4"
+  },
+  {
+   "path": "Music/The Long Walk.wma",
+   "size": 2491824,
+   "sha256": "75db262059a5f2199bbb183471011135a40dc1e71176457af334479196a010de"
+  },
+  {
+   "path": "Music/The Machine.wma",
+   "size": 2790524,
+   "sha256": "20ecb149405e61ed29a108940c19059f12c2281aeda30e10c3eb3adabdd9dca9"
+  },
+  {
+   "path": "Music/The Problem With Me.wma",
+   "size": 2898056,
+   "sha256": "c6be42d876efda99e6b89ab5cb9af3af735609079359c96b09292bc7507810d6"
+  },
+  {
+   "path": "Music/The Scars to Prove It.wma",
+   "size": 3937532,
+   "sha256": "22a79bfb5139d219f77f3ee08de6b707b0c46cd37a9e58a4b76b300b5c015874"
+  },
+  {
+   "path": "Music/The Situation Will Come Online.wma",
+   "size": 1010272,
+   "sha256": "f9038605fab15f87278946c56790c12f2e849a8d485fd8c7ccf140bc4af9a81e"
+  },
+  {
+   "path": "Music/The Storytella.wma",
+   "size": 3035458,
+   "sha256": "6b26ffe5fc679c150f7457207588150c1874a1f9f5ae5d17a19e41cefc3b2bf3"
+  },
+  {
+   "path": "Music/The Waitress Song.wma",
+   "size": 2467928,
+   "sha256": "da12c59c3a8e0708159fa6f28df2c66be85f3965011361dc49169f4cff17f86a"
+  },
+  {
+   "path": "Music/The World to Me.wma",
+   "size": 2772602,
+   "sha256": "fb23eec0deacaed675b55b652cdf52b3844a084d274b3f53f93b91719162c2e1"
+  },
+  {
+   "path": "Music/This Sadness Alone.wma",
+   "size": 2497798,
+   "sha256": "aaf3d079a549d525da65ba93c304e56c1162e3f166b1abdb1402d92e5affb042"
+  },
+  {
+   "path": "Music/This Time Next Year.wma",
+   "size": 2760654,
+   "sha256": "e0e048a627b3f6fface0258fd8f1d20d4c9e48e9d372eeb3752108c85ba33b44"
+  },
+  {
+   "path": "Music/Tiki Lounge Muzik.wma",
+   "size": 4893372,
+   "sha256": "84dd0f70851b1e425cb6e2b7c3ae8dec5eac35b0d83dea8bef083f07f122e772"
+  },
+  {
+   "path": "Music/Till We Earned a Holiday.wma",
+   "size": 4313894,
+   "sha256": "6e98ae983aeeaadf60eed7a431e2ce7a7850e13ae702bf86aa9f0cacf021d30b"
+  },
+  {
+   "path": "Music/Transpose.wma",
+   "size": 3381950,
+   "sha256": "15c9a48ed1c2505b0dc402943e1d33e1fb8ac8358d9d834ccc4c13d1a6d6c462"
+  },
+  {
+   "path": "Music/Trembling.wma",
+   "size": 2348448,
+   "sha256": "4296524cc94f73833dfdc1a9e339c48222e0a0d601464de58ba40a3dbd430a07"
+  },
+  {
+   "path": "Music/Uh-uh.wma",
+   "size": 3668702,
+   "sha256": "0be0770b3c33cc929b55c79a903221417b9684101636d1fcffd205a6829b4e55"
+  },
+  {
+   "path": "Music/Us_Vs_Them.wma",
+   "size": 1279102,
+   "sha256": "1324b373eb4d6158753b14c35a3d5f2ef92567bfeaf0babe1e6bedf41b0f7bf8"
+  },
+  {
+   "path": "Music/VampireFastCode.wma",
+   "size": 2282734,
+   "sha256": "5da4d034903210c86219c338d26efb09a2a72baa2e87724cbb19002c0d37a58b"
+  },
+  {
+   "path": "Music/Waiting While Under Paralysis.wma",
+   "size": 4475192,
+   "sha256": "08a7270075a3a42a6cf206342275201163788d34dbec5c54cd98b17580719736"
+  },
+  {
+   "path": "Music/Walk the Plank.wma",
+   "size": 3901688,
+   "sha256": "1b3356e89f9ae70831d0f85fa1aaaf112967310f0178fa880732397dc7b9f96c"
+  },
+  {
+   "path": "Music/We Puttin' Speakers to Test.wma",
+   "size": 5472850,
+   "sha256": "6faec1defdb0ac720dbbe91c20dd07dc37d64b2d72ff2a87ac31d9cf52e1cfca"
+  },
+  {
+   "path": "Music/We're All Waiting.wma",
+   "size": 5628174,
+   "sha256": "65fed7f7649e13201890b2642f2f135f066ea6a1f216a582b7f3d605c03db083"
+  },
+  {
+   "path": "Music/We've Had Enough.wma",
+   "size": 1679360,
+   "sha256": "917102f4c5fffadac7ed0bf2e0ca032d7f09fc93bf8c87187433a85d3eb1ab11"
+  },
+  {
+   "path": "Music/What Do You Think Yer Doin.wma",
+   "size": 2999614,
+   "sha256": "339b801130f211f41d0250d88b95f94852c1d72c50eb20ca6d306c67b14f6aea"
+  },
+  {
+   "path": "Music/What is Creature.wma",
+   "size": 4559102,
+   "sha256": "5bef2955795a45940568c14a21f6150232ad8b1b53c14f833c0308e4a277b1b6"
+  },
+  {
+   "path": "Music/When Things Go Right.wma",
+   "size": 2581434,
+   "sha256": "4e67e68099cf09800f5bd1cb6517f7bc44be47821a2fec4cdbf10f68014397da"
+  },
+  {
+   "path": "Music/Where Are We.wma",
+   "size": 6631806,
+   "sha256": "0a89d0eff65ac2a7c9fdf4c4d35f6fb47bcb1bcf41a0bf37be0baaef85b261da"
+  },
+  {
+   "path": "Music/Winter Rain.wma",
+   "size": 5646096,
+   "sha256": "d9aeb81cbdcad8b46029cff24c7c5a9d314988a521729207cdfd0319e7141e30"
+  },
+  {
+   "path": "Music/Without Panasos.wma",
+   "size": 4600646,
+   "sha256": "d3b3796980677e6bf1e404a32fd1ee5647b5db806c53b62907f80908d0e3cdc7"
+  },
+  {
+   "path": "Music/Wolf in Sheeps Clothing.wma",
+   "size": 2575460,
+   "sha256": "304d0fb00037e8b7254d1f9e76196594706eaccdf166831ad36abd563f900f79"
+  },
+  {
+   "path": "Music/Words.wma",
+   "size": 1494166,
+   "sha256": "b3481240c77aaafbef66a380d1b1fbda50102e7c2bd416a2bf881e6ed4ab6192"
+  },
+  {
+   "path": "Music/World Of Our Own.wma",
+   "size": 3901688,
+   "sha256": "386e942314cf5f6d7131068c6310446c5d13ef0f27f1a07e887ce96a486d23a1"
+  },
+  {
+   "path": "Music/Your Warning.wma",
+   "size": 1440400,
+   "sha256": "c7d0f42e2930ca4880375f0a78ab9369772641a59151f7fdfdd33eb260128699"
+  },
+  {
+   "path": "Resource/AIBoarders/AlpineFantasyLowerAI2.res",
+   "size": 486254,
+   "sha256": "26fe0ce01f8c403189d8e1253cbf0e8dfac5ec80a7bbb1c1def4c242057c169c"
+  },
+  {
+   "path": "Resource/AIBoarders/AlpineFantasyLowerAI3.res",
+   "size": 436056,
+   "sha256": "b6c83e1a7e5791cb4dfb36f11e7e8e6d1c86b202ba389a1e75898de75889ae73"
+  },
+  {
+   "path": "Resource/AIBoarders/AlpineFantasyLowerCB.res",
+   "size": 300561,
+   "sha256": "c39c423255f3c90df09fa570895b159bc02bae61d7ee808c63223f83a7d98276"
+  },
+  {
+   "path": "Resource/AIBoarders/AlpineFantasyUpperAI2.res",
+   "size": 1163926,
+   "sha256": "704a2d7923a045e513349890d1fd944bc093d11d7454e9712b90a785823b9e74"
+  },
+  {
+   "path": "Resource/AIBoarders/AlpineFantasyUpperAI3.res",
+   "size": 1285202,
+   "sha256": "c74ce60c327e087dcfe9fb810284cd73a542e5defd6a38b63a271f8974bae345"
+  },
+  {
+   "path": "Resource/AIBoarders/AlpineFantasyUpperCB.res",
+   "size": 385655,
+   "sha256": "327d6a5078b37e68a2f486a904a0595b555665edc458aae7b39692c1ee48e80b"
+  },
+  {
+   "path": "Resource/AIBoarders/BrightonLowerAI2.res",
+   "size": 502762,
+   "sha256": "88b68239732a5c54e8142f32207588bdff150d66d86126f38d606a8396bede54"
+  },
+  {
+   "path": "Resource/AIBoarders/BrightonLowerAI3.res",
+   "size": 446834,
+   "sha256": "ea30e026340fb01028b5d6bf5286e63a774e9e759cc13011364c7c10a247747c"
+  },
+  {
+   "path": "Resource/AIBoarders/BrightonLowerCB.res",
+   "size": 275589,
+   "sha256": "8c22d4349fbf97444fd215898bb84b040e988bca1ee3f8f8d7c8219d2e836f85"
+  },
+  {
+   "path": "Resource/AIBoarders/BrightonUpperAI2.res",
+   "size": 1618892,
+   "sha256": "797ebdcd0a45e1abd46ec2ad48a45a252eb92cbfca99e8eb3a4fdd661cd99828"
+  },
+  {
+   "path": "Resource/AIBoarders/BrightonUpperAI3.res",
+   "size": 1569104,
+   "sha256": "fc1136a5527566dde7632b187f2ccc2db5a170e4e37904b31782cab5fc6978b7"
+  },
+  {
+   "path": "Resource/AIBoarders/BrightonUpperCB.res",
+   "size": 437283,
+   "sha256": "1cba32eccd448659c1a8cd33abb175176c0580601c299050060c6eb48587ae82"
+  },
+  {
+   "path": "Resource/AIBoarders/JibFestAI2.res",
+   "size": 234524,
+   "sha256": "2e925abfaa5b8d06dbc1cf0217922db870065c5b63998203397b420a3e7bfdc3"
+  },
+  {
+   "path": "Resource/AIBoarders/JibFestAI3.res",
+   "size": 303320,
+   "sha256": "21ab78056d8fd685c885c7c4c6dbda459780cbb57c200fb10bf431297b6a6943"
+  },
+  {
+   "path": "Resource/AIBoarders/JibFestCB.res",
+   "size": 289146,
+   "sha256": "b19ce6e9d3adea5d24dfe72f6415373aa1ecf128f06dd62c246d86bd96e755de"
+  },
+  {
+   "path": "Resource/AIBoarders/SlopeStyleAI2.res",
+   "size": 606420,
+   "sha256": "e10c5a23493478e599d2ab084e551e21758e892428f60611dcd3c0f87aa3c23c"
+  },
+  {
+   "path": "Resource/AIBoarders/SlopeStyleAI3.res",
+   "size": 598068,
+   "sha256": "afec0890178abe96989788b3626beb3de14be5a3ef1a8ed695a9d54d858a8292"
+  },
+  {
+   "path": "Resource/AIBoarders/SlopeStyleCB.res",
+   "size": 330723,
+   "sha256": "2eb6d36517964d02d8f60a9555296800d37d43c6ae177f35f6868757aa05b7b8"
+  },
+  {
+   "path": "Resource/AIBoarders/SnowSummitLowerAI2.res",
+   "size": 468472,
+   "sha256": "a549bcd7aeb90d09601c271f9bb6cc136ef0d78ef54e22d5b701320b0b224629"
+  },
+  {
+   "path": "Resource/AIBoarders/SnowSummitLowerAI3.res",
+   "size": 484498,
+   "sha256": "b0371200c6256cf7e11fb070ad94d29dd59f475889f4a2bb898f36e39f5e329e"
+  },
+  {
+   "path": "Resource/AIBoarders/SnowSummitLowerCB.res",
+   "size": 333111,
+   "sha256": "27de3426ce8ce73ca80d2be666a2df67751d8f040ac892683b1a1fe4c6568960"
+  },
+  {
+   "path": "Resource/AIBoarders/SnowSummitUpperAI2.res",
+   "size": 1216494,
+   "sha256": "4ce102ad155d76c05caf9f6a543cc9958ea26ea1e7b59bafd13317fd4b4b22c3"
+  },
+  {
+   "path": "Resource/AIBoarders/SnowSummitUpperAI3.res",
+   "size": 1307556,
+   "sha256": "83380e65fb1b5f34dee3e58f321f0cd0685d6510377938a2ca08cd3e946ee967"
+  },
+  {
+   "path": "Resource/AIBoarders/SnowSummitUpperCB.res",
+   "size": 469249,
+   "sha256": "924a6b97082be473f30cac2e2bdc2753b5b1fdc2f56cf8e7c1e4dd0e38ca2999"
+  },
+  {
+   "path": "Resource/AIBoarders/SouthwestFantasyAI2.res",
+   "size": 241118,
+   "sha256": "52968305ce3a1acde607ba68abbf7332a11417db89b9e423af0bb767b0314b4f"
+  },
+  {
+   "path": "Resource/AIBoarders/SouthwestFantasyAI3.res",
+   "size": 265482,
+   "sha256": "0aed1564aded8a11eb71df3471d3ad49ac9e659e4de3ce8e0a390101e9268749"
+  },
+  {
+   "path": "Resource/AIBoarders/SouthwestFantasyCB.res",
+   "size": 257385,
+   "sha256": "7960dddf980253384e9a56a0afe7e8249d40ba936a1ae20630ae8f1e3b7e62f7"
+  },
+  {
+   "path": "Resource/AIBoarders/StrattonLowerAI2.res",
+   "size": 580037,
+   "sha256": "a8e650bc1d21a4afbc86c5059afd24e75c207aba6fdca3f6f9dfcdcb504495fa"
+  },
+  {
+   "path": "Resource/AIBoarders/StrattonLowerAI3.res",
+   "size": 621412,
+   "sha256": "0af85eddbd1481a3b3e6d921c0e58995296cd7cdd0754b389ba9f18a29ae023d"
+  },
+  {
+   "path": "Resource/AIBoarders/StrattonLowerCB.res",
+   "size": 373381,
+   "sha256": "8156d0833a9d22772227fe158560ddc872341b03be84fc3718d45298182e603f"
+  },
+  {
+   "path": "Resource/AIBoarders/StrattonUpperAI2.res",
+   "size": 1124950,
+   "sha256": "00b52cac92f0347a9c52d3d7cfda70ec40ad1e57243e894fb2e1a27972570cd1"
+  },
+  {
+   "path": "Resource/AIBoarders/StrattonUpperAI3.res",
+   "size": 1070184,
+   "sha256": "f08880ba1baff295a53bd3bc0ab5c66f9d3bb8a33aa245ee7b9ee74cfe28943a"
+  },
+  {
+   "path": "Resource/AIBoarders/StrattonUpperCB.res",
+   "size": 662182,
+   "sha256": "f259d1a0794c313e058f4854b7e746da3e28e843e2c527cad31db05c734ef82c"
+  },
+  {
+   "path": "Resource/Anims/Boarder.res",
+   "size": 1621462,
+   "sha256": "5b986ed95e2e5a50a89659d72ab1f6e07410edf2b5921b2b78d1e687ce63cf8d"
+  },
+  {
+   "path": "Resource/Anims/camera.res",
+   "size": 1017,
+   "sha256": "b3065fffeba8921b9bc98eaa56b264343e71a862d13126310cae3b52840ed038"
+  },
+  {
+   "path": "Resource/Anims/Environment.res",
+   "size": 672078,
+   "sha256": "b0b961a2daf2d16e145d640e756a654e053124a58cf4074f5ab1b04ed5d0dc6a"
+  },
+  {
+   "path": "Resource/Anims/Observer.res",
+   "size": 686478,
+   "sha256": "04d5055bb02cb7213f60c00fb9ec26c6441919e964504e410ee795ec046a9e39"
+  },
+  {
+   "path": "Resource/Anims/Snowman.res",
+   "size": 41407,
+   "sha256": "c36a3c1e499805747b553a27299e78d7ff1e5d532dca7d13c457d02276fbad6b"
+  },
+  {
+   "path": "Resource/Boarders/board.img",
+   "size": 1310778,
+   "sha256": "7478d8526ded7a8a91f572db28e2940495cb3a13a37074d25a71b9490ebcae32"
+  },
+  {
+   "path": "Resource/Boarders/board.res",
+   "size": 34251,
+   "sha256": "50f2ebe3482d264d2413f19ab16a4d5efe0b722fe9e7224d207341cd9c1e1348"
+  },
+  {
+   "path": "Resource/Boarders/boots.img",
+   "size": 194073,
+   "sha256": "f2095b2a3ec7c611dd418206f025ad7d389119f532bf006257d5fb4d9daf4516"
+  },
+  {
+   "path": "Resource/Boarders/boots.res",
+   "size": 55675,
+   "sha256": "8f3bcd8187c6494c43e45acc2e0d382b09aaba84fda9f82acbdf797b4870b0b4"
+  },
+  {
+   "path": "Resource/Boarders/Char_Lense.img",
+   "size": 39371,
+   "sha256": "d4def1a27cf342bed5dea92197368d149ebc9dfc3cf5565d16c5a5437a4ed0e9"
+  },
+  {
+   "path": "Resource/Boarders/Char_Lense.res",
+   "size": 90157,
+   "sha256": "9b48f9daea8ee065bac0ce42b952981d35c25237d19b413b23e176a280661707"
+  },
+  {
+   "path": "Resource/Boarders/Char_Shadow.res",
+   "size": 75968,
+   "sha256": "df3987f1af66ab1ebf29d24126e70b3c776ef9f5629f86db99be0eeb6b900e4c"
+  },
+  {
+   "path": "Resource/Boarders/coat.img",
+   "size": 14564149,
+   "sha256": "cc52dc44a0d5ef6567badae2bdf340d489443a92b7bbfddb1f475c328a7717b4"
+  },
+  {
+   "path": "Resource/Boarders/coat.res",
+   "size": 759050,
+   "sha256": "ca9a2fd39bba147e19cd5c477d9200f531f314653ae00f32ccf5203bcf3e5bf4"
+  },
+  {
+   "path": "Resource/Boarders/face.img",
+   "size": 752704,
+   "sha256": "7c7f9bab9b604dae197437d6dd1f4b45f79b37f164ff3a4d0f248beea6dbed00"
+  },
+  {
+   "path": "Resource/Boarders/face.res",
+   "size": 1465153,
+   "sha256": "3d314556f9bb5fbf3355b3e9b7b5030bf364bb6ba03494976c2316ce83deadc1"
+  },
+  {
+   "path": "Resource/Boarders/goggles.img",
+   "size": 52840,
+   "sha256": "c2787b4ec064dac55cef303141ffc7bbce4ac1a359ae0b6cfaf054af7fd7f5d1"
+  },
+  {
+   "path": "Resource/Boarders/goggles.res",
+   "size": 393998,
+   "sha256": "d6b4b5d3ac2eb72ac26d5c5532e77be834efc9f982aa757d88cbc0112d07ac2f"
+  },
+  {
+   "path": "Resource/Boarders/hat.img",
+   "size": 229315,
+   "sha256": "7d0159d74ad884569347fb96cc3fea86c4751775f7f3d57bbb99b0446c6adfff"
+  },
+  {
+   "path": "Resource/Boarders/hat.res",
+   "size": 587025,
+   "sha256": "42f5629408101784c8dce9a2be3f8278d854062a3296b7b381470e3307a94672"
+  },
+  {
+   "path": "Resource/Boarders/lanyard.img",
+   "size": 4229,
+   "sha256": "c64822c78c20aa511bc5b570242b76a9ba7be5fdf798f8e3b01365e2a1eb441f"
+  },
+  {
+   "path": "Resource/Boarders/lanyard.res",
+   "size": 1853,
+   "sha256": "adbbcf85b0561ed1de6a4b499cdc36823a434ff45a3a76f544fa5f725d692805"
+  },
+  {
+   "path": "Resource/Boarders/pants.img",
+   "size": 10640758,
+   "sha256": "0e0764cc69909eac7d91cfc09085164a1f54ffa32d98c2bab16b62cf733fa154"
+  },
+  {
+   "path": "Resource/Boarders/pants.res",
+   "size": 248858,
+   "sha256": "b79ea53f2576195adcc7066bcf28fe6fa02a1034076765c604a3da4d4fdf2602"
+  },
+  {
+   "path": "Resource/Boarders/props.img",
+   "size": 162426,
+   "sha256": "47725e8047ecb33bc9defac31eb69a91c75cbf4fc572ea796f66c4f2a7364cb3"
+  },
+  {
+   "path": "Resource/Boarders/props.res",
+   "size": 18143,
+   "sha256": "d5d652f10cccfd1ef91c125862b10e128c829c38769562110e01a66f74d0618f"
+  },
+  {
+   "path": "Resource/Boarders/shadow.res",
+   "size": 76259,
+   "sha256": "644fce21128e5b9222310c2e210739623e7d65234ffdbb89fc45a3e3c28132a0"
+  },
+  {
+   "path": "Resource/Boarders/shirt.img",
+   "size": 4090683,
+   "sha256": "60e0ed31375f6e0065a0286cabb3d3bf1fd7a2e16f1b2796a603cdaa45c4fa3b"
+  },
+  {
+   "path": "Resource/Boarders/shirt.res",
+   "size": 396981,
+   "sha256": "302923a90b3759bc88bb5b64d8b052026790ee466ed66b7aa90a710bb96f1a6e"
+  },
+  {
+   "path": "Resource/Boarders/skeleton.res",
+   "size": 7437,
+   "sha256": "3109935489ec73fc6605d629bdc14837b8a8a636b26b988849bec39351880be6"
+  },
+  {
+   "path": "Resource/Boarders.res",
+   "size": 146408,
+   "sha256": "b5cbbac2f258403c0d5d943e83848bfbac6d2555b532bc0f63b6771d2e203ceb"
+  },
+  {
+   "path": "Resource/DVDReplays/Air Addict.res",
+   "size": 183999,
+   "sha256": "0a83b2963fa983d6ca1aabab991003e536d8e9ce71d6418b8305d93f72b7c7c5"
+  },
+  {
+   "path": "Resource/DVDReplays/AirFest.res",
+   "size": 123785,
+   "sha256": "7bbc5c7080685ad9277bf81a5d6e51458225890607af9558dd98943eb0f63159"
+  },
+  {
+   "path": "Resource/DVDReplays/En Fuego.res",
+   "size": 159118,
+   "sha256": "fa434f7683f0145e7fdb964e63270926dcb54b365a39fdb49e15608bd85043d2"
+  },
+  {
+   "path": "Resource/DVDReplays/Frosty Fun.res",
+   "size": 132289,
+   "sha256": "75abb5f5b7c300949a50f935c5e25e5d4e8e56cbd7af13509bb49085ab6f0e92"
+  },
+  {
+   "path": "Resource/DVDReplays/Just Chillin.res",
+   "size": 131690,
+   "sha256": "8189faba9ab844d38d8ba92d16b415f6aafad7b71b2e84e545759dfa3d4ed5a1"
+  },
+  {
+   "path": "Resource/DVDReplays/No Limits.res",
+   "size": 119439,
+   "sha256": "4342901927b7aed3016967ddf23d0173a326a3d00486928b7b42be239193dc2a"
+  },
+  {
+   "path": "Resource/DVDReplays/No Respect.res",
+   "size": 212873,
+   "sha256": "eaa4772433a50fc54abfda740b88c8bf0d3e2d1f0979b962c472ea3aeee0d3fb"
+  },
+  {
+   "path": "Resource/DVDReplays/OutofBounds.res",
+   "size": 126376,
+   "sha256": "dfaa3fb86ceedb9d0f222fe8040191c9ca697d8990d0fd546a415001bb1fe25e"
+  },
+  {
+   "path": "Resource/DVDReplays/Rabid Railer.res",
+   "size": 164289,
+   "sha256": "136a6b76af419930cb700386b4cde882a7295a4a0291571e659bc7a11e2fabff"
+  },
+  {
+   "path": "Resource/DVDReplays/Rated Extreme.res",
+   "size": 188457,
+   "sha256": "e4b222ad00427371fe2c0dfb8f36b091722c9ea2f512274a679739f583901a9e"
+  },
+  {
+   "path": "Resource/DVDReplays/Sick Like This.res",
+   "size": 128534,
+   "sha256": "59c32dc3299e2e790487cb202f2d45de554434fa0fd1f383d30d3a93319302b7"
+  },
+  {
+   "path": "Resource/DVDReplays/Thin Air.res",
+   "size": 185181,
+   "sha256": "06e31e7cd95f271330c237e7e24b0c91138c10e58d340d892cf3d0ecdd4fadd7"
+  },
+  {
+   "path": "Resource/DVDReplays/TransferStudent.res",
+   "size": 183618,
+   "sha256": "8c64f28e669818ad84e22501c564d30422705aef0cd5f737845fee0233319c70"
+  },
+  {
+   "path": "Resource/Effects/LensFlare.img",
+   "size": 1180893,
+   "sha256": "b6aedc1da2a077af735e25835532555517582ce665c6a89f18abc273b8a906c2"
+  },
+  {
+   "path": "Resource/Effects.img",
+   "size": 2553917,
+   "sha256": "9911449d458dbe676b685ee5b825f73981b20d47ed12dd0344800d8c3548f75e"
+  },
+  {
+   "path": "Resource/Fonts.img",
+   "size": 393781,
+   "sha256": "554ddb418365052c088db3427a60a7b04a2d73417b73eb087a758cf875ca8141"
+  },
+  {
+   "path": "Resource/Fonts.res",
+   "size": 7177,
+   "sha256": "340509ca5305d5f72b447594d224ce5e83eba85b02677acf851f0c5876e59f5e"
+  },
+  {
+   "path": "Resource/GameInfo.res",
+   "size": 414336,
+   "sha256": "cbfc8df2506fe3706eb7769d19268f5b3e7ba2d4023944923ab91cba6f31a2c6"
+  },
+  {
+   "path": "Resource/Objects/CHALLENGE OBJECTS/ClothRip.img",
+   "size": 35037,
+   "sha256": "a5daeccff9c806a15285bae4a1c14c422f5b5a46eeebb01832e00be350c27c3f"
+  },
+  {
+   "path": "Resource/Objects/CHALLENGE OBJECTS/ClothRip.res",
+   "size": 4100,
+   "sha256": "db8991de5fa4ec271f4e80c2c21085758392630fea7612a099d392dcfa5b05e6"
+  },
+  {
+   "path": "Resource/Objects/CHALLENGE OBJECTS/snowman.img",
+   "size": 228921,
+   "sha256": "94161033ce4d5c937f4686dc598a824bf35976ffcc2982722264070dcac10ed2"
+  },
+  {
+   "path": "Resource/Objects/CHALLENGE OBJECTS/snowman.res",
+   "size": 127455,
+   "sha256": "9abf790c14f93e56bf95364558c55a7d039c6abb4d6b9ec9faae96ea8fe088f5"
+  },
+  {
+   "path": "Resource/Objects/CHALLENGE OBJECTS.img",
+   "size": 43954,
+   "sha256": "a59c89ad70b8835d52d487500dacac737c41a2a94fda92151a194bb0bb5b507c"
+  },
+  {
+   "path": "Resource/Objects/CHALLENGE OBJECTS.res",
+   "size": 2703,
+   "sha256": "c25f1f577ef302d8cc0f2d4657bfa452b64dbbe6494571fa4ee869a067a54966"
+  },
+  {
+   "path": "Resource/Objects/LiftChairs.img",
+   "size": 96883,
+   "sha256": "a24883a791cff587ca889ae5939bc6f8977512f2235db9efe5252ae133134358"
+  },
+  {
+   "path": "Resource/Objects/LiftChairs.res",
+   "size": 39176,
+   "sha256": "839e6da609c62ffd7b2042cbd87e7639303b49abe98996f8510537f34125a14f"
+  },
+  {
+   "path": "Resource/Objects.img",
+   "size": 43954,
+   "sha256": "24cca5d8886665e9d144ed7ff1c2cac486cbd1974d8ed04f8fbae5b02da45beb"
+  },
+  {
+   "path": "Resource/Objects.res",
+   "size": 2703,
+   "sha256": "c25f1f577ef302d8cc0f2d4657bfa452b64dbbe6494571fa4ee869a067a54966"
+  },
+  {
+   "path": "Resource/ProRecs/Bjorn Leines.res",
+   "size": 37934,
+   "sha256": "875d0923531a1a91e6c9acf76e41f477c793a88dab56cc4661065681541d1561"
+  },
+  {
+   "path": "Resource/ProRecs/Bobby Meeks.res",
+   "size": 37206,
+   "sha256": "0b8ea563972654ed9d3bab4f1edfb38fb09644213ef7ada7ddf313a4313a3f2c"
+  },
+  {
+   "path": "Resource/ProRecs/Chris Gunnarson.res",
+   "size": 37750,
+   "sha256": "944f9754cfaf00078fa2cb9d43e1f9a641439251bca44c7e20413cc80470d116"
+  },
+  {
+   "path": "Resource/ProRecs/Gigi R\u00fcf.res",
+   "size": 37749,
+   "sha256": "b190dcb89b574f1dee70cdc799ae821dd0096cabc41bf0bbdb49058444ee0f21"
+  },
+  {
+   "path": "Resource/ProRecs/Hobie Chittenden.res",
+   "size": 38145,
+   "sha256": "c7bc975ca274c86e3feabf337ec865e0710449a6e964a3c39954f9f732204c3f"
+  },
+  {
+   "path": "Resource/ProRecs/Janna Meyen.res",
+   "size": 37950,
+   "sha256": "26f15471d2ff33290ac6d50bd3cd9bedba05ad754e427c0697db13c7d64e9b33"
+  },
+  {
+   "path": "Resource/ProRecs/Jason Brown.res",
+   "size": 37386,
+   "sha256": "6c57f7c387010e44c47e56047e6a1f9d3f504bc69df9c0a92063f4962819e494"
+  },
+  {
+   "path": "Resource/ProRecs/Jason Murphy.res",
+   "size": 37324,
+   "sha256": "e5d83fa94602a72976122c49683308773f410eed09e667c81832d9f8718f8730"
+  },
+  {
+   "path": "Resource/ProRecs/Jeremy Jones.res",
+   "size": 37273,
+   "sha256": "217f7c116475f275ab0cbaf8a9d590357d04fad4ee2427562e37c980ab826884"
+  },
+  {
+   "path": "Resource/ProRecs/Jordan Mendenhall.res",
+   "size": 37350,
+   "sha256": "b33c3e7abb79e3b5881723220ffa7106538a66b50fcd122861a65e8a18e404c7"
+  },
+  {
+   "path": "Resource/ProRecs/Keiko Yanagisawa.res",
+   "size": 37858,
+   "sha256": "b739c281b0ddbb32885dfb34a9108c138dd1e5984d4ec84b2cb98a45f4eace8e"
+  },
+  {
+   "path": "Resource/ProRecs/Kurt Wastell.res",
+   "size": 37461,
+   "sha256": "2fd696123d18018cddd52863a0aaae365414254b3138bdd1d3e59de70884a09b"
+  },
+  {
+   "path": "Resource/ProRecs/Mikey LeBlanc.res",
+   "size": 36826,
+   "sha256": "ffb13dfbb0ff87ed627b833a2aaf15d764ae48510d0b0adb8f0d4b40d344aa6f"
+  },
+  {
+   "path": "Resource/ProRecs/Mitch Nelson.res",
+   "size": 37662,
+   "sha256": "c03b43e5e2a9d46c5ecf3b9154b494f3a09b4d8decc93a24bf24bbb715c1dd28"
+  },
+  {
+   "path": "Resource/ProRecs/Raven.res",
+   "size": 31231,
+   "sha256": "d2688bc48d29aa1a579aac34cff42ca61800f541dd0746d2b995c856cf144cd7"
+  },
+  {
+   "path": "Resource/ProRecs/Scott Sorenson.res",
+   "size": 37319,
+   "sha256": "b950ab8e28df8d4d10c734802ce6da6ef170faf334555fcf68d0a1542c2172de"
+  },
+  {
+   "path": "Resource/ProRecs/Steezy.res",
+   "size": 31368,
+   "sha256": "01d2ea10881e938d75b164c108fce63710cce78d89804daba756513dca55a6d7"
+  },
+  {
+   "path": "Resource/ProRecs/Travis Parker.res",
+   "size": 37204,
+   "sha256": "bb29ae8cb652691025c8b1453893de9879d6bb420c66c4ad9ba802ed40b4e335"
+  },
+  {
+   "path": "Resource/ProRecs/Yuki Yamazaki.res",
+   "size": 36885,
+   "sha256": "0abea40380caded061e23d707c982b1937f4ef1d44dfc6b00660b2b0413db231"
+  },
+  {
+   "path": "Resource/Shaders.res",
+   "size": 72797,
+   "sha256": "087cc0b90ebfe0fc833d138466001b0984edcd2eb361f3bc4337f59f9676e7ff"
+  },
+  {
+   "path": "Resource/Shell/DollEnv.img",
+   "size": 131287,
+   "sha256": "6e4e62bd65b2e7ee25e8a47e350dc1ddfe3244ce8c6c0f5791b6d4ecedc3ce5b"
+  },
+  {
+   "path": "Resource/Shell/DollEnv.res",
+   "size": 21059,
+   "sha256": "58706f68e3db9a349a01d031671b8b165d94ebbfa6f6cd4baa95c4fc0b30aa42"
+  },
+  {
+   "path": "Resource/Shell/DropPointIcons.img",
+   "size": 272045,
+   "sha256": "e6e27f5afa5347fe0f5f487f3e162aab01e5dc70c5529768f1edd51b2f88a2fc"
+  },
+  {
+   "path": "Resource/Shell/DropPointIcons.res",
+   "size": 17900,
+   "sha256": "f5c3715f3b41a81be49cfeff064437da5798174ac642e1a066c1f7f37e9497ed"
+  },
+  {
+   "path": "Resource/Shell/Fonts.img",
+   "size": 328054,
+   "sha256": "172b453027ee4e850885db1b8f06d69c878af1d38e8c516eceb649c920a205bf"
+  },
+  {
+   "path": "Resource/Shell/Fonts.res",
+   "size": 986596,
+   "sha256": "2ccc8e7fc4b5314086715f21b293817ff4dccfd7b454616df182c77ed31abc9b"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Board.img",
+   "size": 5224923,
+   "sha256": "5668348beb05fa9a9c0a7619f752d0cdb218dc07025534d374ba73248a905ce6"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Boots.img",
+   "size": 957973,
+   "sha256": "725f332bac712b20734b531208f247dc54ca2086c30689081ed5482dec2d771a"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Coat.img",
+   "size": 675697,
+   "sha256": "f63d62ca4e1cb9705b0122d3146067c1fc97d6c6addf654fbd2a27b7c7c7d347"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Face.img",
+   "size": 252605,
+   "sha256": "63b1b9c3507350fccd62d1ca7ae771f5c70ccfc9f78f303aae00d8ae5b7ce671"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Goggles.img",
+   "size": 280035,
+   "sha256": "ca33eb71569c23a31804bf693cf34c77bf7e95714028694d1aeccd0c893afb0f"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Hat.img",
+   "size": 115847,
+   "sha256": "f94bdf35923426b15200e8b2a7dadcc2ca0ae35ae5a5c46c10fb8e3d2ddb561b"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Logos.img",
+   "size": 1314151,
+   "sha256": "a0d30bffba35f1ea986ce155f26652316042cd6e3b5be8c133acee3dad91ba86"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Pants.img",
+   "size": 1100923,
+   "sha256": "ac5c6b00bf82be3a5c187eba2b229f519bfcaae299935e99c8d75f429fd1fe7e"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Shirt.img",
+   "size": 667344,
+   "sha256": "b22466e9ef977d9cdab87441262c825020c473cb68671c6d57c498f009a90146"
+  },
+  {
+   "path": "Resource/Shell/GearImages/Stance.img",
+   "size": 131276,
+   "sha256": "3711d4f70b25a873601569ecbade8e1766fe5dee819d6a95b3b8efc507af8323"
+  },
+  {
+   "path": "Resource/Shell/GearImages.img",
+   "size": 2174,
+   "sha256": "e6698e2f214e707db5fe95a3b8a4ab55d658bf1de39dd278ff2422f3688e3bfe"
+  },
+  {
+   "path": "Resource/Shell/GuiParts.res",
+   "size": 16570,
+   "sha256": "ac1d645b939b4705be625ba54af2972152b5543debf75d6bd58aa1474f80e710"
+  },
+  {
+   "path": "Resource/Shell/LensImages/LevelSelect.img",
+   "size": 722543,
+   "sha256": "81d55030cb2ad7493318765a7a9d23f93d4099100f2cd007e2950e7160435115"
+  },
+  {
+   "path": "Resource/Shell/Menus.img",
+   "size": 1376057,
+   "sha256": "dbbd1fb194d2c39e44d8b6b0106ba5a139484ae08413cdf9fa5f3afecdef3a78"
+  },
+  {
+   "path": "Resource/Shell/Menus.res",
+   "size": 3080925,
+   "sha256": "336fd7ca3aeab01b90421348f9f5c8e6996fc8a25b1d74ba07312f139c1653f4"
+  },
+  {
+   "path": "Resource/Shell/Panels.img",
+   "size": 3599881,
+   "sha256": "ad512f668352886b53f929d81d2d4b72ad0b0e1a538f5b319e1f64c6682393f9"
+  },
+  {
+   "path": "Resource/Shell/Panels.res",
+   "size": 254374,
+   "sha256": "d36e5157dd9e3d72a7f954bb7ec0830d3dd6f70c9e93fd98d63c17de350e40de"
+  },
+  {
+   "path": "Resource/Shell/ProChallSymbols.res",
+   "size": 38138,
+   "sha256": "bff59c63d4a2d1bd971d5f940f06d43278cf6d172b767b2159dd92fa11ca7382"
+  },
+  {
+   "path": "Resource/Shell/ScrapBookImages.img",
+   "size": 68211,
+   "sha256": "80ded9fdb0ee51ff856dcd4ff68ea54a69c8cb1e593ed7790b2889dc562fe048"
+  },
+  {
+   "path": "Resource/Shell.res",
+   "size": 902791,
+   "sha256": "ecc9eb45e13a943d9157ff4665b82069fc83198f6d72a866f9b2f8dd1ff9f10a"
+  },
+  {
+   "path": "Resource/SoundFX.res",
+   "size": 1134933,
+   "sha256": "52444342988b71017f87a7efae16a965931a780a2e00a4b03343f369a81aab4a"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest/BRCPan.img",
+   "size": 445713,
+   "sha256": "11b436d03ea62fe52e924bc4e0e6489de45f8012f307bd76c7a9201b1eaff70e"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest/BRCPan.res",
+   "size": 8155,
+   "sha256": "501bb5f318df1f6b70633cfd4d375982a1e384edb839f14b81e467e5b0560d3e"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest/Trees.img",
+   "size": 1067224,
+   "sha256": "bba51d86afb12ef2d81537a7e95d19d955d98c24d15583d3a218fa2e8949f814"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest/Trees.res",
+   "size": 2921953,
+   "sha256": "037c870e49b4f2b58eb314f12cf82976da03921e4bcb52b2f789d8330814f484"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest.col",
+   "size": 18069628,
+   "sha256": "21a08bbab213f8afa8d565ed90029fae69f18da3d135dd9b1cbf3b6f42f809e2"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest.img",
+   "size": 5874376,
+   "sha256": "f651531c6fd90e9ee32634fa6994c838bd843747e0f423d89380c1b267342f1b"
+  },
+  {
+   "path": "Resource/Terrain/BR_Crest.res",
+   "size": 3622577,
+   "sha256": "91a266917077b0f064c918d2c956a9462551fb170f3decdfef84ef9fa47b9456"
+  },
+  {
+   "path": "Resource/Terrain/Common.img",
+   "size": 1579229,
+   "sha256": "90dc4505bf0d470c75ea415c9b2e8f9878f598f044b4ec196f85208bd726ae9a"
+  },
+  {
+   "path": "Resource/Terrain/Common.res",
+   "size": 1573085,
+   "sha256": "d51ec681e2d8deb061fcda35b82aeda2cfb300f677d1de18cab48fa1d35a73f8"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry/EBPan.img",
+   "size": 396334,
+   "sha256": "2b9fc0694ca9047470d365f222232a9522b236ac8fe4470ab07d89b3338fe001"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry/EBPan.res",
+   "size": 5645,
+   "sha256": "d84092b880bb6894e9838993d892a73a7cb6619f18b471cbe08cabc48b5e4d10"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry/Trees.img",
+   "size": 1486492,
+   "sha256": "05bd3d6c90112164b64158f46eef716b7d50d8ed8ed0a8f37bd65ce559f5c8a1"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry/Trees.res",
+   "size": 1376423,
+   "sha256": "e0e023d9f5e93ea6ec6dec19e75e1157ed2a805c32ec4701c3663a5eae459e5a"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry.col",
+   "size": 11468864,
+   "sha256": "94ee65f8a2a3a6d7976f92ba2435698c949f4ef8ad491cd9bfc1dd19c192e34d"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry.img",
+   "size": 5897446,
+   "sha256": "c7b6f48780c27dce96323f41afc9eba50d54eae0f32f05472ab104fe194a83df"
+  },
+  {
+   "path": "Resource/Terrain/Euro_BackCountry.res",
+   "size": 2579062,
+   "sha256": "871f4f603b6b15c42c11296f48a39d55c50719bfbc2a0ee0bbc03ed5d150a0ad"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan/FJEManMD.img",
+   "size": 986810,
+   "sha256": "ffc7ea901750a4c01eb01bfded3ef4b726ab644fca5c1057617a544af53cd00a"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan/Pan.img",
+   "size": 791589,
+   "sha256": "49c9b6a403827886602fbe911de5349377cf83c1868071718df50ef37a73f543"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan/Trees.img",
+   "size": 1229518,
+   "sha256": "08846e7618e56e2c7eef2ba5cc9006874e0ca246d5e225c9d6bc992a0757a09c"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan/Trees.res",
+   "size": 1673636,
+   "sha256": "e878f997c0f4845cd4fc342484d6280bb26e87fd39b93db5ade6a5be24f19b6d"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan.col",
+   "size": 4967536,
+   "sha256": "83a33175d6ea36f7d366a407e717bbadfa89ce385fe480dbcc932e856e287de9"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan.img",
+   "size": 5638672,
+   "sha256": "8c19799bb33e42ea738f813c7625b73ac202528aefabc70de42f51145c7689a6"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Japan.res",
+   "size": 2231871,
+   "sha256": "e8cba061089c88ac8da3c4d63ae3df55845b3633e780949baeba5a8ea3151dd6"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Southwest/FSWPan.img",
+   "size": 398373,
+   "sha256": "83ef8969821a54cf7b76cc559f7448e01fb059bbd09370682fe722041ec60c0a"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Southwest/Trees.img",
+   "size": 1067224,
+   "sha256": "7249978d5cfd145eeac17ec817080eebedf7cf3aea7633bd8514efab02800941"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Southwest/Trees.res",
+   "size": 1465767,
+   "sha256": "d896ca3288235998d88d9e2a16c2d119c02f514d2c6c91328106418cf6836852"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Southwest.col",
+   "size": 3721582,
+   "sha256": "927a8272299f665094da401f21f2ee9b3bd32eb6cacb8ac0adf98d7b4cd1c145"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Southwest.img",
+   "size": 5582963,
+   "sha256": "866abd2fa33bee7fa04b9ba30f9ce758b0714072b4d25d4da818e94fa88c0d91"
+  },
+  {
+   "path": "Resource/Terrain/Fantasy_Southwest.res",
+   "size": 2179078,
+   "sha256": "13fbd9b4df2f406c4c74d1ef2971836f68a35656f7ef634a2d4d6b20b52674c4"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip/SSELifts.img",
+   "size": 47832,
+   "sha256": "161f45d929b85e5868b9edd256d4d947925bf62f341c06e50bc9961c6db93324"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip/SSEManMD.img",
+   "size": 781976,
+   "sha256": "a2ac5bdcd50deb330c42e3dbb80b07d3040136f60473bbe1c0d3a5a57c006bfc"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip/SSEPan.img",
+   "size": 396325,
+   "sha256": "f8f39b8a274a300233264294a7c620bb6ca9ccafef0ead064737a4ba65eb4559"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip/Trees.img",
+   "size": 1042891,
+   "sha256": "5840045ef1ee840af1160be1afd09f383ee03c45afdf8e04d24eacd89c7a4929"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip/Trees.res",
+   "size": 3373896,
+   "sha256": "5d2accb2774b4c6af001658a7d1854e3b885e1084579b7867d794fc16007c848"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip.col",
+   "size": 11039014,
+   "sha256": "a0b8baf2dd7bf858c76480f1e1e3aa7f9125f8387b5e459a8dfea36f8f9a9697"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip.img",
+   "size": 3599341,
+   "sha256": "8b6f987dd2423069badd25ca3df6e375479a2313c7a79aa40f30377a2f83babc"
+  },
+  {
+   "path": "Resource/Terrain/SS_EgoTrip.res",
+   "size": 4927395,
+   "sha256": "123bfbbde2fba66e19d295c940864b796e0b3622e70bfdd55c80d726dc66835a"
+  },
+  {
+   "path": "Resource/Terrain/SS_JibFest/Pan.img",
+   "size": 398373,
+   "sha256": "05e81e91d48bff668e0984c51923c76160a1c78fcb54270e604d8ce67c568762"
+  },
+  {
+   "path": "Resource/Terrain/SS_JibFest/Trees.img",
+   "size": 1042891,
+   "sha256": "dbba92a1faba47ba135c199f7bfdb46e1c74cfaa5681a6c41414bb0104d8aeb5"
+  },
+  {
+   "path": "Resource/Terrain/SS_JibFest/Trees.res",
+   "size": 2280666,
+   "sha256": "7e1a28b972d865e75f81f587dbda28f543d5279c3808f0c23c7d80cb8aeb3c59"
+  },
+  {
+   "path": "Resource/Terrain/SS_JibFest.col",
+   "size": 3105976,
+   "sha256": "9fdc8be0c04f39dcf71e46e3d481168f489d263ad6c718ec23091e49dc0bba29"
+  },
+  {
+   "path": "Resource/Terrain/SS_JibFest.img",
+   "size": 5653442,
+   "sha256": "31e2652f97020ab0ebfd64bf6b69ad716c3a66d166a0d48dd04663426764b49e"
+  },
+  {
+   "path": "Resource/Terrain/SS_JibFest.res",
+   "size": 1380148,
+   "sha256": "4d1d81342f803fa538e2761e22a94277be398b4c0e1e491c2491dd42f3b76cdc"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park/Lifts.img",
+   "size": 109728,
+   "sha256": "ede3433216ab4ed38ceeb721c4fe4065c64aaa69848e9c7614a3540846f15ffc"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park/Pan.img",
+   "size": 791589,
+   "sha256": "359fe5d2ad240028a9d1d69e3f3ce81a1bff7c02a1c727929a56233e7bad02dd"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park/Trees.img",
+   "size": 1293676,
+   "sha256": "cdce11e01b36f67b0690d7fdb4194912153c00dee9f12883d7750efe868b538e"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park/Trees.res",
+   "size": 2729026,
+   "sha256": "02eff598ecf7b689533296b43144b04896cbd33bc1245a9e4bc98664bbff1775"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park/TTEManMD.img",
+   "size": 652023,
+   "sha256": "5799f98bc0c9aecf4b82ae7e383d9a1c81e031ed4056ddedb30f8c1b4bf8a3ca"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park.col",
+   "size": 12480388,
+   "sha256": "b635cdbaf6db3f2c8881a3497a07835f622f6fa255d63beaac6f3b6c8b9066e7"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park.img",
+   "size": 2797411,
+   "sha256": "7036834d96821638f7d4ccdc1cd5320b1472b18750687704e7bdef2f0de8af72"
+  },
+  {
+   "path": "Resource/Terrain/TT_Park.res",
+   "size": 3861093,
+   "sha256": "b5ada1c3e2731ecc94b90f437ef7b061e75740498e133506b560e4e0e92b2eb8"
+  },
+  {
+   "path": "Resource/Voice/English/Bjorn.res",
+   "size": 625879,
+   "sha256": "8b846d9b985f574b06b0526bcd54c58a43c1ad1942a1389c0715a1cab3df694a"
+  },
+  {
+   "path": "Resource/Voice/English/Bobby.res",
+   "size": 941892,
+   "sha256": "56bfdb04714a5f0b7389654f0bac3452b62519fac996bf26150fba128565cc2e"
+  },
+  {
+   "path": "Resource/Voice/English/Gigi.res",
+   "size": 725788,
+   "sha256": "5e5106ed54f450a6083b3e70b354c69c26701c159a876a75036c2073cf0efd79"
+  },
+  {
+   "path": "Resource/Voice/English/Jana.res",
+   "size": 787058,
+   "sha256": "066bf416c3f441fc55ac13782d79f840c1fd51cc7930efd4ad3db37ba1a9ab38"
+  },
+  {
+   "path": "Resource/Voice/English/JasonB.res",
+   "size": 775843,
+   "sha256": "ac0ac88a97b6c76e64e8109b377575c36db15479bc79942674e268ed0e73af2b"
+  },
+  {
+   "path": "Resource/Voice/English/JasonM.res",
+   "size": 588390,
+   "sha256": "524e5a2726d8d3bc082508685eddf409f93c9d08655bcdc0f34faebc6bf38943"
+  },
+  {
+   "path": "Resource/Voice/English/Jeremy.res",
+   "size": 528267,
+   "sha256": "9bc2c93ab013eeb853de76525bebd4c29d5325bb5da7e7d917e360094ef65d41"
+  },
+  {
+   "path": "Resource/Voice/English/Jordan.res",
+   "size": 603634,
+   "sha256": "0c906b45b1309318e83f0958085734c71d495dfb481d8d3f4a99e3059d724456"
+  },
+  {
+   "path": "Resource/Voice/English/Kurt.res",
+   "size": 729305,
+   "sha256": "31d09805d947f8fdf750efb534d7bb5bbe3b36686ba70c1f8adca748178bdd70"
+  },
+  {
+   "path": "Resource/Voice/English/Mikey.res",
+   "size": 464284,
+   "sha256": "5c7b5e0e0df04977b3b935c23529c7ea8209b385772841d8e6fdda768e767935"
+  },
+  {
+   "path": "Resource/Voice/English/Mitch.res",
+   "size": 834418,
+   "sha256": "237fa6d0bfcf2287de9ba21dfca5dd06affed440c6cb5f0af09001497f7df639"
+  },
+  {
+   "path": "Resource/Voice/English/Snowman.res",
+   "size": 139240,
+   "sha256": "109144473160545ecceedce34c1a1c4fb933c19cfba3ddd4380727add3175eb6"
+  },
+  {
+   "path": "Resource/Voice/English/Travis.res",
+   "size": 1343246,
+   "sha256": "c0e7782c55af2665d2130e789af9393ef41543bf2068012f8dfea56fa4eb391d"
+  },
+  {
+   "path": "Resource/Voice/English.res",
+   "size": 16009479,
+   "sha256": "717313cf8a3ee7461e3aaf5ee34b6ce45b5397e58720e4103c76e8e574b7803f"
+  },
+  {
+   "path": "Resource/Voice/French/Bjorn.res",
+   "size": 625879,
+   "sha256": "6f437f53c80af74fd96a8e3f5400e2ffba20d8361346a0d334633f208eb9c134"
+  },
+  {
+   "path": "Resource/Voice/French/Bobby.res",
+   "size": 915792,
+   "sha256": "eb4beadfa45cd780b53a1a0da04dd29f2484f6cfdd87f5ebc484e9025306df52"
+  },
+  {
+   "path": "Resource/Voice/French/Gigi.res",
+   "size": 725788,
+   "sha256": "305a7a457ba94550a636f4e604c192c9ac8185261e9ccf50d17cb2995132436a"
+  },
+  {
+   "path": "Resource/Voice/French/Jana.res",
+   "size": 787058,
+   "sha256": "c633a184ee5347d8d4a5ae0a0c2fd88f4eec60e92af7225fd381a90009f92e5f"
+  },
+  {
+   "path": "Resource/Voice/French/JasonB.res",
+   "size": 775843,
+   "sha256": "342a5a0d53575804bdda7d6479fea0f8903e74f2df430a1ce0656f8814f17003"
+  },
+  {
+   "path": "Resource/Voice/French/JasonM.res",
+   "size": 588390,
+   "sha256": "f35d8e20c86a56dfe8c9fcafe525b8e962f5aa28acf134441c20964bbaa944c6"
+  },
+  {
+   "path": "Resource/Voice/French/Jeremy.res",
+   "size": 528267,
+   "sha256": "c7dee04617fe9c22b95c729c1165eae6449358bd86c241a8127859c5be9509f1"
+  },
+  {
+   "path": "Resource/Voice/French/Jordan.res",
+   "size": 603634,
+   "sha256": "d32cd361c535871ad4d6cec38f05b170104d56297bdc7873ae7b9faf2d3253fc"
+  },
+  {
+   "path": "Resource/Voice/French/Kurt.res",
+   "size": 729305,
+   "sha256": "65a8c0f24bc8ce767077ba49df5a8478d1eebd81c5db0fea96dee5955c702c41"
+  },
+  {
+   "path": "Resource/Voice/French/Mikey.res",
+   "size": 464284,
+   "sha256": "822bd7728d9b2e54968c04f90fe36f59d3467cf8b11d704004a39a0e2cd351d3"
+  },
+  {
+   "path": "Resource/Voice/French/Mitch.res",
+   "size": 834418,
+   "sha256": "b0b4f47830d6085a9a782c8d0f47d17eaa28aa6b70b53c4ce89dba694ea132f6"
+  },
+  {
+   "path": "Resource/Voice/French/Snowman.res",
+   "size": 139240,
+   "sha256": "f6596f464ad6ccec6737913dcf5e7a83ea29fd5d1fc38acf1e835a056c3e0bac"
+  },
+  {
+   "path": "Resource/Voice/French/Travis.res",
+   "size": 1343246,
+   "sha256": "9a3c9e9ee5400adb6abbe236035019953d342637a7310ccd4687b613a3b5c7c5"
+  },
+  {
+   "path": "Resource/Voice/French.res",
+   "size": 17426043,
+   "sha256": "2515bb0fb3c14ab2f84cda78a47913cb25487ac497814201e2baac942e9b44e7"
+  },
+  {
+   "path": "Resource/Voice/German/Bjorn.res",
+   "size": 625879,
+   "sha256": "6f437f53c80af74fd96a8e3f5400e2ffba20d8361346a0d334633f208eb9c134"
+  },
+  {
+   "path": "Resource/Voice/German/Bobby.res",
+   "size": 915792,
+   "sha256": "eb4beadfa45cd780b53a1a0da04dd29f2484f6cfdd87f5ebc484e9025306df52"
+  },
+  {
+   "path": "Resource/Voice/German/Gigi.res",
+   "size": 725788,
+   "sha256": "305a7a457ba94550a636f4e604c192c9ac8185261e9ccf50d17cb2995132436a"
+  },
+  {
+   "path": "Resource/Voice/German/Jana.res",
+   "size": 787058,
+   "sha256": "c633a184ee5347d8d4a5ae0a0c2fd88f4eec60e92af7225fd381a90009f92e5f"
+  },
+  {
+   "path": "Resource/Voice/German/JasonB.res",
+   "size": 775843,
+   "sha256": "342a5a0d53575804bdda7d6479fea0f8903e74f2df430a1ce0656f8814f17003"
+  },
+  {
+   "path": "Resource/Voice/German/JasonM.res",
+   "size": 588390,
+   "sha256": "f35d8e20c86a56dfe8c9fcafe525b8e962f5aa28acf134441c20964bbaa944c6"
+  },
+  {
+   "path": "Resource/Voice/German/Jeremy.res",
+   "size": 528267,
+   "sha256": "c7dee04617fe9c22b95c729c1165eae6449358bd86c241a8127859c5be9509f1"
+  },
+  {
+   "path": "Resource/Voice/German/Jordan.res",
+   "size": 603634,
+   "sha256": "d32cd361c535871ad4d6cec38f05b170104d56297bdc7873ae7b9faf2d3253fc"
+  },
+  {
+   "path": "Resource/Voice/German/Kurt.res",
+   "size": 729305,
+   "sha256": "65a8c0f24bc8ce767077ba49df5a8478d1eebd81c5db0fea96dee5955c702c41"
+  },
+  {
+   "path": "Resource/Voice/German/Mikey.res",
+   "size": 464284,
+   "sha256": "822bd7728d9b2e54968c04f90fe36f59d3467cf8b11d704004a39a0e2cd351d3"
+  },
+  {
+   "path": "Resource/Voice/German/Mitch.res",
+   "size": 834418,
+   "sha256": "b0b4f47830d6085a9a782c8d0f47d17eaa28aa6b70b53c4ce89dba694ea132f6"
+  },
+  {
+   "path": "Resource/Voice/German/Snowman.res",
+   "size": 139240,
+   "sha256": "f6596f464ad6ccec6737913dcf5e7a83ea29fd5d1fc38acf1e835a056c3e0bac"
+  },
+  {
+   "path": "Resource/Voice/German/Travis.res",
+   "size": 1343246,
+   "sha256": "9a3c9e9ee5400adb6abbe236035019953d342637a7310ccd4687b613a3b5c7c5"
+  },
+  {
+   "path": "Resource/Voice/German.res",
+   "size": 20756543,
+   "sha256": "a3fa1cf8bf0aed18146fc4698512c8f077a3d1c152ec94c0d8f7b9777dd84fa9"
+  },
+  {
+   "path": "Resource/Voice/Italian/Bjorn.res",
+   "size": 625879,
+   "sha256": "6f437f53c80af74fd96a8e3f5400e2ffba20d8361346a0d334633f208eb9c134"
+  },
+  {
+   "path": "Resource/Voice/Italian/Bobby.res",
+   "size": 915792,
+   "sha256": "eb4beadfa45cd780b53a1a0da04dd29f2484f6cfdd87f5ebc484e9025306df52"
+  },
+  {
+   "path": "Resource/Voice/Italian/Gigi.res",
+   "size": 725788,
+   "sha256": "305a7a457ba94550a636f4e604c192c9ac8185261e9ccf50d17cb2995132436a"
+  },
+  {
+   "path": "Resource/Voice/Italian/Jana.res",
+   "size": 787058,
+   "sha256": "c633a184ee5347d8d4a5ae0a0c2fd88f4eec60e92af7225fd381a90009f92e5f"
+  },
+  {
+   "path": "Resource/Voice/Italian/JasonB.res",
+   "size": 775843,
+   "sha256": "342a5a0d53575804bdda7d6479fea0f8903e74f2df430a1ce0656f8814f17003"
+  },
+  {
+   "path": "Resource/Voice/Italian/JasonM.res",
+   "size": 588390,
+   "sha256": "f35d8e20c86a56dfe8c9fcafe525b8e962f5aa28acf134441c20964bbaa944c6"
+  },
+  {
+   "path": "Resource/Voice/Italian/Jeremy.res",
+   "size": 528267,
+   "sha256": "c7dee04617fe9c22b95c729c1165eae6449358bd86c241a8127859c5be9509f1"
+  },
+  {
+   "path": "Resource/Voice/Italian/Jordan.res",
+   "size": 603634,
+   "sha256": "d32cd361c535871ad4d6cec38f05b170104d56297bdc7873ae7b9faf2d3253fc"
+  },
+  {
+   "path": "Resource/Voice/Italian/Kurt.res",
+   "size": 729305,
+   "sha256": "65a8c0f24bc8ce767077ba49df5a8478d1eebd81c5db0fea96dee5955c702c41"
+  },
+  {
+   "path": "Resource/Voice/Italian/Mikey.res",
+   "size": 464284,
+   "sha256": "822bd7728d9b2e54968c04f90fe36f59d3467cf8b11d704004a39a0e2cd351d3"
+  },
+  {
+   "path": "Resource/Voice/Italian/Mitch.res",
+   "size": 834418,
+   "sha256": "b0b4f47830d6085a9a782c8d0f47d17eaa28aa6b70b53c4ce89dba694ea132f6"
+  },
+  {
+   "path": "Resource/Voice/Italian/Snowman.res",
+   "size": 139240,
+   "sha256": "f6596f464ad6ccec6737913dcf5e7a83ea29fd5d1fc38acf1e835a056c3e0bac"
+  },
+  {
+   "path": "Resource/Voice/Italian/Travis.res",
+   "size": 1343246,
+   "sha256": "9a3c9e9ee5400adb6abbe236035019953d342637a7310ccd4687b613a3b5c7c5"
+  },
+  {
+   "path": "Resource/Voice/Italian.res",
+   "size": 19382857,
+   "sha256": "0ec45495ed36404bb9aee2c68f02ea0ca7c85b321ad1b4bf14768221b403ffcc"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Bjorn.res",
+   "size": 625879,
+   "sha256": "8b846d9b985f574b06b0526bcd54c58a43c1ad1942a1389c0715a1cab3df694a"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Bobby.res",
+   "size": 941892,
+   "sha256": "56bfdb04714a5f0b7389654f0bac3452b62519fac996bf26150fba128565cc2e"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Gigi.res",
+   "size": 725788,
+   "sha256": "5e5106ed54f450a6083b3e70b354c69c26701c159a876a75036c2073cf0efd79"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Jana.res",
+   "size": 787058,
+   "sha256": "066bf416c3f441fc55ac13782d79f840c1fd51cc7930efd4ad3db37ba1a9ab38"
+  },
+  {
+   "path": "Resource/Voice/Japanese/JasonB.res",
+   "size": 775843,
+   "sha256": "ac0ac88a97b6c76e64e8109b377575c36db15479bc79942674e268ed0e73af2b"
+  },
+  {
+   "path": "Resource/Voice/Japanese/JasonM.res",
+   "size": 588390,
+   "sha256": "524e5a2726d8d3bc082508685eddf409f93c9d08655bcdc0f34faebc6bf38943"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Jeremy.res",
+   "size": 528267,
+   "sha256": "9bc2c93ab013eeb853de76525bebd4c29d5325bb5da7e7d917e360094ef65d41"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Jordan.res",
+   "size": 603634,
+   "sha256": "0c906b45b1309318e83f0958085734c71d495dfb481d8d3f4a99e3059d724456"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Kurt.res",
+   "size": 729305,
+   "sha256": "31d09805d947f8fdf750efb534d7bb5bbe3b36686ba70c1f8adca748178bdd70"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Mikey.res",
+   "size": 464284,
+   "sha256": "5c7b5e0e0df04977b3b935c23529c7ea8209b385772841d8e6fdda768e767935"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Mitch.res",
+   "size": 834418,
+   "sha256": "237fa6d0bfcf2287de9ba21dfca5dd06affed440c6cb5f0af09001497f7df639"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Snowman.res",
+   "size": 139240,
+   "sha256": "109144473160545ecceedce34c1a1c4fb933c19cfba3ddd4380727add3175eb6"
+  },
+  {
+   "path": "Resource/Voice/Japanese/Travis.res",
+   "size": 1343246,
+   "sha256": "c0e7782c55af2665d2130e789af9393ef41543bf2068012f8dfea56fa4eb391d"
+  },
+  {
+   "path": "Resource/Voice/Japanese.res",
+   "size": 16009479,
+   "sha256": "717313cf8a3ee7461e3aaf5ee34b6ce45b5397e58720e4103c76e8e574b7803f"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Bjorn.res",
+   "size": 625879,
+   "sha256": "6f437f53c80af74fd96a8e3f5400e2ffba20d8361346a0d334633f208eb9c134"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Bobby.res",
+   "size": 915792,
+   "sha256": "eb4beadfa45cd780b53a1a0da04dd29f2484f6cfdd87f5ebc484e9025306df52"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Gigi.res",
+   "size": 725788,
+   "sha256": "305a7a457ba94550a636f4e604c192c9ac8185261e9ccf50d17cb2995132436a"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Jana.res",
+   "size": 787058,
+   "sha256": "c633a184ee5347d8d4a5ae0a0c2fd88f4eec60e92af7225fd381a90009f92e5f"
+  },
+  {
+   "path": "Resource/Voice/Spanish/JasonB.res",
+   "size": 775843,
+   "sha256": "342a5a0d53575804bdda7d6479fea0f8903e74f2df430a1ce0656f8814f17003"
+  },
+  {
+   "path": "Resource/Voice/Spanish/JasonM.res",
+   "size": 588390,
+   "sha256": "f35d8e20c86a56dfe8c9fcafe525b8e962f5aa28acf134441c20964bbaa944c6"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Jeremy.res",
+   "size": 528267,
+   "sha256": "c7dee04617fe9c22b95c729c1165eae6449358bd86c241a8127859c5be9509f1"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Jordan.res",
+   "size": 603634,
+   "sha256": "d32cd361c535871ad4d6cec38f05b170104d56297bdc7873ae7b9faf2d3253fc"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Kurt.res",
+   "size": 729305,
+   "sha256": "65a8c0f24bc8ce767077ba49df5a8478d1eebd81c5db0fea96dee5955c702c41"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Mikey.res",
+   "size": 464284,
+   "sha256": "822bd7728d9b2e54968c04f90fe36f59d3467cf8b11d704004a39a0e2cd351d3"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Mitch.res",
+   "size": 834418,
+   "sha256": "b0b4f47830d6085a9a782c8d0f47d17eaa28aa6b70b53c4ce89dba694ea132f6"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Snowman.res",
+   "size": 139240,
+   "sha256": "f6596f464ad6ccec6737913dcf5e7a83ea29fd5d1fc38acf1e835a056c3e0bac"
+  },
+  {
+   "path": "Resource/Voice/Spanish/Travis.res",
+   "size": 1343246,
+   "sha256": "9a3c9e9ee5400adb6abbe236035019953d342637a7310ccd4687b613a3b5c7c5"
+  },
+  {
+   "path": "Resource/Voice/Spanish.res",
+   "size": 17274555,
+   "sha256": "bf95f9c673d1a63da632e3a082c9edcba28ceb413d6f450f146fcdec8a609ffc"
+  },
+  {
+   "path": "ScreenOfDeath_eng.xpr",
+   "size": 1228836,
+   "sha256": "03f2c4686fdf6b2575b9ae0f8e11ffb00a13dfedafdb93591e740fd083707d4e"
+  },
+  {
+   "path": "ScreenOfDeath_fre.xpr",
+   "size": 1228836,
+   "sha256": "308d02a21cef91707a2b352c370f1273456b0f35c191b092a87a1417ae8ec295"
+  },
+  {
+   "path": "ScreenOfDeath_ger.xpr",
+   "size": 1228836,
+   "sha256": "75532b94b28625c743604249d7b52845ff3831a042984e7dc69bb2b7025c3fd5"
+  },
+  {
+   "path": "ScreenOfDeath_ita.xpr",
+   "size": 1228836,
+   "sha256": "0a4ba915d4c3a5efdbe03eb021070540772307b9bdce278e96ef516e9b2602d9"
+  },
+  {
+   "path": "ScreenOfDeath_jap.xpr",
+   "size": 1228836,
+   "sha256": "12276c27a0260a17c0064e1e70a2608202e6fc3f35db7f9082518c048d2ff034"
+  },
+  {
+   "path": "ScreenOfDeath_spa.xpr",
+   "size": 1228836,
+   "sha256": "faa47d2932fda0434586e4f1b7250dcdd621aaab0c309028323b59dde21f3dd9"
+  },
+  {
+   "path": "XDemos/media/ambient.wma",
+   "size": 6438726,
+   "sha256": "36a5c680452c566f9acca1b797e0bffe2bbcd70f9a3ec8b781b3c0e679afe707"
+  },
+  {
+   "path": "XDemos/media/Dn.png",
+   "size": 1321,
+   "sha256": "ac2f5fe01dabf3d0e9425f5cda71d41ca5eb0e526bda11e8fc63c39f71652e31"
+  },
+  {
+   "path": "XDemos/media/fontb.xpr",
+   "size": 266240,
+   "sha256": "60d91b108af3bfe840655020901416c6a87f52bfe3ab85c97da479db162a4727"
+  },
+  {
+   "path": "XDemos/media/fontn.xpr",
+   "size": 135168,
+   "sha256": "1827382e992d69257a5eaf02d320f13f2b59123953f4f9c2c2c940ba637b0cb8"
+  },
+  {
+   "path": "XDemos/media/launch.wav",
+   "size": 18048,
+   "sha256": "e9bdd1a577ec8b7767c3c80726cc264e5b6cf3945c065305da30032135434b2b"
+  },
+  {
+   "path": "XDemos/media/menu.wav",
+   "size": 8808,
+   "sha256": "c644e644dfd189045c0d230b7b0e257b63b30f23879d4b1c22fdd45c55c1ff1d"
+  },
+  {
+   "path": "XDemos/media/nocontrollermessage.png",
+   "size": 35911,
+   "sha256": "e3a9ec54afe948a4949dcab68621f93b98648ddbfa73a8a70aaf5d3b0a45d673"
+  },
+  {
+   "path": "XDemos/media/screen.png",
+   "size": 314888,
+   "sha256": "83be560586c129216701331e972684f2e2f15bbbbf0fa59793a6717897c4a544"
+  },
+  {
+   "path": "XDemos/media/screenT.png",
+   "size": 310118,
+   "sha256": "a0fc8228464d3c0378e7aacad16ead04ef3428538eb114fc1cc997c566b8f652"
+  },
+  {
+   "path": "XDemos/media/Up.png",
+   "size": 1407,
+   "sha256": "7cdab9bd063b6c1d7d9ad36cd9ca1191a45ae2fcb6471b7b8b206a9ec392d589"
+  },
+  {
+   "path": "XDemos/media/wait.png",
+   "size": 73987,
+   "sha256": "ec3fd36a6222b18d70f97223a4d0ae60727e45dda75a7cfa67dc43c9adef48ac"
+  },
+  {
+   "path": "XDemos/media/xdemos.skn",
+   "size": 120,
+   "sha256": "f358235eed7dd824288f472bc20a0726ba148412e2edc6f124f464f8315f5406"
+  },
+  {
+   "path": "XDemos/videos/Gotham.bik",
+   "size": 128618968,
+   "sha256": "2f969a05c3784c389491d0dc5d36dac9cba95709062bd15e8d9fdc74fd908304"
+  },
+  {
+   "path": "XDemos/videos/Gotham.png",
+   "size": 58792,
+   "sha256": "dc7d37771d08642fc5bc10f702d275196d1ae4c0d7d4f5f37b3cd04cbec91fd1"
+  },
+  {
+   "path": "XDemos/videos/RalliSport.bik",
+   "size": 113906796,
+   "sha256": "045621b90e0a0f11df59753b75f022796fcf542476be41ad93a27b482a12e701"
+  },
+  {
+   "path": "XDemos/videos/Rallisport.PNG",
+   "size": 55196,
+   "sha256": "e7c2589453a96f64b9d9a8d8b0ecaf755ded2c9cd6841b2c6fa5b088870d245a"
+  },
+  {
+   "path": "XDemos/XDemos.xbe",
+   "size": 593920,
+   "sha256": "502deba9a21104815877c78653df07def2b28474642a304927e179af4da08711"
+  },
+  {
+   "path": "XDemos/xdemos.xdi",
+   "size": 587,
+   "sha256": "c5a5df29e0aca642d5a23f1c5c45f0a3467357950fdb04c9e2635300904e7cfd"
+  },
+  {
+   "path": "YouTheMan.xbe",
+   "size": 376832,
+   "sha256": "13f09d04824ac714d847606ae321094a37f61cc2236aea62647323f0540f856c"
+  }
+ ]
+}

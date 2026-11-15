@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "snow_gather": true,
+  "texture_set_cache": true,
+  "texture_hash_memo": true,
+  "bounded_frame_cap": false,
+  "vulkan_batching": true,
+  "wma_yield_fix": true
+}

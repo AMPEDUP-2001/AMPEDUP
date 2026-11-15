@@ -1,0 +1,4 @@
+[
+  {"start":"0x0002BE70","observed":true,"note":"Observed SetupSoundtracksListbox indirect call"},
+  {"start":"0x0002C0F0","observed":false,"note":"Independent prologue after prior RET, address taken by guest 0x2C92D"}
+]

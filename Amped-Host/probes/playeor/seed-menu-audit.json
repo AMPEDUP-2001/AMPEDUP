@@ -1,0 +1,7 @@
+[
+ {"start":"0x0002B8E0","observed":false,"note":"registered SetupSonglistListbox"},
+ {"start":"0x000681A0","observed":false,"note":"registered SetupReplayTheaterListboxAll"},
+ {"start":"0x00068960","observed":false,"note":"registered FillMultiPlayerCharListbox"},
+ {"start":"0x000D4970","observed":false,"note":"registered WriteObject and WriteLuaObject"},
+ {"start":"0x000D4AA0","observed":false,"note":"registered WriteLuaFile"}
+]

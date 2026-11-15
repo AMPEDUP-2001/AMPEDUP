@@ -1,0 +1,7 @@
+[
+  {
+    "start": "0x0002BE70",
+    "observed": true,
+    "note": "Indirect call observed; registration dataflow identifies SetupSoundtracksListbox."
+  }
+]

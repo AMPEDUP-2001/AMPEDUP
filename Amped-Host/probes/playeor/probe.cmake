@@ -1,0 +1,11 @@
+# Opt-in, separate v23 dispatch overlay. Include only in isolated builds.
+option(AMPED_PLAYEOR_CANDIDATE "Enable isolated 0x2BE70 callback candidate" OFF)
+if(AMPED_PLAYEOR_CANDIDATE)
+ if(NOT AMPED_GENERATED_DIR MATCHES "seeded-v23/generated$")
+  message(FATAL_ERROR "PlayEOR candidate requires v23 sources")
+ endif()
+ get_target_property(_playeor_sources amped_recomp SOURCES)
+ list(FILTER _playeor_sources EXCLUDE REGEX "/recomp_dispatch\\.c$")
+ set_property(TARGET amped_recomp PROPERTY SOURCES "${_playeor_sources}")
+ target_sources(amped_recomp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/probes/playeor/playeor_v23.c" "${CMAKE_CURRENT_SOURCE_DIR}/probes/playeor/toggle_v23.c" "${CMAKE_CURRENT_SOURCE_DIR}/probes/playeor/recomp_dispatch_playeor.c")
+endif()

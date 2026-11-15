@@ -1,0 +1,254 @@
+{
+  "AMPED_CAP_PHASE_DIAGNOSTIC": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_TEXTURE_TIMING": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_AUDIO_BRANCH_FIX": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_AUDIO_MENU_VIRTUAL": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_AUDIO_VM_PROBE": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_A_ACTION_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_BINK_PROBE": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_BOARDER_PROBE_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_CAMERA_LIFECYCLE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_CAMERA_SCRIPT_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_CAREER_56B40_CANDIDATE": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_CAREER_PAUSE_Y": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_CONTINUE_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_CRT_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_DEMO_ACTION_REDIRECT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_DISABLE_DEMOS_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_EMBEDDED_MOVIE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_FPS_CAP_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_FPS_CAP_TEST": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_GRAPHICS_UI_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_GUEST_CLEAR_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_HUD_SNAPSHOT_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_KICK_WAIT_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_LOADING_STRIP_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_LUA_CDECL_FALLBACK_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_LUA_INPUT_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_LUA_RANDOM_CANDIDATE": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_MENU_CONSUMER_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_MENU_LIFECYCLE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_MENU_UPDATE_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_MOVIE_BRIDGE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_MULTIPLAYER_CALLBACK_CANDIDATE": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_NATIVE_VIDEO_EXPERIMENT_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_NATIVE_WIDE_SETTING_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_PAUSE_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_PHASE_ACTION_COMBINED_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_PHASE_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_PLAYEOR_CANDIDATE": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_PROJECTION_CORRELATE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_PROJECTION_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_RENDER_SCALE_6_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_RENDER_SCALE_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_REPLAY_CALLBACK_CANDIDATE": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_REPLAY_SAVE_4F880_CANDIDATE": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_SDL_CLAIM_DIAGNOSTIC": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_SETTINGS_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_SHADER_ABLATE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_STARTUP_QUAD_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_TERRAIN_ATTEMPT_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_TERRAIN_INPUT_SAMPLE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_TIMESTEP_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_UI_SURVEY_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_UNIFIED_EXPERIMENT": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "AMPED_VM_ENTRY_PROBE_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_WIDESCREEN_EXPERIMENT_V23": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_XINPUT_PROBE": {
+    "type": "BOOL",
+    "value": "OFF"
+  },
+  "AMPED_XINPUT_PROBE_V23": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "XBOXRECOMP_ENHANCE": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "XBOXRECOMP_OVERLAY": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "XBOXRECOMP_VULKAN": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "XBOXRECOMP_WIN_VULKAN": {
+    "type": "BOOL",
+    "value": "ON"
+  },
+  "CMAKE_C_FLAGS": {
+    "type": "STRING",
+    "value": "-DAMPED_ACK_POLL_TEST=1 -DAMPED_SNOW_GATHER_TEST=1 -DAMPED_HASH_UNROLL_TEST=1"
+  },
+  "CMAKE_BUILD_TYPE": {
+    "type": "STRING",
+    "value": "Release"
+  }
+}
