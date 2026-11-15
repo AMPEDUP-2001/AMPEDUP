@@ -4,7 +4,7 @@
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [Build from source](docs/building.md) · [Release notes](docs/preview.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/preview.md) · [Credits](#credits)
 
 ## Play on Windows
 
@@ -20,14 +20,33 @@ Choose a Windows installer from the [0.5 release](https://github.com/AMPEDUP-200
 
 Use your own European multilingual retail disc image. The supported XISO has SHA‑256 `1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0`. Other editions and disc layouts are unverified. The repository contains the runtime, patch recipes and build tools. Bring your own disc to generate the executable and install game content.
 
+## System requirements
+
+- Windows 10 or 11 x64 and a Vulkan-capable GPU with a compatible driver.
+- About 6 GB of free disk space for extraction and temporary build files.
+- The matching retail XISO listed above. Internet access is required for the online installer.
+
+**Test PC.** Windows 11 Pro, Intel Core i7-8700K (6 cores, 12 threads), NVIDIA GeForce RTX 3070 (8 GB VRAM), and 48 GB RAM. Minimum CPU, GPU, and RAM requirements are still unverified.
+
+### Performance on the test PC
+
+The development benchmark measured two 30-second gameplay samples per scale on **Snow Summit 1 / Miracle Mile**. It used Vulkan with VSync, a 1706 × 960 widescreen window on a 2560 × 1440 display at roughly 60 Hz, a 60 FPS cap, SMAA, 16× anisotropic filtering, CRT off, and muted audio.
+
+| Internal scale | Avg. displayed FPS | Mean CPU draw | GPU busy (p95) | GPU budget left (p95) |
+| --- | ---: | ---: | ---: | ---: |
+| 1× | 56.22 | 7.43 ms (44.6%) | 8.65 ms (51.9%) | 48.1% |
+| 2× | 58.15 | 6.56 ms (39.4%) | 8.84 ms (53.1%) | 46.9% |
+| 3× | 58.52 | 6.48 ms (38.9%) | 9.18 ms (55.1%) | 44.9% |
+| 4× | 58.50 | 6.37 ms (38.2%) | 9.56 ms (57.3%) | 42.7% |
+
+The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rendering work on the CPU, and GPU busy measures active GPU time using PresentMon. CPU and GPU work can overlap. The slowest five-second window at 4× averaged 55.94 displayed FPS.
+
 ## Features in the preview
 
 - Vulkan rendering, native 16:9 or 4:3, and internal resolution from original through 4×.
 - FXAA, SMAA, anisotropic filtering, and optional CRT scanlines.
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
 - A 60 FPS cap and an in-game settings menu. Open settings with **F1** or **View + Menu**. **Quit Game** is at the bottom.
-
-Requirements are Windows 10 or 11 x64, a Vulkan-capable GPU, and about 6 GB of free space for extraction and temporary build files. Performance varies by course and render scale. [Release notes](docs/preview.md) describe the tested paths.
 
 ## Credits
 
