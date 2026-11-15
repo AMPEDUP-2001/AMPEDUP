@@ -4,7 +4,7 @@ How to map Xbox memory at its original virtual addresses on Windows so that reco
 
 ## The Problem
 
-Xbox games are compiled with hardcoded absolute addresses. The Burnout 3 binary contains thousands of instructions like:
+Xbox games are compiled with hardcoded absolute addresses. The reference racing title binary contains thousands of instructions like:
 
 ```asm
 mov eax, [0x004D532C]    ; read global variable

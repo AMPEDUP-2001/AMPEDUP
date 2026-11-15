@@ -13,7 +13,11 @@ $xbePath = (Resolve-Path -LiteralPath $Xbe).Path
 if ((Get-FileHash -LiteralPath $xbePath).Hash -ne 'D825274C3A52B203E6065EF7B0109BCFFFDC175FE8B826FAC215A2ADB779E58E') {
     throw 'That default.xbe does not match the supported European retail executable.'
 }
-$winDeps = Join-Path (Resolve-Path -LiteralPath $DependencyRoot).Path 'takedawn-windeps'
+$dependencyDir = (Resolve-Path -LiteralPath $DependencyRoot).Path
+$winDeps = Join-Path $dependencyDir 'windows-deps'
+if (-not (Test-Path -LiteralPath $winDeps -PathType Container)) {
+    $winDeps = Join-Path $dependencyDir 'takedawn-windeps'
+}
 $llvm = Join-Path $winDeps 'llvm-mingw'
 $sdl = Join-Path $winDeps 'SDL2/x86_64-w64-mingw32'
 $glslang = Join-Path $winDeps 'glslang'

@@ -18,7 +18,7 @@ The target address is computed at runtime. The recompiler cannot know at compile
 
 ## Sources of Indirect Calls
 
-In Burnout 3, indirect calls come from:
+In the reference racing title, indirect calls come from:
 
 1. **C++ vtable dispatch**: `obj->vtable[method_index]()` -- the most common source. RenderWare is an object-oriented engine with deep class hierarchies.
 2. **Function pointer callbacks**: Event handlers, state machine transitions, resource loaders.
@@ -198,7 +198,7 @@ PUSH32(esp, 0);
 RECOMP_ICALL(MEM32(vtable_va + 0x10));
 ```
 
-Known functions requiring guards in Burnout 3:
+Known functions requiring guards in the reference racing title:
 - `sub_0017D790`: vtable guard at loc_0017D88D (range check before 3 ICALLs)
 - `sub_001B4170`: vtable loop guard (linked list dispatch)
 - `sub_001B41F0`: vtable loop guard
@@ -248,7 +248,7 @@ Unknown VAs are logged with the caller's return address for tracing back to the 
 void recomp_icall_fail_log(uint32_t va) {
     void *caller = _ReturnAddress();
     fprintf(stderr, "[ICALL-FAIL] VA=0x%08X caller=%p\n", va, caller);
-    // Look up caller in burnout3.map to find the source function
+    // Look up caller in racing-reference.map to find the source function
 }
 ```
 

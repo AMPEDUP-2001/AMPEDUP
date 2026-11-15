@@ -140,7 +140,7 @@ changed = [addr for addr in hashes1 if hashes1[addr] != hashes2[addr]]
 print(f"{len(changed)} pages changed out of {len(hashes1)}")
 ```
 
-**Typical results for Burnout 3:**
+**Typical results for the reference racing title:**
 - 47 of 1520 pages change during 3 seconds of driving
 - Most active region: 0x4DB000-0x4E0000 (physics simulation)
 - Also active: 0x4D9000 (camera), 0x549000 (part transforms), 0x40F000 (vehicle state)

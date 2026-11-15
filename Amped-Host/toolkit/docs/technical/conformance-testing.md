@@ -15,11 +15,11 @@ at the wrong width — all of them pass a string-comparison test suite.
 
 ## The idea, borrowed
 
-This is [ps3recomp](https://github.com/sp00nznet/ps3recomp)'s methodology, which
+This is [the PlayStation 3 recompiler](../../../../README.md#credits)'s methodology, which
 is worth stating plainly since the two projects share a maintainer and the
 approach transfers almost intact:
 
-1. **Check the decoder against an oracle you did not write.** ps3recomp runs the
+1. **Check the decoder against an oracle you did not write.** the PlayStation 3 recompiler runs the
    SDK's `ppu-lv2-objdump` over a binary and diffs mnemonic-per-address against
    its own decoder, with an explicit alias table for the simplified mnemonics
    objdump prefers.
@@ -37,7 +37,7 @@ Pillar 1 mostly does not apply to us: we do not have our own decoder to audit.
 We use Capstone, which is already the independent implementation. The layer
 worth auditing here is our *operand model* on top of it, not the decode.
 
-Pillar 2 gets much stronger, and this is the important difference. ps3recomp has
+Pillar 2 gets much stronger, and this is the important difference. The PlayStation 3 recompiler has
 to reason about a PowerPC while running on an x86 host, so its oracle is a
 *model* — the SDK toolchain, an independent decoder, a hand-built PPC
 interpreter. A model can be wrong, and when it is, it is wrong in the same
@@ -303,7 +303,7 @@ function's extent past its first `ret` matters too: stopping there truncates
 anything with a block below the exit, which then looks like it jumps outside
 itself.
 
-On Burnout 3 that took the comparable set from **17 to 37**, out of 1,617
+On the reference racing title that took the comparable set from **17 to 37**, out of 1,617
 functions decoded.
 
 ### Surviving hostile code
@@ -362,7 +362,7 @@ were the harness's fault rather than the lifter's:
 - **The x87 stack.** Plenty of this era's maths helpers take their argument in
   `st(0)` rather than on the call stack, and an empty stack is *not* neutral:
   the hardware yields the indefinite value where the model yields `0.0`. Both
-  sides are now given the same value in `st(0)`. Without it, a Burnout 3
+  sides are now given the same value in `st(0)`. Without it, a reference racing title
   float-to-int helper "failed" on every vector over an input neither side had
   been handed.
 
@@ -374,7 +374,7 @@ the rewrite reaches into `__asm` blocks too.
 
 | Title | Comparable | Vectors | Mismatches |
 |---|---|---|---|
-| Burnout 3: Takedown | 37 | 161 | 0 |
+| the reference racing title | 37 | 161 | 0 |
 | Blood Wake | 39 | 44 | 0 |
 | Crimson Skies | 35 | 227 | 2 functions, open |
 

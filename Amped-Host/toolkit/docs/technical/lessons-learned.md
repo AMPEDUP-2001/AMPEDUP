@@ -1,6 +1,6 @@
 # Lessons Learned
 
-Battle-tested advice from building the first Xbox static recompilation, based on 29 sessions of development on Burnout 3: Takedown.
+Battle-tested advice from building the first Xbox static recompilation, based on 29 sessions of development on the reference racing title.
 
 ## Things That Worked Well
 
@@ -79,7 +79,7 @@ There is no silver bullet. Each new crash requires investigation to determine wh
 
 ### Identifying Statically-Linked Libraries
 
-The Burnout 3 binary has 2.73 MB of code. The game code, CRT, RenderWare engine, and XDK libraries (D3D8LTCG, DSOUND, XMV, XONLINE, etc.) are all linked into a single .text section with no symbols. Figuring out where one library ends and another begins, and which functions belong to which library, requires:
+the reference racing title binary has 2.73 MB of code. The game code, CRT, RenderWare engine, and XDK libraries (D3D8LTCG, DSOUND, XMV, XONLINE, etc.) are all linked into a single .text section with no symbols. Figuring out where one library ends and another begins, and which functions belong to which library, requires:
 
 - Pattern matching against known library signatures (FLIRT-style).
 - String reference analysis (error messages reveal library identity).
@@ -95,7 +95,7 @@ The COLOROP state alone has 25 possible values (DISABLE, SELECTARG1, SELECTARG2,
 
 ### Reverse Engineering Game File Formats
 
-Burnout 3 uses Criterion's proprietary file formats (.bgv for vehicles, .txd for textures, streamed.dat for tracks, PrgData.bin for progression data). No documentation exists. Every format must be reverse engineered from the binary and sample files:
+the reference racing title uses Criterion's proprietary file formats (.bgv for vehicles, .txd for textures, streamed.dat for tracks, PrgData.bin for progression data). No documentation exists. Every format must be reverse engineered from the binary and sample files:
 
 - BGV vehicles: 24-byte vertex stride with packed normals (11-11-10 bit signed), triangle strips with degenerate restart markers, pattern scanning for draw call descriptors.
 - TXD textures: RenderWare texture dictionary format with DXT-compressed data.
@@ -125,9 +125,9 @@ When a RECOMP_ICALL lookup fails, the caller has already pushed a dummy return a
 
 ### Running from Wrong Working Directory
 
-Git Bash on Windows uses Unix-style paths (`/e/burnout3`), but the game looks for asset files relative to the Windows current directory. When launched from Git Bash with `cd /e/burnout3 && ./bin/burnout3.exe`, the CWD is set to the Unix-style path, and file loading fails.
+Git Bash on Windows uses Unix-style paths (`/e/racing-reference`), but the game looks for asset files relative to the Windows current directory. When launched from Git Bash with `cd /e/racing-reference && ./bin/racing-reference.exe`, the CWD is set to the Unix-style path, and file loading fails.
 
-**Fix**: Use `cd E:/burnout3` (Windows drive-letter path) to set the correct CWD.
+**Fix**: Use `cd E:/racing-reference` (Windows drive-letter path) to set the correct CWD.
 
 ## What We Would Do Differently
 
@@ -157,7 +157,7 @@ We should have classified all 22,097 functions early: game logic, CRT, RenderWar
 
 1. **The hardest 10% is indirect calls.** Everything else -- memory layout, register model, direct calls, stack simulation -- is mechanical. Indirect calls require runtime dispatch with failure recovery, and corrupted vtable pointers make it adversarial.
 
-2. **Games are more resilient than you think.** Burnout 3 runs with dozens of stubbed functions, fake physics, placeholder rendering, and corrupted memory regions. The game loop keeps going. This is partly because games are designed to handle errors gracefully (frame drops, missing assets, hardware variations) and partly because Xbox games were built for a fixed platform where many edge cases simply never occur.
+2. **Games are more resilient than you think.** the reference racing title runs with dozens of stubbed functions, fake physics, placeholder rendering, and corrupted memory regions. The game loop keeps going. This is partly because games are designed to handle errors gracefully (frame drops, missing assets, hardware variations) and partly because Xbox games were built for a fixed platform where many edge cases simply never occur.
 
 3. **One crash at a time.** Do not try to understand the entire codebase before fixing anything. Boot the game, hit the first crash, fix it, repeat. Each crash teaches you something about the architecture. After 100 crashes, you understand the game.
 
@@ -171,4 +171,4 @@ We should have classified all 22,097 functions early: game logic, CRT, RenderWar
     }
     ```
 
-5. **The map file is your best friend.** MSVC's linker map (burnout3.map) maps native addresses to function names. When a crash backtrace shows address 0x00007FF6A1234567, subtract the image base and look up the offset in the map to find which recompiled function is faulting. Combined with `_ReturnAddress()` in ICALL diagnostics, this is the primary debugging technique.
+5. **The map file is your best friend.** MSVC's linker map (racing-reference.map) maps native addresses to function names. When a crash backtrace shows address 0x00007FF6A1234567, subtract the image base and look up the offset in the map to find which recompiled function is faulting. Combined with `_ReturnAddress()` in ICALL diagnostics, this is the primary debugging technique.

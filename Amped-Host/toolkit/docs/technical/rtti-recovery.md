@@ -117,7 +117,7 @@ RTTI is uncommon. Measured over the titles on hand:
 | **Half-Life 2 (Xbox)** | **2,336** | **2,932 vtables, 12,288 methods** |
 | Crimson Skies | 4 | no vtables — CRT `type_info` only |
 | Xbox dashboard | 4 | no vtables — CRT `type_info` only |
-| Blood Wake, Burnout 3, Wreckless, Ghost Recon | 0 | none |
+| Blood Wake, the reference racing title, Wreckless, Ghost Recon | 0 | none |
 
 So this is a capability that pays off enormously on C++ titles and does nothing
 on C ones. **Absence is a normal result, not a failure**: the tool prints a note

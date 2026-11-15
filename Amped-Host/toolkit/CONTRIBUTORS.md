@@ -30,14 +30,13 @@ The fork of xboxrecomp this branch comes from: the Metal backend and the first
 macOS host.
 
 ### xenophobentx
-The `takedawn` branch, the toolkit of the
-[Takedawn](https://github.com/xenophobentx/takedawn) port: the Vulkan backend,
-the Linux and Android hosts, the settings overlay, frame pacing and the port's
-picture and sound options.
+The [Windows reference port](../../README.md#credits) branch of the toolkit.
+Contributions include the Vulkan backend, the Linux and Android hosts, the
+settings overlay, frame pacing, and the port's picture and sound options.
 
 ### [Naitrate](https://github.com/Naitrate)
 Holding flips to a host grid at the display's rate when a title asks for it
-(#3), the toolkit half of Takedawn's High refresh rate.
+(#3), the toolkit half of the Windows reference port's High refresh rate.
 
 ### [jillsandwich1998](https://github.com/jillsandwich1998)
 The mouse cursor that hides itself after a short idle time and on key or
@@ -325,7 +324,7 @@ direction.
   accepts `GHIDRA_ROOT` itself being an install for anyone who keeps it
   unversioned. Also confirmed [XboxDev/ghidra-xbe](https://github.com/XboxDev/ghidra-xbe)
   works on current Ghidra despite its version-mismatch warning, and built one.
-- The same PR **took Burnout 3 out of the tooling** — hardcoded title strings
+- The same PR **took the reference racing title out of the tooling** — hardcoded title strings
   in the parser, disassembler, func_id and translator replaced with a shared
   config, and the Linux default paths made generic.
 - **Noticed that `tools.abi_analysis` was missing from the getting-started

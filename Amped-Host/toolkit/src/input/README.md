@@ -240,7 +240,7 @@ for an alternative that the title's host code provides, and the overlay shows
 the row once that code has called `xbox_InputOfferControlScheme(1)`. What the
 alternative is, and when it holds, is the title's business, because only the
 title knows when it is in a menu: it rewrites the pad state its game has just
-read (Burnout 3: `src/game/controls.c` there, the PS2 version's driving
+read (the reference racing title: `src/game/controls.c` there, the PS2 version's driving
 controls, only while driving). Two things here serve that code:
 
 - `xbox_InputSources(port)`: whether the port's last state came from a
@@ -367,7 +367,7 @@ and an external pad does not rumble.
 closed. It answers port 0 like the keyboard (`XBOX_INPUT_SRC_TOUCH`):
 merged on top of a pad, and the whole state when there is none, so a phone
 has a player 1. The layout follows the title through a hook
-(`xbox_InputTouchSetDrivingHook`): Burnout 3 gives a race layout (a floating
+(`xbox_InputTouchSetDrivingHook`): the reference racing title gives a race layout (a floating
 stick on the left half, GAS, BRAKE, BOOST, BREAKER, LOOK, VIEW) and a menu
 layout (d-pad, A B X Y, LT RT); pause and the settings menu sit at the top, left of centre, in
 both. Each finger keeps the control it went down on; a finger on a button

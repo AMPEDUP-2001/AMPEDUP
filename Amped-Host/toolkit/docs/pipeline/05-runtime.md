@@ -66,7 +66,7 @@ for (int i = 1; i <= XBOX_NUM_MIRRORS; i++) {
 }
 ```
 
-Not all mirrors succeed -- Windows may have DLLs or other allocations at some addresses. For Burnout 3, 4 out of 33 attempted mirrors fail due to address conflicts. This is acceptable because the game primarily accesses RAM through the base view.
+Not all mirrors succeed -- Windows may have DLLs or other allocations at some addresses. For the reference racing title, 4 out of 33 attempted mirrors fail due to address conflicts. This is acceptable because the game primarily accesses RAM through the base view.
 
 ### Section Loading
 
@@ -147,7 +147,7 @@ A bump allocator is sufficient because Xbox games rarely free memory -- they all
 
 ## Kernel Shim
 
-The Xbox kernel provides 366 possible exports. Games import a subset. Burnout 3 uses 147.
+The Xbox kernel provides 366 possible exports. Games import a subset. The reference racing title uses 147.
 
 ### Architecture
 
@@ -203,7 +203,7 @@ static void bridge_MmAllocateContiguousMemory(void) {
 | Data exports (KeTickCount, HardwareInfo, ...) | 12 | Static data in kernel data area |
 | Other | 42 | Case-by-case |
 
-For Burnout 3, approximately 68 kernel functions are bridged to actual Win32 implementations, and 79 are stubbed (return success without doing anything).
+For the reference racing title, approximately 68 kernel functions are bridged to actual Win32 implementations, and 79 are stubbed (return success without doing anything).
 
 ### Data Exports
 
@@ -349,7 +349,7 @@ Manual overrides are the primary debugging tool. When a function crashes or prod
 - **Fixes it** (reimplements the logic with correct Win32 calls)
 - **Instruments it** (adds logging/traces to understand what it does)
 
-For Burnout 3, approximately 33 functions have manual overrides, including the physics engine, frame pump, resource loader, and several RenderWare initialization functions.
+For the reference racing title, approximately 33 functions have manual overrides, including the physics engine, frame pump, resource loader, and several RenderWare initialization functions.
 
 ## Build System
 
@@ -360,7 +360,7 @@ cmake -S . -B build
 cmake --build build --config Release
 ```
 
-The output is a single executable (`bin/burnout3.exe`) that links:
+The output is a single executable (`bin/racing-reference.exe`) that links:
 - The auto-generated recompiled code (static library)
 - The manual overrides
 - The kernel shim (static library)

@@ -13,16 +13,15 @@
 
 > Turn any Xbox game binary into a native Windows executable. No emulation. No interpreter. Just raw, recompiled C.
 
-This repository is a fork of [sp00nznet/xboxrecomp](https://github.com/sp00nznet/xboxrecomp),
-through [apexJCL/xboxrecomp](https://github.com/apexJCL/xboxrecomp). Its `takedawn` branch
-is the toolkit of [Takedawn](https://github.com/xenophobentx/takedawn).
+This toolkit comes from the original recompiler through a fork for the
+Windows reference port. See the [project credits](../../README.md#credits).
 
 **[Join the sp00nznet recomp Discord](https://discord.gg/CRpzGWZFcu)** — the
-community hub for sp00nznet's recomp projects, where ps3recomp development
+community hub for sp00nznet's recomp projects, where the PlayStation 3 recompiler development
 happens in the open. Good place to ask questions, show a port you are working
 on, or find out what people are stuck on before you duplicate the effort.
 
-**Title-agnostic.** The runtime, kernel layer, D3D8 abstraction, NV2A translator, and the Python pipeline (parser → disasm → func_id → abi_analysis → recomp) all derive per-title layout and behavior from the XBE itself. *Burnout 3: Takedown* was the reference title the toolkit was built against, so many docs use its metrics as examples — see `docs/technical/candidate-games.md` for ports in progress.
+**Title-agnostic.** The runtime, kernel layer, D3D8 abstraction, NV2A translator, and the Python pipeline (parser → disasm → func_id → abi_analysis → recomp) all derive per-title layout and behavior from the XBE itself. *the reference racing title* was the reference title the toolkit was built against, so many docs use its metrics as examples — see `docs/technical/candidate-games.md` for ports in progress.
 
 ### Recent Changes
 
@@ -42,7 +41,7 @@ Microsoft got here first: their internal Ficl/Fission recompiler shipped Xbox
 back-compat on the 360. We have since studied it — see
 [Microsoft's Own Recompiler](docs/technical/ms-fusion-recompiler.md).
 
-The technique has been proven on other platforms — [N64Recomp](https://github.com/N64Recomp/N64Recomp) showed MIPS-to-C was viable, [XenonRecomp](https://github.com/hedge-dev/XenonRecomp) brought it to Xbox 360's PowerPC — but nobody had tackled the OG Xbox until now. Its x86 architecture makes it both easier (same instruction set family as the host) and harder (variable-length instructions, complex addressing modes, x87 FPU stack) than MIPS or PPC targets.
+The technique has been proven on other platforms — [the Nintendo 64 recompiler](../../README.md#credits) showed MIPS-to-C was viable, [the Xbox 360 recompiler](../../README.md#credits) brought it to Xbox 360's PowerPC — but nobody had tackled the OG Xbox until now. Its x86 architecture makes it both easier (same instruction set family as the host) and harder (variable-length instructions, complex addressing modes, x87 FPU stack) than MIPS or PPC targets.
 
 ### Why Not Just Use an Emulator?
 
@@ -262,7 +261,7 @@ The first time you run a recompiled game, **it will crash**. That's normal. The 
 5. **Debug** — use the ICALL trace ring buffer, memory access logging, and your debugger
 6. **Iterate** — each crash teaches you something about the game. Fix it and move on.
 
-With Burnout 3 (the first game recompiled with this toolkit), the process from "empty repo" to "game boots and renders textured 3D tracks" took about two weeks of iterative development.
+With the reference racing title (the first game recompiled with this toolkit), the process from "empty repo" to "game boots and renders textured 3D tracks" took about two weeks of iterative development.
 
 ## Repository Structure
 
@@ -343,7 +342,7 @@ xboxrecomp/
 - [Microsoft's Own Recompiler](docs/technical/ms-fusion-recompiler.md) — White-room analysis of Ficl/Fission: pipeline, address map, HLE boundary
 - [Ficl/Fission Codegen Teardown](docs/technical/ms-fusion-codegen-teardown.md) — IDA/Hex-Rays teardown of both their translators, and how it reframes our roadmap
 - [SVOD Extraction](docs/technical/svod-extraction.md) — reading the BC package container to get the donor title's guest XBE out, and the validation gate that catches a plausible-looking bad extraction
-- [Burnout 3 Reunification](docs/technical/burnout3-reunification.md) — bringing the origin title back onto the extracted toolkit: what's done, and the threading gate that makes the runtime a merge not a swap
+- [the reference racing title Reunification](docs/technical/racing-reference-reunification.md) — bringing the origin title back onto the extracted toolkit: what's done, and the threading gate that makes the runtime a merge not a swap
 
 ### Xbox Formats
 - [XBE File Format](docs/formats/xbe.md) — Xbox executable format reference
@@ -370,7 +369,7 @@ so there is one place to keep correct:
 
 ## Games That Work Well As Targets
 
-Based on our experience with Burnout 3, the best candidates for Xbox static recomp share these traits:
+Based on our experience with the reference racing title, the best candidates for Xbox static recomp share these traits:
 
 | Factor | Easier | Harder |
 |--------|--------|--------|
@@ -385,7 +384,7 @@ See [docs/technical/candidate-games.md](docs/technical/candidate-games.md) for a
 
 ## Projects Using This Toolkit
 
-- **[Burnout 3: Takedown](https://github.com/sp00nznet/burnout3)** — The origin title and most mature target. 22,097 functions lifted. An earlier build was playable to the main menu at 60fps, but leaned on hand-written menu and render scaffolding; that is being replaced with genuinely recompiled code, and the honest bring-up currently reaches engine/RenderWare init. Treat the old "playable" claim as retired until the recompiled path gets back there.
+- **[the reference racing title](../../README.md#credits)** — The origin title and most mature target. 22,097 functions lifted. An earlier build was playable to the main menu at 60fps, but leaned on hand-written menu and render scaffolding; that is being replaced with genuinely recompiled code, and the honest bring-up currently reaches engine/RenderWare init. Treat the old "playable" claim as retired until the recompiled path gets back there.
 - **[Xbox Dashboard](https://github.com/sp00nznet/xboxdashboard)** — The original Xbox system shell (build 3944); the toolkit on system software rather than a game. Nothing renders yet: the earlier "green orb at 60fps" was the project's own scaffolding drawing a disc, and has been retired along with the fake scene root and hand-rolled asset loader around it. What runs is the dashboard's own code — full init chain, its own D3D8 sizing and allocating its own 640x480 surfaces, its own NV2A pushbuffer, its own `default.xip` read. Its UI is driven by a **VRML97 + JavaScript scene engine** (text→bytecode compiler + stack-machine VM + node-class reflection registry), which is the piece still to come online.
 - **[Wreckless: The Yakuza Missions](https://github.com/sp00nznet/wreckless)** — Xbox launch title (2002). Custom engine, 3,407 functions, boots through CRT init into game main. Debugging early gameplay crash.
 - **[Blood Wake](https://github.com/sp00nznet/bloodwake)** — First-party Microsoft naval combat (2001). Stormfront Studios custom engine. 4,608 functions, 367K lines of C generated (99.1% success). Project scaffolded, working toward first build.
@@ -488,10 +487,10 @@ A: This project provides tools and documentation. You must own a legitimate copy
 A: Emulators interpret or JIT-compile code at runtime. Static recompilation translates the entire binary ahead of time into native C code that compiles to a regular `.exe`. There's no CPU emulation at runtime — the recompiled functions execute directly.
 
 **Q: Can I use this on Xbox 360 games?**
-A: No. Xbox 360 uses PowerPC (big-endian, different ISA). See [XenonRecomp](https://github.com/hedge-dev/XenonRecomp) for Xbox 360 static recompilation. This toolkit is specifically for the original Xbox's x86 code.
+A: No. Xbox 360 uses PowerPC (big-endian, different ISA). See [the Xbox 360 recompiler](../../README.md#credits) for Xbox 360 static recompilation. This toolkit is specifically for the original Xbox's x86 code.
 
 **Q: How long does it take to get a game running?**
-A: It depends on the game's complexity. Burnout 3 went from zero to "boots and renders 3D tracks" in about two weeks. Simple games might be faster; complex ones with custom engines could take longer. The toolchain handles the mechanical translation — the real work is building the runtime shims and debugging indirect calls.
+A: It depends on the game's complexity. The reference racing title went from zero to "boots and renders 3D tracks" in about two weeks. Simple games might be faster; complex ones with custom engines could take longer. The toolchain handles the mechanical translation — the real work is building the runtime shims and debugging indirect calls.
 
 **Q: Why C output instead of direct x86-64 binary translation?**
 A: C is portable, debuggable, and the compiler optimizes it for you. You can read the output, set breakpoints in it, and modify individual functions. Direct binary translation would be faster to run but impossible to debug or modify.
@@ -545,7 +544,7 @@ actually landed rather than by any tag that existed at the time.
 
 ### Unreleased
 
-*Burnout 3: Takedown, from its entry point to every game mode playable,
+*the reference racing title, from its entry point to every game mode playable,
 one and two players. Most of what it needed is general: the XDK's USB and
 DirectSound stacks handing the hardware physical addresses, an x87 that
 honours precision control, and enough of the NV2A to draw a 3D game
@@ -1333,7 +1332,7 @@ through a CRT that cares.
   with 3D Z-order unswizzle, and software channel conversion for the formats
   with no direct DXGI equivalent. Ships `tests/d3d8_smoke`, which builds the real
   `d3d8_resources.c` against stub device accessors so the format tables are
-  checkable without a D3D11 device. The same PR took hardcoded *Burnout 3*
+  checkable without a D3D11 device. The same PR took hardcoded *the reference racing title*
   strings out of the tools and the Linux default paths —
   *[@DarthSidious666](https://github.com/DarthSidious666)* (#17)
 
@@ -1517,7 +1516,7 @@ linked, ran, and was wrong, with no lifter warning anywhere.
   snippet with MSVC, lifts the bytes, and runs the lifted C against the original
   instructions on the real CPU over **2,043 input vectors** covering integer
   results, the x87 stack (values *and* depth) and all four SSE lanes. Adapted
-  from ps3recomp's methodology, but stronger here: we target x86 and run on
+  from the PlayStation 3 recompiler's methodology, but stronger here: we target x86 and run on
   x86, so the oracle is the hardware rather than a model of it. It found three
   live bugs, all of which the existing string-comparison tests passed:
   - **`fxch st(i)` was a silent no-op** — Capstone reports `fxch` with both
@@ -1553,7 +1552,7 @@ linked, ran, and was wrong, with no lifter warning anywhere.
   for, call one of its functions, run the lifted C over the same arguments, and
   compare. Candidates are picked mechanically (no calls, no invented pointers,
   plain `ret`, nothing lifting to a comment), so what gets compared is provably
-  safe to run. Verified clean on Burnout 3, Conker, Crimson Skies and Blood
+  safe to run. Verified clean on the reference racing title, Conker, Crimson Skies and Blood
   Wake. No game files are included or needed for the rest of the suite.
 
   It found that **`fnstsw` did not model C2, the unordered bit**. An x87 compare
@@ -1564,7 +1563,7 @@ linked, ran, and was wrong, with no lifter warning anywhere.
   against itself.
 
   Totals: **2,599 snippet vectors, 211 whole-function vectors**, plus per-title
-  runs (Burnout 3: 37 functions / 161 vectors clean).
+  runs (the reference racing title: 37 functions / 161 vectors clean).
 
 ### v0.5.0 — *"Fall-Through"* (July 2026)
 
@@ -1573,7 +1572,7 @@ linked, ran, and was wrong, with no lifter warning anywhere.
   function often ends by falling through into the next — which x86 executes. The
   lifter emitted nothing, so the body ended and skipped the next function's
   shared epilogue: an esp leak that corrupted callee-saved registers.
-  **4,587 of 35,286 functions in Burnout 3** had this shape.
+  **4,587 of 35,286 functions in the reference racing title** had this shape.
 - **Per-title SEH detection.** `__SEH_prolog`/`__SEH_epilog` addresses were
   hardcoded to one game's CRT, so on every other title the `ebp` read-back was
   never emitted. Found by signature now.
@@ -1615,7 +1614,7 @@ linked, ran, and was wrong, with no lifter warning anywhere.
 
 Initial public release: XBE parser, x86 disassembler and function detector,
 library-function identifier, the x86 → C recompiler, and the runtime libraries
-(kernel, D3D8, DirectSound, APU, NV2A, input), extracted from the Burnout 3
+(kernel, D3D8, DirectSound, APU, NV2A, input), extracted from the reference racing title
 bring-up that started it.
 
 ## References
@@ -1624,8 +1623,8 @@ bring-up that started it.
 - [Xbox Kernel Exports](https://xboxdevwiki.net/Kernel) — Xbox Dev Wiki
 - [NV2A GPU](https://xboxdevwiki.net/NV2A) — Xbox GPU documentation
 - [Xbox Architecture](https://www.copetti.org/writings/consoles/xbox/) — Copetti's deep dive
-- [N64Recomp](https://github.com/N64Recomp/N64Recomp) — Static recomp for N64 (MIPS→C)
-- [XenonRecomp](https://github.com/hedge-dev/XenonRecomp) — Static recomp for Xbox 360 (PPC→C)
+- [the Nintendo 64 recompiler](../../README.md#credits) — Static recomp for N64 (MIPS→C)
+- [the Xbox 360 recompiler](../../README.md#credits) — Static recomp for Xbox 360 (PPC→C)
 - [RexGlueSDK](https://github.com/rexglue/rexglue-sdk) — Xbox 360 recomp runtime (Xenia as link-time library)
 - [Cxbx-Reloaded](https://github.com/Cxbx-Reloaded/Cxbx-Reloaded) — Xbox emulator (dynamic recomp)
 - [xemu](https://github.com/xemu-project/xemu) — Xbox emulator (LLE)

@@ -3,22 +3,31 @@ param(
     [Parameter(Mandatory=$true)][string]$DependencyRoot,
     [string]$ExecutablePath,
     [ValidatePattern('^[a-fA-F0-9]{64}$')][string]$ExpectedExecutableSha256,
+    [string]$ToolArchives,
     [switch]$SnowGather = $true
 )
 $ErrorActionPreference = 'Stop'
 $hostDir = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $dependencyDir = (Resolve-Path -LiteralPath $DependencyRoot).Path
-$winDeps = Join-Path $dependencyDir 'takedawn-windeps'
+$winDeps = Join-Path $dependencyDir 'windows-deps'
+if (-not (Test-Path -LiteralPath $winDeps -PathType Container)) {
+    $winDeps = Join-Path $dependencyDir 'takedawn-windeps'
+}
 $target = Join-Path $hostDir ('dist\' + $PackageName)
 if (Test-Path -LiteralPath $target) { throw "Package already exists: $target" }
-if ($ExecutablePath) {
+$sourceSetup = [bool]$ToolArchives
+if ($sourceSetup -eq [bool]$ExecutablePath) {
+    throw 'Select either ToolArchives for public setup or ExecutablePath for a local package.'
+}
+if ($sourceSetup) {
+    $archiveRoot = (Resolve-Path -LiteralPath $ToolArchives).Path
+    $sdl = Join-Path $winDeps 'SDL2/x86_64-w64-mingw32/bin/SDL2.dll'
+} else {
     if (-not $ExpectedExecutableSha256) { throw 'Provide ExpectedExecutableSha256 when selecting a game executable.' }
     $exe = (Resolve-Path -LiteralPath $ExecutablePath).Path
-} else {
-    throw 'Select the build explicitly with ExecutablePath and ExpectedExecutableSha256. No implicit executable is packaged.'
+    if ((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash -ne $ExpectedExecutableSha256) { throw 'Unexpected game executable.' }
+    $sdl = Join-Path (Split-Path -Parent $exe) 'SDL2.dll'
 }
-if ((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash -ne $ExpectedExecutableSha256) { throw 'Unexpected game executable.' }
-$sdl = Join-Path (Split-Path -Parent $exe) 'SDL2.dll'
 if (-not (Test-Path -LiteralPath $sdl -PathType Leaf)) { throw "SDL2.dll is missing beside the selected executable: $sdl" }
 $icon = Join-Path $PSScriptRoot 'ampedup.ico'
 $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
@@ -43,8 +52,12 @@ $options | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $payload 'packag
 Copy-Item (Join-Path $PSScriptRoot 'launcher-wizard.ps1') $payload
 Copy-Item (Join-Path $PSScriptRoot 'prepare-assets.ps1') $payload
 Copy-Item (Join-Path $PSScriptRoot 'hud-patches.json') $payload
-Copy-Item -LiteralPath $exe -Destination (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe')
-if ((Get-FileHash -LiteralPath (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe') -Algorithm SHA256).Hash -ne $ExpectedExecutableSha256) { throw 'Packaged executable hash does not match.' }
+if ($sourceSetup) {
+    & (Join-Path $PSScriptRoot 'stage-build-tools.ps1') -Bundle $target -Archives $archiveRoot -WindowsDeps $winDeps
+} else {
+    Copy-Item -LiteralPath $exe -Destination (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe')
+    if ((Get-FileHash -LiteralPath (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe') -Algorithm SHA256).Hash -ne $ExpectedExecutableSha256) { throw 'Packaged executable hash does not match.' }
+}
 Copy-Item -LiteralPath $sdl -Destination (Join-Path $payload 'Amped-Host\bin\SDL2.dll')
 if ((Get-FileHash -LiteralPath (Join-Path $payload 'Amped-Host\bin\SDL2.dll') -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $sdl -Algorithm SHA256).Hash) { throw 'Packaged SDL2.dll hash does not match.' }
 $configParser = Join-Path $hostDir 'toolkit\src\enhance'
@@ -80,5 +93,6 @@ try {
 $files = @(Get-ChildItem -LiteralPath $target -Recurse -File | Sort-Object FullName | ForEach-Object {
     @{ path = $_.FullName.Substring($target.Length + 1).Replace('\','/'); size = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
 })
-@{ schema = 1; executable_sha256 = $ExpectedExecutableSha256.ToUpperInvariant(); snow_gather = [bool]$SnowGather; files = $files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $target 'package-manifest.json') -Encoding Ascii
+$exeHash = if ($sourceSetup) { $null } else { $ExpectedExecutableSha256.ToUpperInvariant() }
+@{ schema = 1; executable_sha256 = $exeHash; build_from_disc = $sourceSetup; snow_gather = [bool]$SnowGather; files = $files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $target 'package-manifest.json') -Encoding Ascii
 Get-ChildItem $target -Recurse -File | Measure-Object Length -Sum | Format-List Count,Sum

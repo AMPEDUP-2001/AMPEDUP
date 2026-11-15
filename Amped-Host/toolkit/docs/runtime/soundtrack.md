@@ -23,7 +23,7 @@ decoder into a DirectSound stream.
 ## ST.DB
 
 512-byte blocks, little-endian. Read from the library's code in a title
-(Burnout 3: 0x001D0134-0x001D05E4); the same layout is described at
+(the reference racing title: 0x001D0134-0x001D05E4); the same layout is described at
 <https://xboxdevwiki.net/Soundtracks> and written by
 <https://github.com/allkern/stdbtool>.
 
@@ -62,7 +62,7 @@ counted (`dropped_folders`, `dropped_songs`), files that do not open are
 counted (`bad_files`); `xbox_SoundtrackInit` logs the counts.
 
 Names are kept to Latin-1 (`xst_name_from_utf8`): a title's menu font goes no
-further (Burnout 3's draws a box for U+0151). Decomposed letters (macOS file
+further (the reference racing title's draws a box for U+0151). Decomposed letters (macOS file
 names) are composed, Latin Extended-A is folded to the nearest letter ("ő"
 to "ö", "ř" to "r"), typographic quotes and dashes to the plain ones, and
 other scripts to "?".
@@ -136,7 +136,7 @@ recompiler's `sub_X` / `sub_X_gen` wrap):
    ten `XFileMediaObject` methods whose `Process` copies
    `xst_stream_read` into the title's packet.
 
-Burnout 3's are in `src/game/soundtrack.c` of that port, with the addresses
+the reference racing title's are in `src/game/soundtrack.c` of that port, with the addresses
 and the player's state machine. Everything after the decoder (the title's
 stream, its volume and mix bins, pause, skip, shuffle) is the title's code,
 unchanged.
@@ -152,7 +152,7 @@ the mouse. Its model is `xst_browse.c` (`xsb_*`, no drawing, unit-tested):
 - places: the folder in use, Music, Home, Downloads, the mounts (macOS
   /Volumes; Linux /run/media/<user>/<label>, /run/media/<label>, /media,
   /mnt; Windows drive letters; Android shared storage and /storage/<card>)
-  and, off Windows, "Computer: /". The same list as the Burnout 3 setup
+  and, off Windows, "Computer: /". The same list as the reference racing title setup
   window's disc browser, with Music first.
 - a folder: "Use this folder", "..", its folders in natural order (1024 rows
   at most), each with the playable files in and below it, counted by name on
@@ -168,7 +168,7 @@ take the change while its title runs calls
 (`xbox_SoundtrackScanning` gives the counts for a progress line), then the
 database is replaced (written beside and renamed over) and `done` is called
 on that thread. What a title has cached of the old list is the port's to
-know (Burnout 3 keeps the soundtrack count: its `soundtrack.c`).
+know (the reference racing title keeps the soundtrack count: its `soundtrack.c`).
 
 ## Paths are UTF-8
 

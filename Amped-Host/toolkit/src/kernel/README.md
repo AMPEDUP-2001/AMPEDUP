@@ -158,7 +158,7 @@ Z:\cache.dat                 → <save_dir>\cache\cache.dat
 
 ```c
 // Call early — before game tries to open files
-xbox_path_init("Burnout 3 Takedown", "saves");
+xbox_path_init("the reference racing title", "saves");
 ```
 
 `save_dir` defaults to `$XDG_DATA_HOME/xboxrecomp` (POSIX) or

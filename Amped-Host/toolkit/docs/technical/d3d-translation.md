@@ -214,7 +214,7 @@ The key D3D8 texture stage states and how they map to shader flags:
 | D3DTSS_COLOROP = D3DTOP_SELECTARG1 (2) | texture only | Pixel shader output = texel |
 | D3DTSS_COLOROP = D3DTOP_SELECTARG2 (3) | diffuse only | Pixel shader output = vertex color |
 
-The D3DTOP_MODULATE case is the most common in Burnout 3 -- it multiplies the texture sample with the vertex color, which provides ambient occlusion baked into vertex colors.
+The D3DTOP_MODULATE case is the most common in the reference racing title -- it multiplies the texture sample with the vertex color, which provides ambient occlusion baked into vertex colors.
 
 ## Render State Translation
 

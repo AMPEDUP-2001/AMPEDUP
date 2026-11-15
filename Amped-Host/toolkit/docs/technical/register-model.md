@@ -33,7 +33,7 @@ These registers must be preserved across function calls. In the original x86 cod
 extern uint32_t g_ebx, g_esi, g_edi;
 ```
 
-They are global (not local) because callers pass implicit parameters through them. For example, many Burnout 3 functions use `esi` as a `this` pointer in thiscall convention. The callee-save contract is enforced by the generated PUSH32/POP32 instructions, not by C scoping.
+They are global (not local) because callers pass implicit parameters through them. For example, many the reference racing title functions use `esi` as a `this` pointer in thiscall convention. The callee-save contract is enforced by the generated PUSH32/POP32 instructions, not by C scoping.
 
 A typical callee-saved prologue in generated code:
 
@@ -58,7 +58,7 @@ void sub_000636D0(void) {
 
 **ebp is NOT global.** It is declared as a local `uint32_t ebp` in every generated function.
 
-Why? Over 20,000 functions in the Burnout 3 binary use Frame Pointer Omission (FPO). With FPO, the compiler treats ebp as a general-purpose scratch register and does not save/restore it. If ebp were global, function A could set ebp to some value, call function B (which uses ebp as scratch without saving it), and when B returns, A's ebp is destroyed.
+Why? Over 20,000 functions in the reference racing title binary use Frame Pointer Omission (FPO). With FPO, the compiler treats ebp as a general-purpose scratch register and does not save/restore it. If ebp were global, function A could set ebp to some value, call function B (which uses ebp as scratch without saving it), and when B returns, A's ebp is destroyed.
 
 By making ebp local, each function gets its own copy via C's stack frame mechanism. FPO functions can use it freely without corrupting anyone else's value.
 

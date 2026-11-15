@@ -9,7 +9,7 @@ The default is `auto` on macOS (BO-239: with `legacy`'s two drawables a
 fullscreen 60 Hz external display showed every other frame for one user) and
 `legacy`, what the presenters did before, elsewhere; only the Metal presenter
 reads the setting. Measured numbers for
-a title are in its own docs (Burnout 3: `docs/present-timing.md`); nothing on
+a title are in its own docs (the reference racing title: `docs/present-timing.md`); nothing on
 this page has been verified on a variable-refresh display, a ProMotion panel,
 or a host other than macOS.
 

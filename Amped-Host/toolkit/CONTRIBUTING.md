@@ -127,7 +127,7 @@ Every Xbox game has its own asset formats. If you reverse-engineer a texture for
 - Comments: explain *why*, not *what*. The code should be readable on its own.
 - Keep files focused. Each kernel source file covers one subsystem.
 
-Ids like BO-116 in docs, comments and commit messages are the Takedawn
+Ids like BO-116 in docs, comments and commit messages are the Windows reference port
 project's internal task numbers. They stay so that the history, the docs and
 the code agree.
 
@@ -164,7 +164,7 @@ sequences and check the C that comes out. If you fix a lift, add the case.
 Running a game is still manual:
 
 1. Build the runtime libraries.
-2. Build a game project that uses them (Burnout 3, Wreckless, Blood Wake, or your own).
+2. Build a game project that uses them (the reference racing title, Wreckless, Blood Wake, or your own).
 3. Run the recompiled game and verify it progresses further than before your change.
 4. Check for regressions by running other games if your change touches shared code.
 

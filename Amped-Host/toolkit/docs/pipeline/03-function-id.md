@@ -2,7 +2,7 @@
 
 ## Why Identify Functions?
 
-A typical Xbox game produces tens of thousands of recompiled functions. Burnout 3 has 22,095 functions in its .text section -- a mix of game code, C runtime (CRT), RenderWare engine, and XDK library code all baked together with no clear boundaries.
+A typical Xbox game produces tens of thousands of recompiled functions. The reference racing title has 22,095 functions in its .text section -- a mix of game code, C runtime (CRT), RenderWare engine, and XDK library code all baked together with no clear boundaries.
 
 Without identification, you're staring at a flat list of `sub_XXXXXXXX` names with no idea what each one does. Identification assigns names, categories, and confidence scores, letting you:
 
@@ -34,7 +34,7 @@ CRT_SIGNATURES = {
 
 ### XDK Version Sensitivity
 
-CRT signatures vary by XDK version. A function compiled with XDK 5849 (Burnout 3's version) may have slightly different register allocation than the same function from XDK 5455. The library version stamps extracted in Step 1 tell you which signature database to use.
+CRT signatures vary by XDK version. A function compiled with XDK 5849 (the reference racing title's version) may have slightly different register allocation than the same function from XDK 5455. The library version stamps extracted in Step 1 tell you which signature database to use.
 
 For broad coverage, maintain signature databases for common XDK versions: 4627, 5233, 5455, 5558, 5849, 5933.
 
@@ -50,7 +50,7 @@ Typical CRT identification coverage: 150-250 functions out of 22K, but these are
 
 ## RenderWare Identification
 
-Burnout 3 uses Criterion's custom fork of RenderWare (~3.7). RenderWare functions can be identified through:
+the reference racing title uses Criterion's custom fork of RenderWare (~3.7). RenderWare functions can be identified through:
 
 ### String References
 
@@ -123,7 +123,7 @@ mov dword ptr [ecx], 0x003B1200   ; store vtable pointer at this->vptr
 
 The constructor function and the vtable address together identify a class. Cross-referencing the vtable entries reveals all virtual methods of that class.
 
-In Burnout 3, vtable-based identification is particularly important for RenderWare plugin classes and game-specific entity types.
+In the reference racing title, vtable-based identification is particularly important for RenderWare plugin classes and game-specific entity types.
 
 ## Stub and Thunk Detection
 

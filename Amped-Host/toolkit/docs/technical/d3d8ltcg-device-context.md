@@ -4,7 +4,7 @@
 
 Xbox games using Criterion's RenderWare engine (and potentially other Xbox D3D8 games) use a statically-linked D3D8LTCG library that maintains a ~16KB device context structure. This document maps the critical fields needed to get recompiled D3D8LTCG gen code running.
 
-**Applies to**: Xbox games using XDK D3D8LTCG (Burnout 3, possibly other Criterion/RenderWare titles)
+**Applies to**: Xbox games using XDK D3D8LTCG (the reference racing title, possibly other Criterion/RenderWare titles)
 
 ## Device Context Location
 

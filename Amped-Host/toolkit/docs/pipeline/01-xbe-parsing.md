@@ -34,7 +34,7 @@ xdvdfs unpack game.iso output_dir/
 
 A newer alternative that handles some edge cases with non-standard disc layouts.
 
-After extraction, the game directory will contain `default.xbe` plus all game assets (textures, models, audio, level data). For Burnout 3: Takedown, the asset directory is approximately 4 GB.
+After extraction, the game directory will contain `default.xbe` plus all game assets (textures, models, audio, level data). For the reference racing title, the asset directory is approximately 4 GB.
 
 ## XBE Header Structure
 
@@ -68,7 +68,7 @@ The first 4 bytes are `58 42 45 48` -- the ASCII string `XBEH`. If these bytes d
 
 The base address tells you where the Xbox kernel would load this executable in memory. Retail games almost universally use `0x00010000`. This is critical for the recompiler because all absolute addresses in the code (global variable references, string pointers, vtable entries) are relative to this base.
 
-For example, Burnout 3 has base address `0x00010000`, so when the recompiled code references `MEM32(0x004D532C)`, that's a global variable in the .data section at that exact virtual address.
+For example, the reference racing title has base address `0x00010000`, so when the recompiled code references `MEM32(0x004D532C)`, that's a global variable in the .data section at that exact virtual address.
 
 ### Entry Point Decoding
 
@@ -84,7 +84,7 @@ encoded = int.from_bytes(raw_entry, 'little')
 entry_point = encoded ^ 0xA8FC57AB  # for retail
 ```
 
-For Burnout 3, the encoded value decodes to `0x001D2807`, which is the address of the game's startup function in the .text section.
+For the reference racing title, the encoded value decodes to `0x001D2807`, which is the address of the game's startup function in the .text section.
 
 ### Kernel Thunk Table Decoding
 
@@ -112,7 +112,7 @@ The section header array starts at the VA specified in the main header. Each sec
 | 0x20   | 4    | Tail Shared Page Ref Count Address | Shared page tracking |
 | 0x24   | 20   | Section Digest | SHA-1 hash of section data |
 
-### Typical Section Layout (Burnout 3)
+### Typical Section Layout (the reference racing title)
 
 | Section | VA | Virtual Size | Raw Size | Description |
 |---------|----|-------------|----------|-------------|
@@ -136,7 +136,7 @@ The gap between .data's initialized size (0x000680FC) and its virtual size (0x00
 
 ## Kernel Import Table
 
-The kernel import table is an array of 32-bit values at the decoded thunk table address. The Xbox has 366 possible kernel exports, but most games import a subset. Burnout 3 imports 147 kernel functions.
+The kernel import table is an array of 32-bit values at the decoded thunk table address. The Xbox has 366 possible kernel exports, but most games import a subset. The reference racing title imports 147 kernel functions.
 
 Each entry in the table is either:
 - `0x00000000` -- unused slot (ordinal not imported)
@@ -173,7 +173,7 @@ struct XBE_LibraryVersion {
 };
 ```
 
-For Burnout 3, these reveal XDK version 5849:
+For the reference racing title, these reveal XDK version 5849:
 
 | Library | Version |
 |---------|---------|
@@ -190,10 +190,10 @@ The XDK version is useful for matching known library signatures -- different XDK
 
 The certificate structure contains identifying information:
 
-| Field | Value (Burnout 3) |
+| Field | Value (the reference racing title) |
 |-------|-------------------|
 | Title ID | Game-specific 32-bit identifier |
-| Title Name | "Burnout 3 Takedown" (Unicode) |
+| Title Name | "the reference racing title" (Unicode) |
 | Allowed Media | DVD disc, hard drive |
 | Game Region | All regions |
 | Game Ratings | Content ratings |

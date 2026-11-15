@@ -97,7 +97,7 @@ The production disassembler uses both:
 2. Linear sweep to find functions missed by recursive descent
 3. Cross-validation: if linear sweep finds a valid-looking function prologue that recursive descent missed, add it
 
-This combined approach achieves near-complete coverage. For Burnout 3, it identifies 22,095 functions across the 2.73 MB .text section.
+This combined approach achieves near-complete coverage. For the reference racing title, it identifies 22,095 functions across the 2.73 MB .text section.
 
 ## Function Detection Strategies
 
@@ -105,7 +105,7 @@ Finding where functions start and end is harder than it sounds. The disassembler
 
 ### Call Target Analysis
 
-Every `call` instruction (opcode `0xE8` for near calls) provides a direct function address. This is the most reliable method. For Burnout 3, call target analysis alone finds roughly 15,000 functions.
+Every `call` instruction (opcode `0xE8` for near calls) provides a direct function address. This is the most reliable method. For the reference racing title, call target analysis alone finds roughly 15,000 functions.
 
 ```python
 for insn in all_instructions:
@@ -135,7 +135,7 @@ push edi
 **SEH (Structured Exception Handling):**
 ```asm
 push <handler_offset>
-call __SEH_prolog    ; 0x00244784 in Burnout 3
+call __SEH_prolog    ; 0x00244784 in the reference racing title
 ```
 
 **Naked/leaf functions:**
@@ -161,7 +161,7 @@ For the lifter (Step 4), jump tables are converted to C `switch` statements. The
 
 ### Cross-Reference Building
 
-Cross-references (xrefs) track every place a given address is referenced -- called, jumped to, or used as data. For Burnout 3, the disassembler builds 163,787 cross-references.
+Cross-references (xrefs) track every place a given address is referenced -- called, jumped to, or used as data. For the reference racing title, the disassembler builds 163,787 cross-references.
 
 Xrefs are categorized:
 - **Code→Code call**: `call 0x001234` at address X (X calls the function at 0x001234)
@@ -300,7 +300,7 @@ Additional options:
 
 After disassembly, sanity-check the results:
 
-1. **Function count**: should be in the thousands for a large game. Burnout 3 has 22,095 functions in 2.73 MB of code -- roughly one function per 130 bytes on average.
+1. **Function count**: should be in the thousands for a large game. The reference racing title has 22,095 functions in 2.73 MB of code -- roughly one function per 130 bytes on average.
 2. **Coverage**: the total bytes covered by identified functions should be close to the section size. Gaps are expected (alignment padding, embedded data), but large unexplained gaps suggest missed functions.
 3. **Entry point**: the decoded entry point from Step 1 should appear as a function in the output.
 4. **No overlaps**: no two functions should claim the same address range. If they do, the function boundary detection has a bug.

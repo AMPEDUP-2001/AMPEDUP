@@ -53,7 +53,7 @@ Example:
 ```
 ICALL FAIL: VA=0x1C45BA68 caller=0x00007FF6A1234567
 
-# In burnout3.map:
+# In racing-reference.map:
 0x00007FF6A1234500  sub_001B4170
 ```
 
@@ -146,7 +146,7 @@ This catches all garbage VAs in one place. The ranges are:
 - `0x00400000` - `0xFDFFFFFF`: nothing should be here (block)
 - `0xFE000000` - `0xFE000600`: kernel thunk synthetic VAs (allow)
 
-For Burnout 3, this centralized guard reduced ICALL volume by 33% (from 180/2s to 121/2s) and completely eliminated the most frequent garbage VA (0x1C45BA68).
+For the reference racing title, this centralized guard reduced ICALL volume by 33% (from 180/2s to 121/2s) and completely eliminated the most frequent garbage VA (0x1C45BA68).
 
 ## Stack Leaks
 
@@ -224,7 +224,7 @@ if (state != last_state) {
 }
 ```
 
-For Burnout 3, the state machine progression is:
+For the reference racing title, the state machine progression is:
 ```
 STATE: 0 -> 1 (init)
 STATE: 1 -> 2 (alloc memory)

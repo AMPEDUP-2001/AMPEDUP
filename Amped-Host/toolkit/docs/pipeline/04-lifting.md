@@ -4,7 +4,7 @@
 
 This is the core of the static recompiler. The lifter takes each x86 instruction from the disassembly output and translates it to equivalent C code. The result is a massive C codebase that, when compiled with a native compiler (MSVC or GCC), produces a Windows executable that behaves identically to the original Xbox code.
 
-For Burnout 3, the lifter translates 2.73 MB of x86 machine code into approximately 4.43 million lines of C across multiple output files.
+For the reference racing title, the lifter translates 2.73 MB of x86 machine code into approximately 4.43 million lines of C across multiple output files.
 
 The key insight is that we don't need to *understand* the code. We translate each instruction mechanically, preserving exact semantics. The C compiler then optimizes the result. Understanding comes later, during debugging, when we selectively replace translated functions with hand-written equivalents.
 
@@ -40,13 +40,13 @@ In generated code files, the `RECOMP_GENERATED_CODE` preprocessor define enables
 
 In standard x86 calling conventions, `ebx`, `esi`, and `edi` are callee-saved -- the called function must preserve their values. You might expect these to be local variables in each translated function.
 
-However, MSVC-compiled Xbox code frequently passes implicit parameters through these registers, especially in optimized builds. For example, many Burnout 3 functions expect `esi` to contain a pointer to the car object (`0x557880`). Making these registers global ensures that values set by the caller are visible to the callee, exactly as on real hardware.
+However, MSVC-compiled Xbox code frequently passes implicit parameters through these registers, especially in optimized builds. For example, many the reference racing title functions expect `esi` to contain a pointer to the car object (`0x557880`). Making these registers global ensures that values set by the caller are visible to the callee, exactly as on real hardware.
 
 The callee-save contract is enforced by the generated code itself -- the lifter emits `PUSH32(esp, ebx)` at the prologue and `POP32(esp, ebx)` at the epilogue, mirroring what the original x86 code does.
 
 ### The EBP Exception
 
-`ebp` is the only register that is **local** to each translated function. Why? Because over 20,000 functions in Burnout 3 use Frame Pointer Omission (FPO), meaning they use `ebp` as a scratch register without saving/restoring it. If `ebp` were global, these functions would corrupt each other's frame pointers.
+`ebp` is the only register that is **local** to each translated function. Why? Because over 20,000 functions in the reference racing title use Frame Pointer Omission (FPO), meaning they use `ebp` as a scratch register without saving/restoring it. If `ebp` were global, these functions would corrupt each other's frame pointers.
 
 For the ~200 functions that use SEH (Structured Exception Handling), a special bridge variable `g_seh_ebp` transfers the `ebp` value between the SEH prolog helper and the calling function:
 
@@ -407,11 +407,11 @@ With 22,095 functions, a single C file would be enormous and slow to compile. Th
 py -3 -m tools.recomp "default.xbe" --all --split 1000
 ```
 
-This produces `recomp_0000.c` through `recomp_0022.c` (23 files for Burnout 3).
+This produces `recomp_0000.c` through `recomp_0022.c` (23 files for the reference racing title).
 
 ## Code Size
 
-The translation is intentionally verbose -- it prioritizes correctness over readability. Each x86 instruction becomes 1-3 lines of C. For Burnout 3:
+The translation is intentionally verbose -- it prioritizes correctness over readability. Each x86 instruction becomes 1-3 lines of C. For the reference racing title:
 
 - Input: 2.73 MB of x86 (approximately 650,000 instructions)
 - Output: 4.43 million lines of C
@@ -496,7 +496,7 @@ what it was. Tests: `tools/recomp/test_spin_waits.py`.
 ## Guest patches
 
 A title can carry a behaviour it never turns on for the player's region
-(Burnout 3's US build keeps the km/h speedometer of its other languages,
+(the reference racing title's US build keeps the km/h speedometer of its other languages,
 chosen by the language index it loads at nine places). `--patches FILE`
 follows a listed `mov reg, [mem]` with `reg = RECOMP_PATCH_U32(key, when,
 value, reg)`: the loaded value stands unless the setting `key` reads `when`,
@@ -517,7 +517,7 @@ leaves the load alone. `game.speed_units` (`RECOMP_SPEED_UNITS=mph|kmh`) is
 an overlay row on the Display page, shown only when enabled.
 
 An optional `"latch": "set"` or `"use"` pairs sites that read one choice at
-different times (Burnout 3 builds the speedometer's unit label once, when the
+different times (the reference racing title builds the speedometer's unit label once, when the
 HUD is made, and its number every frame): a `use` site follows what the last
 `set` site sampled, so a change mid-race shows whole at the next set-up
 instead of as 171 "mph".
@@ -525,7 +525,7 @@ instead of as 171 "mph".
 `"kind": "load_u8"` is the same for a byte flag, `mov al|bl|cl|dl, [mem]`:
 `SET_LO8(eax, RECOMP_PATCH_U32(key, when, value, LO8(eax)))`, the value
 0..255, only the register's low byte changed. A title's own on/off byte read
-back as 0 makes the title take its own "off" path (Burnout 3's graphics
+back as 0 makes the title take its own "off" path (the reference racing title's graphics
 manager has one for its blur, on since the constructor and with no menu
 entry: `graphics.motion_blur`, `RECOMP_GFX_MOTION_BLUR=0`; `graphics.bloom`
 is a `load_u32` of the value its bloom call is gated by). These two settings
@@ -543,27 +543,26 @@ the left one after the compare:
 (and `_cf = (int)(_fa < _fb);` in a function that tracks the carry). The
 compare then reads the value where the memory byte was, whatever sits
 between it and the branch, a compare fused with its `jcc` included. No
-latch. Burnout 3 chooses its frame rate this way: a stage's update compares
+latch. The reference racing title chooses its frame rate this way: a stage's update compares
 its "a crash camera is on" byte and asks for the 30 Hz mode (presentation
 interval 2, two simulation steps a frame); read as 0 the title takes its own
 full-rate path (`graphics.crash_60fps`, `RECOMP_GFX_CRASH_60FPS=1`, off by
 default; the game repository's `docs/crash60.md`).
 
 `"kind": "cmp_u32"` is the same for a 32-bit value, `cmp dword ptr [mem],
-r32|imm` (Burnout 3's music manager compares the player count with 1 and
+r32|imm` (the reference racing title's music manager compares the player count with 1 and
 stays silent in split screen; read as 1 it plays: `audio.split_music`).
 `"kind": "store_u8"` is for a byte the title stores once and reads later,
 `mov byte ptr [mem], imm8|r8`: the store is followed by
 `MEM8(addr) = (uint8_t)RECOMP_PATCH_U32(key, when, value, MEM8(addr));`, so
 the byte is stored again as the value while the setting says so. Unlike the
 load and compare kinds it writes the guest's memory, as `store_f32` does
-(Burnout 3's two-player stage asks for its half frame rate with one store at
+(the reference racing title's two-player stage asks for its half frame rate with one store at
 set-up: `graphics.split_60fps`; the game repository's
 `docs/split-screen.md`).
 `"kind": "store_u32"` is the same for a 32-bit value, `mov dword ptr
 [mem], imm32|r32`, followed by
-`MEM32(addr) = RECOMP_PATCH_U32(key, when, value, MEM32(addr));` (Burnout
-3's one-player stage start stores its simulation stepper's mode, 0, one step
+`MEM32(addr) = RECOMP_PATCH_U32(key, when, value, MEM32(addr));` (the reference racing title's one-player stage start stores its simulation stepper's mode, 0, one step
 a frame whatever the time; stored again as 1, the mode the title itself
 switches to after the first crash camera: `game.race_clock`; the game repository's `docs/race-clock.md`).
 
@@ -573,7 +572,7 @@ A float goes by `"kind": "load_f32"` (after `movss xmm, [mem]`, or a 32-bit
 value whose register has other uses) or `"cmp_f32"` (after `comiss` /
 `ucomiss xmm, dword ptr [mem]`: the compare's snapshot of the memory operand,
 `_fcb`, is rewritten, so the branch compares with the value while the
-constant stays in memory for its other readers; Burnout 3's rival marker,
+constant stays in memory for its other readers; the reference racing title's rival marker,
 `display.rival_marker`). Its value is an `"expr"`, arithmetic
 over numbers, `loaded` (the float the instruction moved) and names the host
 sets with `recomp_patch_set_var` before the guest runs, because a layout
@@ -596,8 +595,7 @@ a value that depends on a neighbour (a width squeezed about an anchor x).
 The expression is parsed by the recompiler (nothing unparsed reaches the
 generated code), evaluated in double, and only while the setting is on.
 `"if": {"reg": "edi", "in": ["0x60EA14", "0x60EA84"]}` limits a site in
-shared code to the objects whose address the register holds there (Burnout
-3's 2D scene code serves the HUD, the menus and the loading screen; the
+shared code to the objects whose address the register holds there (the reference racing title's 2D scene code serves the HUD, the menus and the loading screen; the
 patch is for the two HUD scenes). `display.hud_fix` (`RECOMP_GFX_HUD_FIX=1`)
 is the second overlay row of this kind.
 
@@ -606,7 +604,7 @@ is the second overlay row of this kind.
 after the instruction at `va` the code calls `RECOMP_PATCH_MARK("name")`, and
 a host that registered a function for the name (`recomp_patch_on_mark`)
 learns the title got there ("a stage is being set up", "the 3D world was
-drawn in this frame", "a frame ends"). Burnout 3's ultrawide mode keeps its
+drawn in this frame", "a frame ends"). The reference racing title's ultrawide mode keeps its
 state from four such marks and shows each frame at the shape it was drawn
 for (`nv2a_present_frame_aspect_fn`, `docs/runtime/overlay.md`:
 `display.ultrawide`).
@@ -624,13 +622,13 @@ After regenerating the code, you will likely need to re-apply manual patches to 
 - Jump table replacements where the lifter's pattern matching failed
 - `extern` declarations for global variables shared with manual code
 
-Maintain a checklist of required patches and re-apply them after every regeneration. For Burnout 3, there are 10+ patch locations across 8 generated files.
+Maintain a checklist of required patches and re-apply them after every regeneration. For the reference racing title, there are 10+ patch locations across 8 generated files.
 
 ## Limitations
 
 1. **Self-modifying code**: the lifter assumes code is static. Xbox games rarely use self-modifying code, but some copy protection schemes do.
 
-2. **FS segment**: x86 `fs:` segment overrides (used for Thread Information Block access) are dropped. The lifter translates `mov eax, fs:[0x28]` as `MEM32(0x28)`, which reads from the wrong memory. This affects ~35 instructions in Burnout 3.
+2. **FS segment**: x86 `fs:` segment overrides (used for Thread Information Block access) are dropped. The lifter translates `mov eax, fs:[0x28]` as `MEM32(0x28)`, which reads from the wrong memory. This affects ~35 instructions in the reference racing title.
 
 3. **Precise flag behavior**: the `CMP_*` macros handle common flag patterns, but exotic sequences (e.g., using carry flag from arithmetic to feed into a conditional branch 10 instructions later) may require manual intervention.
 

@@ -16,7 +16,7 @@ When evaluating a game for static recompilation, consider:
 
 ## Proven Target
 
-### Burnout 3: Takedown (2004)
+### The reference racing title (2004)
 
 The first game successfully targeted by this toolkit. Key characteristics:
 - **Engine**: Criterion's custom RenderWare fork (~3.7), statically linked
@@ -25,7 +25,7 @@ The first game successfully targeted by this toolkit. Key characteristics:
 - **Kernel imports**: 147 functions
 - **Libraries**: 11 statically linked XDK libs (D3D8LTCG, DSOUND, XMV, XONLINE, etc.)
 
-Current status: boots, loads game data, runs gameplay loop with a custom rendering frontend. See the [burnout3 repository](https://github.com/sp00nznet/burnout3) for the full implementation.
+Current status: boots, loads game data, runs gameplay loop with a custom rendering frontend. See the [racing-reference repository](../../../../README.md#credits) for the full implementation.
 
 ## Tier 1: Good First Targets
 
@@ -122,7 +122,7 @@ Before committing to a game, perform this analysis:
 
 1. **Start with what you know**: If you're familiar with a game's engine from modding or reverse engineering, that knowledge transfers directly.
 
-2. **RenderWare games are a natural second target**: The kernel layer, memory layout, and D3D8 abstraction from Burnout 3 are directly reusable. Only the game-specific code and asset formats change.
+2. **RenderWare games are a natural second target**: The kernel layer, memory layout, and D3D8 abstraction from the reference racing title are directly reusable. Only the game-specific code and asset formats change.
 
 3. **Avoid launch titles**: Early Xbox games (2001-2002) sometimes use non-standard XDK patterns or debug-era libraries that complicate analysis.
 

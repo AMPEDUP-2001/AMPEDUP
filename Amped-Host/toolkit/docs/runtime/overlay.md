@@ -42,7 +42,7 @@ same sizes and colours in a body under the header, their layout as before
 (the Mixer's rows a little denser).
 
 The rows come in the way the title's menus bring theirs (BO-190, timed from
-per-flip captures of Burnout 3 at 60 Hz): each row slides in from 12% of the
+per-flip captures of the reference racing title at 60 Hz): each row slides in from 12% of the
 width to the left and fades up in 2 frames (33 ms), the next one 3 frames
 (50 ms) later after a page change, 4 frames (67 ms) later when the overlay
 opens; rows below the sixth in view come in with it. It is drawing only:
@@ -66,7 +66,7 @@ The header, footer and dim fade in over 0.14 s as before.
   hold, so it cannot deadlock with what the title holds. The APU's frame
   thread idles (its existing `pause_requested` path, via a separate
   `host_paused` flag the title's own register writes do not clear), so
-  sound stops. The game time is not frozen: Burnout 3 steps its simulation
+  sound stops. The game time is not frozen: the reference racing title steps its simulation
   by elapsed time with a limit of four steps a frame (sub_001B58E0), so it
   catches up by at most that.
   The pause takes hold at the next flip, so a load or movie that does not
@@ -120,7 +120,7 @@ number: `RECOMP_GFX_LOD_BIAS=-0.75`. Metal and Vulkan share the code
 (`nv2a_host_lod_bias`).
 
 Not on a cut-out (BO-171): a draw with the alpha test on (trees, bushes,
-fences, road markings; Burnout 3 tests alpha > 64) takes no negative host
+fences, road markings; the reference racing title tests alpha > 64) takes no negative host
 bias, only the title's own. The render scale already picks levels
 log2(scale) finer, and a still finer level gives a leaf's edge more texels
 than pixels, so it shimmers. A positive value still applies. Such a draw's
@@ -275,7 +275,7 @@ recently used upscaled textures back to the title's.
 Before the race (`graphics.texture_upscale_preload`, "Upscale while loading",
 on by default; BO-272): a title says once a frame where it is
 (`nv2a_texup_set_loading`: play, its countdown before the GO, its loading
-screen; Burnout 3 reads its game state and player 1's event phase). A
+screen; the reference racing title reads its game state and player 1's event phase). A
 track's textures are first drawn in the countdown, so outside play the
 governor drops the upload-burst rule and the doubling pause (a late frame in
 the countdown skips one frame's compute), allows the frame's GPU room up to
@@ -370,17 +370,17 @@ title's defaults when those change. Keys it does not know are kept.
 | `game.language` (`english`, `japanese`, `german`, `french`, `spanish`, `italian`, `korean`, `chinese`, `portuguese`, or the number 1..9; default `english`) | `RECOMP_GAME_LANGUAGE` | restart; the dashboard language the kernel reports (`XC_LANGUAGE`, `xbox_GetLanguage` in `src/kernel/kernel_xbox.c`), from which the title picks its text, speech and films. Display page, "Language", only when the title named more than one language its disc has (`xbox_SettingsSetLanguages`); the row steps over the others. Unset, English, as before |
 | `display.ultrawide` (`off`, `21:9`, `32:9`, `window`) | `RECOMP_DISPLAY_ULTRAWIDE` | live, from the title's next 3D set-up; Display page, only when the title enabled a guest patch for it |
 | `display.hud_fix` (bool) | `RECOMP_GFX_HUD_FIX` | live, shown whole from the title's next HUD set-up; Display page, only when the title enabled a guest patch for it |
-| `display.score_board` (`original`, `smooth`) | `RECOMP_GFX_SCORE_BOARD` | live, from the next frame; a title hook on its HUD (Burnout 3: the SCORE board; the port's `src/game/scoreboard.c`): `original` touches nothing, `smooth` fades the board's plate with its text and fades the board in after a camera; Display page, only when the title enabled it (`recomp_patch_enable`) |
-| `display.rival_marker` (`original`, `farther`) | `RECOMP_GFX_RIVAL_MARKER` | live, from the next frame; where the marker over a rival changes from its far look to its near one, by guest patches at `farther` (Burnout 3: the arrow and the race position, 35 units checked every 30 steps as shipped; farther: the position below 60, the arrow past 75, checked every step); Display page, row "Rival marker switch", only when the title enabled a guest patch for it |
-| `display.crashnav_map` (`stretched`, `native`) | `RECOMP_DISPLAY_CRASHNAV_MAP` | live, from the next frame; with `display.hud_fix` on in 16:9, a title's map screen (Burnout 3: Crash Nav's Select Location) across the picture with its route and markers (stretched), or 4:3 with the rest of the menu (native); Display page, row "Crash Nav map", only when the title enabled a switch for it and `display.hud_fix` is on |
+| `display.score_board` (`original`, `smooth`) | `RECOMP_GFX_SCORE_BOARD` | live, from the next frame; a title hook on its HUD (the reference racing title: the SCORE board; the port's `src/game/scoreboard.c`): `original` touches nothing, `smooth` fades the board's plate with its text and fades the board in after a camera; Display page, only when the title enabled it (`recomp_patch_enable`) |
+| `display.rival_marker` (`original`, `farther`) | `RECOMP_GFX_RIVAL_MARKER` | live, from the next frame; where the marker over a rival changes from its far look to its near one, by guest patches at `farther` (the reference racing title: the arrow and the race position, 35 units checked every 30 steps as shipped; farther: the position below 60, the arrow past 75, checked every step); Display page, row "Rival marker switch", only when the title enabled a guest patch for it |
+| `display.crashnav_map` (`stretched`, `native`) | `RECOMP_DISPLAY_CRASHNAV_MAP` | live, from the next frame; with `display.hud_fix` on in 16:9, a title's map screen (the reference racing title: Crash Nav's Select Location) across the picture with its route and markers (stretched), or 4:3 with the rest of the menu (native); Display page, row "Crash Nav map", only when the title enabled a switch for it and `display.hud_fix` is on |
 | `graphics.bloom`, `graphics.motion_blur` (0 to 1 in tenths, default 1, a slider in percent; a file's or variable's `false` / `true` reads as 0 / 1) | `RECOMP_GFX_BLOOM`, `RECOMP_GFX_MOTION_BLUR` | live, from the next frame; the title's own effects: a guest patch skips them at `0` and scales their weight in between (BO-212); Graphics page, only when the title enabled a guest patch for them |
-| `graphics.crash_60fps` (bool, default off) | `RECOMP_GFX_CRASH_60FPS` | live, from the title's next frame; the title's own 30 Hz phases (Burnout 3: crash and takedown cameras) at 60, by a guest patch on the title's own rate choice at `1`; Graphics page, only when the title enabled a guest patch for it; for strong machines: a host that cannot hold 60 runs the game itself slower while it is on (the title steps once a frame), so the row says to leave it off on a Steam Deck and other handhelds |
-| `graphics.softbody` (bool, default off) | `RECOMP_GFX_SOFTBODY` | read at start (a restart applies it); the title's own soft-body vehicle damage, for a title that has one (Burnout 3: Takedawn's `src/game/softbody.c`): vehicles crumple, tear and bend where they are hit, drawn only, handling unchanged; Graphics page, only when the title enabled it; costs CPU in a pile-up |
+| `graphics.crash_60fps` (bool, default off) | `RECOMP_GFX_CRASH_60FPS` | live, from the title's next frame; the title's own 30 Hz phases (the reference racing title: crash and takedown cameras) at 60, by a guest patch on the title's own rate choice at `1`; Graphics page, only when the title enabled a guest patch for it; for strong machines: a host that cannot hold 60 runs the game itself slower while it is on (the title steps once a frame), so the row says to leave it off on a Steam Deck and other handhelds |
+| `graphics.softbody` (bool, default off) | `RECOMP_GFX_SOFTBODY` | read at start (a restart applies it); the title's own soft-body vehicle damage, for a title that has one (the reference racing title: the Windows reference port's `src/game/softbody.c`): vehicles crumple, tear and bend where they are hit, drawn only, handling unchanged; Graphics page, only when the title enabled it; costs CPU in a pile-up |
 | `graphics.split_60fps` (bool, default off) | `RECOMP_GFX_SPLIT_60FPS` | from the title's next two-player stage; the title's 30 Hz split screen at 60, by a guest patch at `1`; Graphics page, only when the title enabled a guest patch for it; for strong machines: a host that cannot hold 60 runs the game itself slower while it is on (the title steps once a frame), so the row says to leave it off on a Steam Deck and other handhelds |
 | `game.race_clock` (bool, default off) | `RECOMP_GAME_RACE_CLOCK` | from the title's next race; on a host that cannot hold 60, a race keeps real time from its start: the title's own catch-up stepping, which it otherwise starts only at the end of the first crash camera, by a guest patch at `1`; no change at a steady 60; Graphics page, row "Potato mode", only when the title enabled a guest patch for it |
 | `audio.split_music` (bool, default off) | `RECOMP_AUDIO_SPLIT_MUSIC` | live; the title's music in split screen, where it plays none, by a guest patch at `1`; Audio page, only when the title enabled a guest patch for it |
 | `graphics.vehicle_detail` (`original`, `far`, `farthest`) | `RECOMP_GFX_VEHICLE_DETAIL` | live, from the next frame; the distances at which the title swaps its vehicle models for simpler ones, scaled by a guest patch (2x, 4x); Graphics page, only when the title enabled a guest patch for it |
-| `graphics.scenery_detail` (`original`, `far`) | `RECOMP_GFX_SCENERY_DETAIL` | live, from the next frame; the distance at which the title swaps a scenery object's detailed model for its simple one (Burnout 3: trees, signs and the other track props with two models), scaled by a guest patch at `far` (the factor is the title's: 4x in Burnout 3); Graphics page, row "Scenery detail", only when the title enabled a guest patch for it |
+| `graphics.scenery_detail` (`original`, `far`) | `RECOMP_GFX_SCENERY_DETAIL` | live, from the next frame; the distance at which the title swaps a scenery object's detailed model for its simple one (the reference racing title: trees, signs and the other track props with two models), scaled by a guest patch at `far` (the factor is the title's: 4x in the reference racing title); Graphics page, row "Scenery detail", only when the title enabled a guest patch for it |
 | `input.deadzone`, `input.trigger_deadzone` | `RECOMP_PAD_DEADZONE`, `RECOMP_PAD_TRIGGER_DEADZONE` | yes |
 | `input.rumble` (strength, 0 to 3 in steps of 0.25; 1 the original, 0 off; motor = (speed / peak) ^ (1 / strength), see src/input/README.md) | `RECOMP_INPUT_RUMBLE_GAIN` | yes |
 | `input.glyphs` (`auto`, `xbox`, `xbox_modern`, `playstation`, `playstation5`, `nintendo`, `steam`, `positional`, `keyboard`) | `RECOMP_INPUT_GLYPHS` | live: the title's button prompts drawn for the pad in use (`src/input/pad_glyphs.h`). `auto` follows the pad that last pressed a button (the keyboard counts, and shows key caps); `xbox` is the title's own picture, nothing replaced; `positional` is for any pad (no letters: a diamond of four dots, the one to press filled; `auto` picks it for a pad of unknown family, and the title's own picture while no pad has been used). Only a title that registers its prompt textures and brings pictures for them has anything to change (`src/kernel/nv2a_texrep.h`; Metal and Vulkan backends) |
@@ -414,7 +414,7 @@ changes only how the hold waits: the flip leaves at the same vblank. The
 Advanced page shows the lead it holds and why it last moved;
 `RECOMP_TRACE=pacing` prints its counts and each change.
 
-The host's default is Balanced on every platform; the Burnout 3 port's macOS
+The host's default is Balanced on every platform; the reference racing title port's macOS
 default became Balanced too (BO-75, measured: as steady as Stock at about half
 the CPU), with Maximum still offered there and a stored `power.mode = "stock"`
 still honoured. *stock* (shown as Maximum) is offered on macOS only. On Windows, Android and
@@ -540,7 +540,7 @@ the last goes off, the page asks whether to keep that progress (the save
 goes into the save history first, then the copy replaces it) or throw it
 away (the save stays as it was and saving waits for a restart). A copy left
 behind by a quit is removed at the next start, with or without the key. A
-port can also switch a cheat on without the row (the Burnout 3 port reads
+port can also switch a cheat on without the row (the reference racing title port reads
 `BO3_UNLOCK_ALL=1`; give such a run a scratch save).
 
 ## Saves are replaced whole (kernel_saveguard.h)
@@ -591,7 +591,7 @@ pinned to wght 500.
 
 The same way, a port can name small DXT images inside a file of the
 player's install (`xbox_OverlaySetGameArt`, `xbox_settings.h`: offsets and
-sizes, the file's size and SHA-256; Burnout 3 names nine sprites of
+sizes, the file's size and SHA-256; the reference racing title names nine sprites of
 `Data/Global.txd`): the up and left triangles and the tick of `Arrow`, the
 `dpad` triangles, a rounded box's corner (`box_curve`, `16_curve` and their
 `b` shapes), the `grid` tile, `big_curve` and the `Buttons` sheet. A thread
@@ -615,7 +615,7 @@ its own shapes and text as before (a log line, nothing on screen).
 
 More pictures come with `xbox_OverlaySetGameArtMore` (BO-190), each named
 with its own file, size and SHA-256, and also in the 8-bit palette format
-(Xbox swizzled, the palette after the pixels). Burnout 3 names `Volumebar`,
+(Xbox swizzled, the palette after the pixels). The reference racing title names `Volumebar`,
 `Tick` and `circle` of `Data/Global.txd` and `Padlock` of
 `Data/Frontend.txd`. A slider row draws the title's volume bar (full cells
 white on the selected row, pale blue on the others, empty cells as blue
@@ -646,13 +646,13 @@ mixer on, the named bus's gain, mute and solo apply. `audio.menu_sounds`
 switches them off (the row shows only when a port named sounds);
 `RECOMP_OVERLAY_MENU_SOUNDS=0` names none.
 
-Burnout 3 names three waves (`sound/Fe.awd` Vertical and Back,
+the reference racing title names three waves (`sound/Fe.awd` Vertical and Back,
 `sound/Generic.awd` Select), mapped from a `RECOMP_MIX_TRACE` of its menus:
 Vertical for a cursor move, a value change, a page turned and the menu
 opening (the title plays it as each new page comes in, the pause menu
 included), Select for A, Back for B and for the menu closing (the title's
 pause menu plays Back as it closes); at the levels the front end plays them
-(-15.5, -16.8 and -22.8 dB). When the title's own TAKEDAWN SETTINGS row opens
+(-15.5, -16.8 and -22.8 dB). When the title's own the Windows reference port SETTINGS row opens
 the overlay, the title has just played its Select: the overlay plays no
 opening sound over it, and the pause waits 0.7 s so that Select is not cut
 off and finished when the overlay closes (the title's input is held at
@@ -662,7 +662,7 @@ once).
 
 A port can name two bitmap fonts inside its title's executable
 (`xbox_OverlaySetGameFonts`, `xbox_settings.h`): where each DXT5 atlas and
-its glyph table are, the file's size and SHA-256. Burnout 3 names GlobalFont
+its glyph table are, the file's size and SHA-256. The reference racing title names GlobalFont
 and HeadFont of the US retail `default.xbe`. At start a thread reads the
 player's own file, checks it, decodes the two atlases, scales them 4x with
 Super-xBR (`nv2a_texscale`) and keeps the coverage in memory
@@ -712,7 +712,7 @@ ends the host calls `nv2a_pcache_rescan`, and the backend builds what the
 key list gained on its pre-warm thread.
 
 What a build is (the scenes, the child process, the key list) is the host's
-and the backends': see `nv2a_pcache.h`, `xbox_autoplay.h`, and Burnout 3's
+and the backends': see `nv2a_pcache.h`, `xbox_autoplay.h`, and the reference racing title's
 `docs/shader-prebuild.md` for the one host that has it.
 
 ## Adding a graphics API

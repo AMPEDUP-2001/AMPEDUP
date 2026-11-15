@@ -253,7 +253,7 @@ Frame" in `docs/pipeline/06-debugging.md` and `RECOMP_AC97_READY`.
 
 ## Implementation Breakdown
 
-Of the 147 kernel imports in Burnout 3:
+Of the 147 kernel imports in the reference racing title:
 
 | Category | Count | Notes |
 |----------|-------|-------|

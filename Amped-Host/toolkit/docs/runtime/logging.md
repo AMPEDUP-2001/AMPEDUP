@@ -31,7 +31,7 @@ A crash, a hang report or a fault turns it on for the rest of the run.
 **Where the log goes.** Unchanged: the tee (`xbox_crash.c`) copies stdout and
 stderr to `<save dir>/logs/run.log` (first 64 KB) and `run.tail.log`
 (384 KB, rotated once), at most about 830 KB a run, the last three runs kept
-as `prev1..3`; Android also logcat and `<files>/takedawn.log`. In a quiet run
+as `prev1..3`; Android also logcat and `<files>/reference-port.log`. In a quiet run
 only errors and notices reach them, and the kernel's own `xbox_log` writes
 nothing (no `xbox_kernel.log`; its ERROR level is the HLE's bookkeeping, such
 as unresolved ordinal slots, nothing a player can act on). The bug report says whether logging was on and
@@ -140,7 +140,7 @@ Tests: `tests/xr_log`.
 | ERROR | src/game/main.c:2645 | `--record/--seconds are not implemented` |
 | ERROR | src/game/main.c:2657 | `--record/--seconds are not implemented` |
 | ERROR | src/game/main.c:1262 | `[REC] ffmpeg failed` |
-| ERROR | src/game/shaderbuild.c:713 | `"usage: burnout3 --build-shaders [options]` |
+| ERROR | src/game/shaderbuild.c:713 | `"usage: racing-reference --build-shaders [options]` |
 | NOTICE | src/game/main.c:2356 | `"[BOOT] %s%s", bo3_version_long()` |
 | NOTICE | src/game/main.c:2073 | `[SAVE] copied ./%s to %s` |
 | NOTICE | src/game/main.c:2078 | `[SAVE] backup: %s (keeping` |

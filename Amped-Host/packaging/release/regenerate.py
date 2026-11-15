@@ -3,6 +3,7 @@
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
+from importlib.metadata import PackageNotFoundError, version
 import json
 from pathlib import Path
 import subprocess
@@ -115,11 +116,11 @@ def main():
         verify(HOST / "probes", "patches")
         return
     try:
-        import capstone
-    except ImportError:
-        parser.error("Install capstone==5.0.7 into this Python environment.")
-    if capstone.__version__ != "5.0.7":
-        parser.error("The release's regeneration uses capstone==5.0.7.")
+        capstone_version = version("capstone")
+    except PackageNotFoundError:
+        parser.error("Install capstone==5.0.9 into this Python environment.")
+    if capstone_version != "5.0.9":
+        parser.error("The release's regeneration uses capstone==5.0.9.")
     WORK.mkdir(exist_ok=False)
     analysis = WORK / "analysis.json"
     run_tool(WORK, "xbe_parser", xbe, "--json", analysis)

@@ -72,6 +72,18 @@ try {
         if ($verified % 25 -eq 0) { Set-InstallStatus "Verifying game files ($verified / $(@($manifest.files).Count))..." }
     }
     if (@(Get-ChildItem -LiteralPath $game -File -Recurse -Force).Count -ne @($manifest.files).Count) { throw 'Extracted game file count did not match.' }
+    $sourceBuilder = Join-Path $sourceRoot 'build-from-disc.ps1'
+    $installedExe = Join-Path $Destination 'Amped-Host\bin\amped_recomp.exe'
+    if (Test-Path -LiteralPath $sourceBuilder -PathType Leaf) {
+        Set-InstallStatus 'Building AMPEDUP! from your disc. This takes several minutes...'
+        $buildLog = Join-Path $Destination 'setup-build.log'
+        try {
+            & $sourceBuilder -Xbe $xbe -Executable $installedExe -BuildLog $buildLog
+        } catch {
+            throw "Could not build the game. See $buildLog. $($_.Exception.Message)"
+        }
+    }
+    if (-not (Test-Path -LiteralPath $installedExe -PathType Leaf)) { throw 'The game executable is missing from the installation.' }
     if ($progress) { $label.Text = 'Preparing game resources...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
     Set-InstallStatus 'Preparing the game...'
     & (Join-Path $Destination 'prepare-assets.ps1') -GameRoot $game -Destination $Destination
@@ -86,6 +98,7 @@ try {
         $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)
         $shortcut.TargetPath = Join-Path $Destination 'AMPEDUP!.exe'
         $shortcut.WorkingDirectory = $Destination
+        $shortcut.IconLocation = (Join-Path $Destination 'ampedup.ico') + ',0'
         $shortcut.Save()
         [Windows.Forms.MessageBox]::Show("Installation complete. Start AMPEDUP! from your desktop.`n`n$Destination", 'AMPEDUP!', 'OK', 'Information') | Out-Null
     }

@@ -17,8 +17,8 @@ Prioritized by impact on Blood Wake and Wreckless (both launch-era titles).
 | NV2A register read/write (PMC, PFB, PTIMER, etc.) | Full | Full | DONE | - |
 | MMIO interception (VEH-based) | N/A (LLE) | Full | DONE | - |
 | Push buffer parsing (PFIFO DMA pusher) | Full | Stub | N/A | Low (D3D8 API intercept instead) |
-| PGRAPH → D3D11 method translator | N/A | From burnout3 | ADDED | High |
-| Push buffer replay | N/A | From burnout3 | ADDED | Medium |
+| PGRAPH → D3D11 method translator | N/A | From racing-reference | ADDED | High |
+| Push buffer replay | N/A | From racing-reference | ADDED | Medium |
 | **Register combiners (pixel shaders)** | Full (8 stages, RGB/alpha, final combiner) | Full (8 stages, HLSL generation, 128-entry cache) | DONE | - |
 | **Vertex shader microcode translation** | Full (MAC+ILU ops, 192 constants, 12 temps) | Full (d3d8_vsh.c: parser, HLSL gen, 64-entry cache) | DONE | - |
 | **Texture unswizzling (Z-order/Morton)** | Full | Full | ADDED | High |

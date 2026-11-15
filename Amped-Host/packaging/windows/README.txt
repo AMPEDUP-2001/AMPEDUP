@@ -1,12 +1,8 @@
-AMPEDUP! - PRIVATE EXPERIMENTAL WINDOWS BUILD
-
-This is a work-in-progress build for personal use on your own PCs. It was built
-from the European multilingual Amped game executable, and the compiled program
-contains recompiled code derived from that game. The package does not include
-the game's disc assets. Do not publish or redistribute this personal package.
+AMPEDUP! 0.5 - WINDOWS
 
 Requirements: 64-bit Windows 10/11, a Vulkan-capable GPU and current driver,
-about 3 GB of free space, and the exact XISO used for this build (SHA-256:
+about 6 GB of free space for installation and compilation, and your matching
+European multilingual retail XISO (SHA-256:
 1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0).
 Other editions or differently packaged images have not been validated.
 
@@ -14,6 +10,7 @@ Other editions or differently packaged images have not been validated.
    choose whether to create a desktop shortcut, and press Install. The folder
    must not already exist; Browse chooses a parent and appends 'AMPEDUP'.
    For now, use short ASCII-only image and installation paths without commas.
+   The public setup builds the game from your disc, which takes several minutes.
 2. Start AMPEDUP! from the desktop shortcut or installed AMPEDUP!.exe.
 
 F1 or Xbox View/Back + Menu/Start opens the graphics settings. The default
@@ -38,6 +35,5 @@ Some video paths may not yet preserve their original aspect. No guarantee of
 60 displayed FPS or support for HDR and all game modes is made.
 
 This product includes software developed by in <in@fishtank.com>.
-See the notices folder for third-party notices and licences. Source and
-relinking obligations must be reviewed before any distribution beyond your
-own machines.
+See the notices folder for third-party notices and licences. The release
+source and build instructions are at https://github.com/AMPEDUP-2001/AMPEDUP.

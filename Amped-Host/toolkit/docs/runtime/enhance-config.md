@@ -40,7 +40,7 @@ At startup the layer logs one line that names the files, and one line for
 each environment override:
 
 ```
-[ENHANCE] config: data/BLINX2/enhance.toml, data/enhance.toml (6 keys)
+[ENHANCE] config: data/platformer-reference/enhance.toml, data/enhance.toml (6 keys)
 [ENHANCE] render.scale = 2 from RECOMP_RENDER_SCALE
 ```
 
@@ -119,17 +119,17 @@ the stock settings.
 | `present.spin_lead` | float or `"auto"` | milliseconds before the vblank that a held flip spins instead of sleeping, at `sleep` pacing; `"auto"` picks it at run time (power mode Auto) | `0` | `RECOMP_PRESENT_SPIN_LEAD` |
 | `render.shader_cache` | string | the shader cache's directory (`"~/..."` is under `$HOME`), or `"none"` for no disk cache: the key list the Metal and Vulkan backends pre-warm from, and on Vulkan the SPIR-V and the driver's pipeline cache. The key list is kept across rebuilds of the toolkit (its version names the key format, not the commit); a test or an installer's smoke run sets `RECOMP_RENDER_SHADER_CACHE` to a directory of its own so it does not write the player's | the per-user cache directory: macOS `~/Library/Caches/<executable>`, Linux `$XDG_CACHE_HOME/<executable>`, Windows `%LOCALAPPDATA%\<executable>\cache` | `RECOMP_RENDER_SHADER_CACHE` |
 | `fps.mode` | string | `"lock30"` (stock), `"lock60"`, `"free"` | `"lock30"` | the game's `RECOMP_FPS_MODE` |
-| `fx.glow` | string | `"on"` (stock), `"off"` (BLiNX 2: its post-mode-3 glow pass) | `"on"` | the game's `RECOMP_GLOW` |
-| `fx.glow_intensity` | float | `0.0` to `2.0`, a scale of that glow layer (BLiNX 2) | `1.0` | the game's `RECOMP_GLOW_INTENSITY` |
+| `fx.glow` | string | `"on"` (stock), `"off"` (the reference platform game: its post-mode-3 glow pass) | `"on"` | the game's `RECOMP_GLOW` |
+| `fx.glow_intensity` | float | `0.0` to `2.0`, a scale of that glow layer (the reference platform game) | `1.0` | the game's `RECOMP_GLOW_INTENSITY` |
 | `aspect.program.<hash>` | string | `"hud"`, `"stretch"`, `"3d"`: a per-shader override of the aspect classifier | none | none |
 
 `fps.mode` belongs to the game. Each title implements it, and the title binds
 the key to its own environment variable:
 `enhance_cfg_bind_env("fps.mode", RENV_FPS_MODE)`. A title that offers only
 some of the values reads the key all the same and says in one line which
-value it runs instead (BLiNX 2 runs `lock30` only).
+value it runs instead (the reference platform game runs `lock30` only).
 
-`fx.glow` and `fx.glow_intensity` are BLiNX 2's own keys, read and applied by
+`fx.glow` and `fx.glow_intensity` are the reference platform game's own keys, read and applied by
 the title the same way. They change only that game's glow pass and leave the
 toolkit's backends alone, so every backend sees the same guest values.
 
@@ -187,7 +187,7 @@ is stock. One line shows the values in force:
   the pack word D3D builds its mode list from; and with an HDTV mode set,
   `HalBootSMCVideoMode` is 1 (HDTV pack), without which XAPI's
   `XGetVideoFlags` clears the HDTV modes. A title only gets a mode it
-  supports: Burnout 3 reads widescreen and 480p (D3DPRESENTFLAG_WIDESCREEN,
+  supports: the reference racing title reads widescreen and 480p (D3DPRESENTFLAG_WIDESCREEN,
   D3DPRESENTFLAG_PROGRESSIVE) and never asks for 720p. Stock (both off) is
   what titles saw before: the old `XC_VIDEO` word, 0x03, had its bits below
   the 16 that `XGetVideoFlags` shifts away.
