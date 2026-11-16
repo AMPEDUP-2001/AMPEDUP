@@ -38,7 +38,7 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "2",
+    "version": "3",
     "done": [
       "{install}/runtime/.ampedup-ready",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe"
@@ -87,23 +87,33 @@
     {
       "id": "aspect",
       "label": "Aspect ratio",
-      "help": "Choose the original 4:3 view or the native widescreen mode.",
+      "help": "Choose 4:3, native 16:9, or ultrawide gameplay with centered menus.",
       "choices": [
         {
           "label": "4:3",
           "set": {
-            "display/amped_native_wide": "false"
+            "display/amped_native_wide": "false",
+            "display/amped_ultrawide": "false"
           }
         },
         {
           "label": "16:9",
           "set": {
-            "display/amped_native_wide": "true"
+            "display/amped_native_wide": "true",
+            "display/amped_ultrawide": "false"
+          }
+        },
+        {
+          "label": "21:9",
+          "set": {
+            "display/amped_native_wide": "true",
+            "display/amped_ultrawide": "true"
           }
         }
       ],
       "defaults": {
-        "display/amped_native_wide": "true"
+        "display/amped_native_wide": "true",
+        "display/amped_ultrawide": "false"
       }
     },
     {
@@ -118,19 +128,19 @@
           }
         },
         {
-          "label": "2×",
+          "label": "2Ã—",
           "set": {
             "graphics/render_scale": "2"
           }
         },
         {
-          "label": "3×",
+          "label": "3Ã—",
           "set": {
             "graphics/render_scale": "3"
           }
         },
         {
-          "label": "4×",
+          "label": "4Ã—",
           "set": {
             "graphics/render_scale": "4"
           }
@@ -180,25 +190,25 @@
           }
         },
         {
-          "label": "2×",
+          "label": "2Ã—",
           "set": {
             "graphics/aniso": "\"2x\""
           }
         },
         {
-          "label": "4×",
+          "label": "4Ã—",
           "set": {
             "graphics/aniso": "\"4x\""
           }
         },
         {
-          "label": "8×",
+          "label": "8Ã—",
           "set": {
             "graphics/aniso": "\"8x\""
           }
         },
         {
-          "label": "16×",
+          "label": "16Ã—",
           "set": {
             "graphics/aniso": "\"16x\""
           }
@@ -282,7 +292,7 @@
   },
   "looks": {
     "allowed": false,
-    "reason": "Use AMPEDUP!’s built-in CRT scanlines and anti-aliasing."
+    "reason": "Use AMPEDUP!â€™s built-in CRT scanlines and anti-aliasing."
   },
   "exit_codes": {
     "12": "Prepare your own copy from the AMPEDUP! page before playing."

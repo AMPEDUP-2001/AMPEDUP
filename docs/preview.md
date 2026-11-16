@@ -1,6 +1,9 @@
-# AMPEDUP! 0.5
+# AMPEDUP! 0.6
 
-- First public release. Both Windows installers compile the game locally from the selected disc image. The online installer downloads the build tools during setup, and the all-in-one installer bundles them.
+- Open **Options → Graphics** to change display settings. **Quit Game** appears on the main menu. Both entries use the game's original lettering from your disc.
+- Enable **Ultrawide (21:9)** for a wider view on supported course cameras. The sampled HUD and menus stay centered. Physical ultrawide fullscreen and additional camera modes still need testing.
+- Open the **Audio** tab with the bumpers or Tab. **Console-style** uses positional filtering and speaker-aware routing. **Legacy** keeps the earlier mix. Set master, soundtrack and effects levels, spatial width, and speaker layout there.
+- Both Windows installers compile the game locally from the selected disc image. The online installer downloads the build tools during setup, and the all-in-one installer bundles them.
 
 - Tested on Windows with an Xbox USB controller. Quick Start, Career reload and replay playback have been playtested. The Brighton 1 music fix was also playtested with audio on.
 - 4× internal rendering and the 60 FPS limiter are available. Snow Summit can miss display refreshes, especially in the first half of a run.

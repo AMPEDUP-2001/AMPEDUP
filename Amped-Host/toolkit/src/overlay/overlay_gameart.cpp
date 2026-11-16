@@ -18,7 +18,10 @@
 #include "nv2a_texrep.h"
 
 #include <SDL.h>
+#include <algorithm>
+#include <array>
 #include <atomic>
+#include <iterator>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -567,3 +570,122 @@ bool gameart_pad_cell(int set, int cell, ArtRect *out)
     *out = s_cell[set][cell];
     return true;
 }
+
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+namespace {
+
+struct MenuLabel {
+    std::vector<ImVec2> silhouette;
+    std::vector<ImVec2> face;
+};
+
+/* Mesh-record name offsets in Fonts.res. The SHA-256 gate pins both this
+ * directory and the GBF triangle-strip layout to the supported disc. */
+constexpr struct {
+    char letter;
+    size_t offset;
+} gravity_glyphs[] = {
+    {'G', 0x2c190}, {'Q', 0x35572}, {'a', 0xbec4},  {'c', 0xe214},
+    {'e', 0x10776}, {'h', 0x132ee}, {'i', 0x142f0}, {'m', 0x174da},
+    {'p', 0x1a016}, {'r', 0x1c292}, {'s', 0x1d740}, {'t', 0x1efcc},
+    {'u', 0x1f7ca},
+};
+
+template<class T>
+T gbf_value(const uint8_t *src)
+{
+    T value;
+    memcpy(&value, src, sizeof value);
+    return value;
+}
+
+void load_menu_label(const uint8_t *file, const char *label, MenuLabel &out)
+{
+    constexpr size_t vertex_stride = 24;
+    constexpr float slant = 0.27f;
+    float advance = 0.0f;
+    for (const char *letter = label; *letter; ++letter) {
+        if (*letter == ' ') {
+            advance += 0.34f;
+            continue;
+        }
+        const auto glyph = std::find_if(std::begin(gravity_glyphs), std::end(gravity_glyphs),
+                                       [letter](auto g) { return g.letter == *letter; });
+        if (glyph == std::end(gravity_glyphs))
+            return;
+        const uint8_t *mesh = file + glyph->offset;
+        const uint8_t *vertices = mesh + 68;
+        const auto vertex_bytes = gbf_value<uint32_t>(mesh + 36);
+        const uint8_t *indices = vertices + vertex_bytes + 4;
+        const uint8_t *parts = indices + gbf_value<uint32_t>(indices - 4);
+        float left = 10.0f, right = -10.0f;
+        for (size_t i = 0; i < vertex_bytes; i += vertex_stride) {
+            const float x = gbf_value<float>(vertices + i);
+            const float y = gbf_value<float>(vertices + i + 4);
+            left = std::min(left, x - slant * y);
+            right = std::max(right, x - slant * y);
+        }
+        // Both material strips form the black silhouette. The front
+        // bevel and face receive the native menu's selection color.
+        for (unsigned part = 0; part < 2; ++part) {
+            const auto first = gbf_value<uint32_t>(parts + part * 16 + 8);
+            const auto count = gbf_value<uint32_t>(parts + part * 16 + 12);
+            for (unsigned i = first; i < first + count; ++i) {
+                const auto a = gbf_value<uint16_t>(indices + 2 * i);
+                const auto b = gbf_value<uint16_t>(indices + 2 * (i + 1));
+                const auto c = gbf_value<uint16_t>(indices + 2 * (i + 2));
+                if (a == b || a == c || b == c)
+                    continue;
+                ImVec2 triangle[3];
+                bool front = part == 1;
+                const uint16_t ids[] = {a, b, c};
+                for (unsigned j = 0; j < 3; ++j) {
+                    const uint8_t *v = vertices + ids[j] * vertex_stride;
+                    triangle[j] = ImVec2(gbf_value<float>(v) - left + advance,
+                                         -gbf_value<float>(v + 4));
+                    front = front && gbf_value<float>(v + 8) < -0.069f;
+                }
+                out.silhouette.insert(out.silhouette.end(), std::begin(triangle), std::end(triangle));
+                if (front)
+                    out.face.insert(out.face.end(), std::begin(triangle), std::end(triangle));
+            }
+        }
+        advance += right - left + 0.025f;
+    }
+}
+
+} // namespace
+
+bool gameart_menu_label(ImDrawList *dl, bool quit, ImVec2 baseline,
+                        float scale, float tilt, ImU32 face_color)
+{
+    static const auto labels = [] {
+        std::array<MenuLabel, 2> loaded;
+        const char *why = nullptr;
+        auto *file = gf_read_verified("Amped-Host/run-game/Resource/Shell/Fonts.res", 986596,
+            "2ccc8e7fc4b5314086715f21b293817ff4dccfd7b454616df182c77ed31abc9b", &why);
+        if (file) {
+            load_menu_label(file, "Graphics", loaded[0]);
+            load_menu_label(file, "Quit Game", loaded[1]);
+            free(file);
+            fprintf(stderr, "[overlay] title menu labels use the disc's GravityFont\n");
+        } else {
+            fprintf(stderr, "[overlay] GravityFont unavailable: %s\n", why);
+        }
+        return loaded;
+    }();
+    const auto &label = labels[quit];
+    if (label.face.empty())
+        return false;
+    const ImVec2 uv = ImGui::GetFontTexUvWhitePixel();
+    const auto draw = [&](const std::vector<ImVec2> &mesh, ImU32 color) {
+        dl->PrimReserve((int)mesh.size(), (int)mesh.size());
+        for (const auto &p : mesh)
+            dl->PrimVtx(ImVec2(baseline.x + scale * p.x,
+                              baseline.y + scale * (p.y + tilt * p.x)), uv, color);
+    };
+    draw(label.silhouette, IM_COL32_BLACK);
+    draw(label.face, face_color);
+    return true;
+}
+#endif

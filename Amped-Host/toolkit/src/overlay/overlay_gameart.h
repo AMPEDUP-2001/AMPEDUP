@@ -68,4 +68,10 @@ ImTextureRef gameart_tex();
 bool gameart_pad_cell(int set, int cell, ArtRect *out);
 ImTextureRef gameart_pad_tex();
 
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+/* Draw a title-menu label from the verified GravityFont mesh, if present. */
+bool gameart_menu_label(ImDrawList *dl, bool quit, ImVec2 baseline,
+                        float scale, float tilt, ImU32 face_color);
+#endif
+
 #endif

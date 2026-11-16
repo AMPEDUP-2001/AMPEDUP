@@ -408,6 +408,15 @@ int64_t mcpx_apu_pace_step(MCPXAPUState *d, int64_t now_us);
 
 /* Debug globals */
 extern MCPXAPUState *g_state;
+
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+/* One coherent snapshot for the audio thread. Speaker mode is bit 16. */
+#define AMPED_AUDIO_MUSIC_MASK 0xffu
+#define AMPED_AUDIO_EFFECTS_SHIFT 8u
+#define AMPED_AUDIO_CONSOLE 0x10000u
+#define AMPED_AUDIO_WIDTH_SHIFT 24u
+unsigned mcpx_apu_amped_audio(void);
+#endif
 extern struct McpxApuDebug g_dbg, g_dbg_cache;
 extern int g_dbg_voice_monitor;
 extern uint64_t g_dbg_muted_voices[4];

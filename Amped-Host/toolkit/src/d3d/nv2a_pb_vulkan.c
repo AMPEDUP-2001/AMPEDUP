@@ -6998,6 +6998,9 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
     int solo = 0;                     /* BO-203: stage 0 is a stage0_only HDR picture */
     int draw_capture = 0;
     int occ_ff = 0;
+#if defined(AMPED_ULTRAWIDE_TRIAL_V23)
+    uint32_t trial_shader = 0;
+#endif
     int use_s = v->stencil_enable && ((g->format >> 4) & 0xF) == 2;
     int use_z = v->depth_enable || use_s;
     VkImageView sview[4];
@@ -7063,6 +7066,9 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
             return;
         }
         vmod = e->mod;
+#if defined(AMPED_ULTRAWIDE_TRIAL_V23)
+        trial_shader = e->hash;
+#endif
         for (i = 0; i < NV2A_VS_MAX_INPUTS; i++)
             if (e->inputs & (1u << i))
                 slot[nf4++] = (int)i;
@@ -7244,6 +7250,15 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
         return;
     }
     nv2a_vp_consts_fill(v, g->format, rt->w, rt->h, &vc);
+#if defined(AMPED_ULTRAWIDE_TRIAL_V23)
+    if (trial_shader == 0x4673ef5fu && rt->w == 640 && rt->h == 480 && !s_occ_q) {
+        extern int amped_ultrawide_trial_hud(uint32_t flip);
+        if (amped_ultrawide_trial_hud(g->flips + 1u)) {
+            vc.c[0] *= 0.75f;
+            vc.c[4] *= 0.75f;
+        }
+    }
+#endif
     ADP_STAMP(ADP_INDEX);
 
     /* Depth: the zeta surface's buffer, attached to this target's passes

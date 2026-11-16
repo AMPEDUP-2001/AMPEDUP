@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.5
+# AMPEDUP! 0.6
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
 
@@ -10,10 +10,10 @@ An unofficial static recompilation of the original Xbox version of *Amped: Frees
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.5 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.5).
+Choose a Windows installer from the [0.6 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.6).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.5-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.5/Setup-AMPEDUP-0.5-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.5.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.5/Setup-AMPEDUP-0.5.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.6-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6/Setup-AMPEDUP-0.6-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.6.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6/Setup-AMPEDUP-0.6.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
@@ -45,12 +45,20 @@ The development benchmark measured two 30-second gameplay samples per scale on *
 
 The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rendering work on the CPU, and GPU busy measures active GPU time using PresentMon. CPU and GPU work can overlap. The slowest five-second window at 4× averaged 55.94 displayed FPS.
 
-## Features in the preview
+## Features in 0.6
 
-- Vulkan rendering, native 16:9 or 4:3, and internal resolution from original through 4×.
+- Vulkan rendering, 4:3, native 16:9, optional 21:9 gameplay, and internal resolution from original through 4×.
 - FXAA, SMAA, anisotropic filtering, and optional CRT scanlines.
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
-- A 60 FPS cap and an in-game settings menu. Open settings with **F1** or **View + Menu**. **Quit Game** is at the bottom.
+- Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
+- **Quit Game** is available from the main menu. Settings that need a restart ask for confirmation.
+
+## Screenshots from 0.6
+
+![Snow Summit 1 at 4× internal resolution](docs/screenshots/snow-summit.jpg)
+
+<img src="docs/screenshots/graphics-settings.jpg" width="440" alt="Graphics settings with 4× rendering and FXAA">
+<img src="docs/screenshots/audio-settings.jpg" width="440" alt="Audio settings with Console-style mix, speaker layout, separate levels and spatial width">
 
 ## Credits
 

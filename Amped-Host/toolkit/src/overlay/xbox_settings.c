@@ -50,6 +50,7 @@ static const char *const k_filters[]  = { "nearest", "linear", "integer", NULL }
 static const char *const k_overscan[] = { "off", "crop", "fill", NULL };
 static const char *const k_fits[]     = { "letterbox", "fill16x10", NULL };
 static const char *const k_speakers[] = { "auto", "stereo", "5.1", NULL };
+static const char *const k_amped_mix[] = { "console", "legacy", NULL };
 #if defined(__ANDROID__)
 static const char *const k_scale[]    = { "1", "1.5", "2", "3", "4", NULL };
 #endif
@@ -222,7 +223,12 @@ static xs_setting s_set[XS_COUNT] = {
     /* Read by the kernel when the title asks, early in boot: a restart. */
     [XS_AMPED_FPS_CAP] = SETTING("display.amped_fps_cap", XS_CHOICE, 0, RENV_AMPED_FPS_CAP, k_amped_fps_cap, NULL, 0, 0, 0),
     [XS_AMPED_NATIVE_WIDE] = SETTING("display.amped_native_wide", XS_BOOL, XS_RESTART | XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 0, 0),
+    [XS_AMPED_ULTRAWIDE] = SETTING("display.amped_ultrawide", XS_BOOL, XS_RESTART | XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 0, 0),
     [XS_AMPED_CRT] = SETTING("graphics.amped_crt", XS_BOOL, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 0, 0),
+    [XS_AMPED_AUDIO_MIX] = SETTING("audio.amped_mix", XS_CHOICE, XS_VIRTUAL, RENV_COUNT, k_amped_mix, NULL, 0, 0, 0),
+    [XS_AMPED_MUSIC_LEVEL] = SETTING("audio.amped_music_level", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1.5, 1),
+    [XS_AMPED_EFFECTS_LEVEL] = SETTING("audio.amped_effects_level", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1.5, 1),
+    [XS_AMPED_SPATIAL_WIDTH] = SETTING("audio.amped_spatial_width", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1, 0.25),
     [XS_GAME_LANGUAGE]      = SETTING("game.language", XS_CHOICE, XS_RESTART, RENV_GAME_LANGUAGE, k_language, NULL, 0, 0, 0),
 #if defined(__ANDROID__)
     [XS_INPUT_VIBRATION]    = SETTING("input.vibration", XS_CHOICE, XS_RESTART, RENV_ANDROID_VIBRATION, k_vibration, NULL, 0, 0, 0),
@@ -438,6 +444,16 @@ static void apply_touch(void)
 #endif
 
 /* Into the runtime, where it can take the value while running. */
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+static void apply_amped_audio(void)
+{
+    mcpx_apu_set_amped_audio(s_set[XS_AMPED_AUDIO_MIX].value == 0,
+                            (unsigned)lround(s_set[XS_AMPED_MUSIC_LEVEL].value * 100.0),
+                            (unsigned)lround(s_set[XS_AMPED_EFFECTS_LEVEL].value * 100.0),
+                            (unsigned)lround(s_set[XS_AMPED_SPATIAL_WIDTH].value * 100.0));
+}
+#endif
+
 static void apply(xs_id id)
 {
     const xs_setting *s = &s_set[id];
@@ -450,6 +466,14 @@ static void apply(xs_id id)
         recomp_env_set(s->env, buf);
     }
     switch (id) {
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+    case XS_AMPED_AUDIO_MIX:
+    case XS_AMPED_MUSIC_LEVEL:
+    case XS_AMPED_EFFECTS_LEVEL:
+    case XS_AMPED_SPATIAL_WIDTH:
+        apply_amped_audio();
+        break;
+#endif
 #if defined(AMPED_UNIFIED_EXPERIMENT)
     case XS_AMPED_CRT:
         nv2a_host_set_amped_crt(v != 0.0);
@@ -1040,6 +1064,9 @@ void xbox_SettingsFinish(void)
 #endif
     /* What nothing else reads at start. */
     apply_audio();
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+    apply_amped_audio();
+#endif
     xbox_InputSetRumbleStrength(s_set[XS_INPUT_RUMBLE].value);
     xbox_InputSetFaceLayoutNintendo(s_set[XS_INPUT_FACE_LAYOUT].value != 0.0);
     xbox_InputSetControlScheme((int)s_set[XS_INPUT_CONTROL_SCHEME].value);

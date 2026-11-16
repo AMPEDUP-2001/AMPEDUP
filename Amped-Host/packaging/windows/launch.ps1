@@ -2,6 +2,7 @@ param([switch]$OverlayTest, [string]$KeyLiveFile, [switch]$Managed, [switch]$Hea
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 $root = $PSScriptRoot
+$menuRecipe = Get-Content -LiteralPath (Join-Path $root 'hud-patches.json') -Raw | ConvertFrom-Json
 $files = if ($Managed) { Join-Path $root 'runtime' } else { $root }
 $switches = @{
     snow_gather = 'AMPED_GATHER_SNOW'
@@ -59,7 +60,7 @@ public static class AmpedWindow {
         $mode = (& $reader $settings | Out-String).Trim()
         if ($LASTEXITCODE -ne 0 -or $mode -notin @('standard','wide')) { throw 'Settings could not be read. See profile/settings.toml.' }
         $override = Join-Path $files ("overrides\$mode\Menus.res")
-        $expected = if ($mode -eq 'wide') { 'DE71459DD177B836D750A226ABCE61281A9410FFDFE685BCF7D2F4EA466A4DDF' } else { '357C9638C6D0298AE5AD6A5A2D366709D8EC61A4153330F9417157B818458350' }
+        $expected = $menuRecipe.modes.$mode.sha256
         if ((Get-FileHash -LiteralPath $override -Algorithm SHA256).Hash -ne $expected) { throw 'A required menu resource is missing or changed.' }
         $disk = Join-Path $profile ('disk-' + $mode)
         [void][IO.Directory]::CreateDirectory($disk)

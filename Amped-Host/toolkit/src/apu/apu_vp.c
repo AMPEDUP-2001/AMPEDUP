@@ -2099,6 +2099,19 @@ static void voice_process(MCPXAPUState *d,
     }
 
     /* HRTF processing for 3D voices */
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+    const unsigned amped_audio = mcpx_apu_amped_audio();
+    float ears[NUM_SAMPLES_PER_FRAME][2];
+    bool positional = false;
+    if ((amped_audio & AMPED_AUDIO_CONSOLE) && v < MCPX_HW_MAX_3D_VOICES) {
+        uint16_t handle = voice_get_mask(d, v, NV_PAVS_VOICE_CFG_HRTF_TARGET,
+                                         NV_PAVS_VOICE_CFG_HRTF_TARGET_HANDLE);
+        if (handle != HRTF_NULL_HANDLE) {
+            hrtf_filter_process(&d->vp.filters[v].hrtf, samples, ears);
+            positional = true;
+        }
+    }
+#else
     if (v < MCPX_HW_MAX_3D_VOICES && g_config.audio.hrtf) {
         uint16_t hrtf_handle =
             (uint16_t)voice_get_mask(d, v, NV_PAVS_VOICE_CFG_HRTF_TARGET,
@@ -2107,6 +2120,7 @@ static void voice_process(MCPXAPUState *d,
             hrtf_filter_process(&d->vp.filters[v].hrtf, samples, samples);
         }
     }
+#endif
 
     if (mcpx_apu_mix_trace_on()) {
         mix_trace_voice(d, v, (const float (*)[2])samples, channels, bin, vol,
@@ -2125,6 +2139,16 @@ static void voice_process(MCPXAPUState *d,
         apu_level_voice(v, s_von_serial[v], bus_fill, &lc, samples, channels);
     }
 
+    /* Keep the source's own volume controls in both host mix modes. */
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+    const bool amped_music = stereo && v >= MCPX_HW_MAX_3D_VOICES
+        && voice_get_mask(d, v, NV_PAVS_VOICE_CFG_FMT, NV_PAVS_VOICE_CFG_FMT_DATA_TYPE);
+    const unsigned trim = amped_music ? amped_audio & AMPED_AUDIO_MUSIC_MASK :
+        (amped_audio >> AMPED_AUDIO_EFFECTS_SHIFT) & AMPED_AUDIO_MUSIC_MASK;
+    const float mix_ea = ea_value * ((float)trim * 0.01f);
+#else
+    const float mix_ea = ea_value;
+#endif
     /* Mix into bins */
     if (s_bus_rt) {
         /* The host mixer on (apu_bus.h): the same gains, summed by the
@@ -2135,7 +2159,7 @@ static void voice_process(MCPXAPUState *d,
                                         NV_PAVS_VOICE_CFG_FMT_DATA_TYPE) != 0;
         int bus;
         for (int b = 0; b < 8; b++) {
-            float g = ea_value;
+            float g = mix_ea;
             float hr;
             if ((v < MCPX_HW_MAX_3D_VOICES) && (b < 4)) {
                 hr = (float)(1 << d->vp.hrtf_headroom);
@@ -2164,7 +2188,7 @@ static void voice_process(MCPXAPUState *d,
                           channels, bin, gs);
     } else
     for (int b = 0; b < 8; b++) {
-        float g = ea_value;
+        float g = mix_ea;
         float hr;
         if ((v < MCPX_HW_MAX_3D_VOICES) && (b < 4)) {
             hr = (float)(1 << d->vp.hrtf_headroom);
@@ -2172,6 +2196,14 @@ static void voice_process(MCPXAPUState *d,
             hr = (float)(1 << d->vp.submix_headroom[bin[b]]);
         }
         g *= attenuate(vol[b]) / hr;
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+        if (positional && b < 4) {
+            const int ear = b >= 2;
+            for (int i = 0; i < NUM_SAMPLES_PER_FRAME; i++)
+                mixbins[bin[b]][i] += g * ears[i][ear];
+            continue;
+        }
+#endif
         for (int i = 0; i < NUM_SAMPLES_PER_FRAME; i++) {
             mixbins[bin[b]][i] += g * samples[i][b % channels];
         }

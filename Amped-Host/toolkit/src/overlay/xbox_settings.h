@@ -113,7 +113,12 @@ typedef enum {
     XS_GRAPHICS_SOFTBODY,    /* a title's soft-body vehicle damage (drawn only), off as shipped; read at start */
     XS_AMPED_FPS_CAP,        /* experimental guest flip cap */
     XS_AMPED_NATIVE_WIDE,    /* experimental startup-only native aspect */
+    XS_AMPED_ULTRAWIDE,      /* 21:9 gameplay with a centered widescreen menu */
     XS_AMPED_CRT,            /* optional output-space scanlines */
+    XS_AMPED_AUDIO_MIX,
+    XS_AMPED_MUSIC_LEVEL,
+    XS_AMPED_EFFECTS_LEVEL,
+    XS_AMPED_SPATIAL_WIDTH,
     XS_GAME_LANGUAGE,        /* the dashboard language the kernel reports (XC_LANGUAGE); a row only where the title has more than one */
 #if defined(__ANDROID__)
     XS_INPUT_VIBRATION,      /* pad motors or the device's vibrator (android_vibration.c) */

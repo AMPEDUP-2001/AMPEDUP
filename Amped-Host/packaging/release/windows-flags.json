@@ -250,5 +250,9 @@
   "CMAKE_BUILD_TYPE": {
     "type": "STRING",
     "value": "Release"
+  },
+  "AMPED_ULTRAWIDE_TRIAL_V23": {
+    "type": "BOOL",
+    "value": "ON"
   }
 }

@@ -209,6 +209,45 @@ void mcpx_apu_update_dsp_preference(MCPXAPUState *d)
 static apu_spk_map s_spk_map;
 static int s_spk_map_set;
 
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+static unsigned s_amped_audio = (25u << AMPED_AUDIO_WIDTH_SHIFT) | AMPED_AUDIO_CONSOLE
+    | (100u << AMPED_AUDIO_EFFECTS_SHIFT) | 100u;
+
+void mcpx_apu_set_amped_audio(unsigned console_mix, unsigned music, unsigned effects, unsigned width)
+{
+    qatomic_set(&s_amped_audio, (console_mix ? AMPED_AUDIO_CONSOLE : 0u)
+                               | (width << AMPED_AUDIO_WIDTH_SHIFT)
+                               | (effects << AMPED_AUDIO_EFFECTS_SHIFT) | music);
+}
+
+unsigned mcpx_apu_amped_audio(void)
+{
+    return qatomic_read(&s_amped_audio);
+}
+
+static void amped_speaker_frame(const float bins[NUM_MIXBINS][NUM_SAMPLES_PER_FRAME],
+                                float speakers[APU_SPK_CHANNELS][NUM_SAMPLES_PER_FRAME],
+                                unsigned width_percent)
+{
+    memcpy(speakers, bins, APU_SPK_CHANNELS * NUM_SAMPLES_PER_FRAME * sizeof(float));
+    /* The title's spatial voices feed front and rear crosstalk buses.
+     * The remaining buses are DSP sends. Prevent a second dry copy of
+     * the source from reaching the speakers through those sends. */
+    /* The software HRTF has greater separation and lower output than
+     * the Snow Summit DSP reference. Blend the spatial buses while
+     * leaving the soundtrack and normal stereo voices alone. */
+    const float cross = 0.5f * (1.0f - (float)width_percent * 0.01f);
+    const float direct = 1.32f * (1.0f - cross);
+    const float other = 1.32f * cross;
+    for (int i = 0; i < NUM_SAMPLES_PER_FRAME; ++i) {
+        speakers[APU_SPK_FL][i] += direct * bins[6][i] + other * bins[7][i];
+        speakers[APU_SPK_FR][i] += direct * bins[7][i] + other * bins[6][i];
+        speakers[APU_SPK_SL][i] += direct * bins[8][i] + other * bins[9][i];
+        speakers[APU_SPK_SR][i] += direct * bins[9][i] + other * bins[8][i];
+    }
+}
+#endif
+
 void mcpx_apu_set_speaker_map(const int8_t map[32])
 {
     memcpy(s_spk_map, map, sizeof(s_spk_map));
@@ -542,10 +581,16 @@ void mcpx_apu_dsp_frame(MCPXAPUState *d,
     if (s_ch_trace < 0)
         s_ch_trace = recomp_env_on(RENV_AUDIO_CHANNELS);
 
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+    const unsigned amped_audio = mcpx_apu_amped_audio();
+    const int amped_routing = (amped_audio & AMPED_AUDIO_CONSOLE) != 0;
+#else
+    const int amped_routing = 0;
+#endif
     /* A title with its GP image wired: the model's six speaker feeds, in
      * stereo folded as the console's analog output is taken to be (ITU-R
      * BS.775: centre and surrounds at -3 dB, no LFE). */
-    if (apu_gp_wired() && d->monitor.point != MCPX_APU_DEBUG_MON_VP) {
+    if ((apu_gp_wired() || amped_routing) && d->monitor.point != MCPX_APU_DEBUG_MON_VP) {
         /* While a capture for the reference tool is taken
          * (RECOMP_ORACLE_CAP) the model writes nothing into GP scratch: the
          * capture is of what the title does, and the tool makes the export
@@ -557,9 +602,17 @@ void mcpx_apu_dsp_frame(MCPXAPUState *d,
         const int six = d->monitor.channels == APU_SPK_CHANNELS;
         const int nch = six ? APU_SPK_CHANNELS : 2;
 
-        gp_follow_lfe();
-        gp_command_at_frame(d);
-        apu_gp_frame(&m, mixbins, acc);
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+        if (amped_routing && !apu_gp_wired()) {
+            amped_speaker_frame((const float (*)[NUM_SAMPLES_PER_FRAME])mixbins, acc,
+                                amped_audio >> AMPED_AUDIO_WIDTH_SHIFT);
+        } else
+#endif
+        {
+            gp_follow_lfe();
+            gp_command_at_frame(d);
+            apu_gp_frame(&m, mixbins, acc);
+        }
         if (!six) {
             for (int i = 0; i < NUM_SAMPLES_PER_FRAME; i++) {
                 float c = 0.70710678f * acc[APU_SPK_FC][i];

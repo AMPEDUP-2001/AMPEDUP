@@ -130,7 +130,11 @@ static int s_activate, s_back, s_page_delta, s_reset;
 /* The page and the row on each. */
 enum { P_DISPLAY, P_GRAPHICS, P_AUDIO, P_INPUT, P_POWER, P_ADVANCED, P_COUNT };
 static const char *const k_page_name[P_COUNT] = {
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+    "Graphics", "Audio", "Audio", "Input", "Power", "Advanced"
+#else
     "Display", "Graphics", "Audio", "Input", "Power", "Advanced"
+#endif
 };
 static int s_page;
 static int s_sel[P_COUNT];
@@ -138,7 +142,7 @@ static bool s_scroll_to_sel;
 static int visible_page_count()
 {
 #if defined(AMPED_SETTINGS_EXPERIMENT)
-    return 1;
+    return 2;
 #else
     return P_COUNT;
 #endif
@@ -212,6 +216,7 @@ static const char *const n_aniso[]     = { "Off", "2x", "4x", "8x", "16x", NULL 
 static const char *const n_lod[]       = { "Off", "Auto (from the render scale)", "-0.5", "-1.0", "-1.5", NULL };
 static const char *const n_aa[]        = { "Off", "FXAA", "SMAA", NULL };
 static const char *const n_speakers[]  = { "Auto", "Stereo", "5.1", NULL };
+static const char *const n_amped_mix[] = { "Console-style", "Legacy", NULL };
 static const char *const n_custom_level[] = { "Off", "Quieter", "Match game music", "Louder", NULL };
 static const char *const n_lfe_lowpass[] = { "Off", "80 Hz", "100 Hz", "120 Hz", NULL };
 #if defined(__ANDROID__)
@@ -326,8 +331,13 @@ static constexpr Meta k_meta[XS_COUNT] = {
     /* XS_GRAPHICS_TEXUP_PRELOAD */ { XS_GRAPHICS_TEXUP_PRELOAD, "Upscale while loading", "Does most of the sharpening during the loading screen and the countdown, so the first race on a new track has less of it to do; a fast PC can leave it off.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_GRAPHICS_SOFTBODY */  { XS_GRAPHICS_SOFTBODY, "Soft-body damage", "Cars crumple, tear and bend where they are hit, with the game's own sparks and debris where metal rips, instead of only losing panels. Drawn only: handling and the race are unchanged. Costs CPU in big pile-ups. Applies after a restart.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_AMPED_FPS_CAP */ { XS_AMPED_FPS_CAP, "FPS cap (experimental)", "Limits guest flips. Game speed and timing may change.", 1, FMT_PLAIN, n_amped_fps_cap, 0 },
-    /* XS_AMPED_NATIVE_WIDE */ { XS_AMPED_NATIVE_WIDE, "Native widescreen (experimental)", "Some startup and attract videos keep 4:3; other videos may stretch.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_NATIVE_WIDE */ { XS_AMPED_NATIVE_WIDE, "Native widescreen (experimental)", "Use 16:9 when Ultrawide is off. Some startup and attract videos keep 4:3.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_ULTRAWIDE */ { XS_AMPED_ULTRAWIDE, "Ultrawide (21:9)", "A wider course camera with the HUD and menus centered. Uses the widescreen menu layout. Applies after restart.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_AMPED_CRT */ { XS_AMPED_CRT, "CRT scanlines", "Optional scanlines on the final image. The effect darkens the picture slightly.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_AUDIO_MIX */ { XS_AMPED_AUDIO_MIX, "Audio mix", "Console-style uses positional filtering and speaker-aware routing. Legacy restores the earlier mix.", 1, FMT_PLAIN, n_amped_mix, 0 },
+    /* XS_AMPED_MUSIC_LEVEL */ { XS_AMPED_MUSIC_LEVEL, "Soundtrack level", "Adjust the soundtrack relative to the game's Music Volume setting.", 0.05, FMT_PERCENT, NULL, 0 },
+    /* XS_AMPED_EFFECTS_LEVEL */ { XS_AMPED_EFFECTS_LEVEL, "Effects level", "Adjust effects and voiceovers together. Their separate controls are in the original Audio Setup menu.", 0.05, FMT_PERCENT, NULL, 0 },
+    /* XS_AMPED_SPATIAL_WIDTH */ { XS_AMPED_SPATIAL_WIDTH, "Spatial width", "Move positional effects toward the center or spread them out. Applies to the Console-style mix.", 0.05, FMT_PERCENT, NULL, 0 },
     /* XS_GAME_LANGUAGE */      { XS_GAME_LANGUAGE, "Language", "The language of the game's text, speech and films, as an Xbox set to that language would show them. Only the languages on your disc are offered. Applies after a restart.", 1, FMT_PLAIN, n_language, 0 },
 #if defined(__ANDROID__)
     /* XS_INPUT_VIBRATION */    { XS_INPUT_VIBRATION, "Vibration", "Where rumble goes. Auto uses this device's vibrator while its built-in controls are in use. External controllers don't rumble on Android; This device vibrates anyway.", 1, FMT_PLAIN, n_vibration, 0 },
@@ -443,6 +453,11 @@ enum { CS_NONE, CS_ON, CS_ASK, CS_DISCARDED };
 static int s_confirm;
 #if defined(AMPED_UNIFIED_EXPERIMENT)
 static bool s_amped_restart_prompt, s_amped_restart_yes, s_amped_restart_scale;
+static bool s_amped_quit_prompt;
+enum TitleMenu { TITLE_NONE, TITLE_MAIN, TITLE_OPTIONS };
+static std::atomic<unsigned> s_title_menu{TITLE_NONE};
+static std::atomic<bool> s_title_row_selected{false};
+static std::atomic<uint32_t> s_title_row_ready_at{0};
 static double s_amped_restart_before[XS_COUNT];
 static char s_amped_restart_error[180];
 static void amped_cancel_restart_prompt()
@@ -1112,8 +1127,18 @@ static int page_rows(int page, Row *r)
 #define WARN(t) r[n++] = Row{ R_INFO, XS_COUNT, 1, (t) }   /* in the attention yellow */
 #define SPK(a, t) r[n++] = Row{ R_SPEAKERS, XS_COUNT, (a), (t) }
 #if defined(AMPED_SETTINGS_EXPERIMENT)
-    /* AMPEDUP! host display settings and menu actions. */
-    (void)page;
+    /* AMPEDUP! host settings and menu actions. */
+    if (page == P_GRAPHICS) {
+        SET(XS_AMPED_AUDIO_MIX);
+        SET(XS_AUDIO_SPEAKERS);
+        SET(XS_AMPED_MUSIC_LEVEL);
+        SET(XS_AMPED_EFFECTS_LEVEL);
+        SET(XS_AMPED_SPATIAL_WIDTH);
+        SET(XS_AUDIO_VOLUME);
+        ACT(A_RESET_PAGE, "Reset this page to the defaults");
+        ACT(A_QUIT, "Quit Game");
+        return n;
+    }
     SET(XS_DISPLAY_FULLSCREEN);
     SET(XS_DISPLAY_FILTER);
     SET(XS_DISPLAY_OVERSCAN);
@@ -1131,6 +1156,9 @@ static int page_rows(int page, Row *r)
 #endif
 #if defined(AMPED_NATIVE_WIDE_SETTING_V23)
     SET(XS_AMPED_NATIVE_WIDE);
+#endif
+#if defined(AMPED_ULTRAWIDE_TRIAL_V23)
+    SET(XS_AMPED_ULTRAWIDE);
 #endif
 #if !defined(__ANDROID__)
     if (s_fs_error[0]) WARN(s_fs_error);
@@ -2016,6 +2044,9 @@ static void set_open(bool on, bool from_title = false)
         pause_sync();
         fprintf(stderr, LOGP "open: the title is paused, its input is held\n");
     } else {
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+        s_amped_quit_prompt = false;
+#endif
         /* A build beside a running title would cost it frames: it stops
          * with the overlay, and goes on from there the next time. */
         if (s_sb && sb_state(NULL, NULL, 0) == XBOX_SHADERS_RUNNING) {
@@ -2105,6 +2136,34 @@ static void hot_toggle()
 
 /* xbox_OverlayRequestOpen: set on any thread, taken on the main loop. */
 static std::atomic<int> s_open_request{0};
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+/* Commands come from the two disc menu scripts on the guest UI thread.
+ * Only the host UI thread opens the overlay or changes input ownership. */
+extern "C" void amped_title_menu_command(unsigned command)
+{
+    switch (command) {
+    case 1:
+    case 2:
+        s_title_row_selected.store(false);
+        s_title_row_ready_at.store(now_ms() + 320);
+        s_title_menu.store(command == 1 ? TITLE_MAIN : TITLE_OPTIONS);
+        break;
+    case 3:
+    case 4:
+        s_title_row_selected.store(command == 3);
+        break;
+    case 5:
+    case 6:
+        s_open_request.store(command == 5 ? 2 : 3);
+        break;
+    case 7:
+        s_title_menu.store(TITLE_NONE);
+        break;
+    }
+    if (getenv("RECOMP_OVERLAY_TEST"))
+        (fprintf)(stderr, LOGP "title menu command %u\n", command);
+}
+#endif
 
 int xbox_OverlayAvailable(void)
 {
@@ -2468,8 +2527,20 @@ void xbox_OverlayPoll(void)
     std::lock_guard<std::mutex> g(s_ov_mu);
     test_poll();
 
-    if (s_open_request.exchange(0) && !s_open)
+    const int open_request = s_open_request.exchange(0);
+    if (open_request && !s_open) {
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+        if (open_request == 3)
+            s_page = P_DISPLAY;
+#endif
         set_open(true, true);
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+        if (open_request == 2) {
+            s_amped_quit_prompt = true;
+            s_amped_restart_yes = false;
+        }
+#endif
+    }
     /* The on-screen controls' menu button. */
     if (xbox_InputTouchTakeMenu() && !s_open)
         set_open(true);
@@ -2513,7 +2584,9 @@ void xbox_OverlayPoll(void)
     if (s_back > 0) {
         s_back = 0;
 #if defined(AMPED_UNIFIED_EXPERIMENT)
-        if (s_open && s_amped_restart_prompt) {
+        if (s_open && s_amped_quit_prompt) {
+            set_open(false);
+        } else if (s_open && s_amped_restart_prompt) {
             amped_cancel_restart_prompt();
             menusnd_play(XBOX_OVERLAY_SND_BACK);
         } else
@@ -2689,6 +2762,10 @@ static bool touch_on()
 
 int xbox_OverlayWants(void)
 {
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+    if (s_enabled && s_title_menu.load() != TITLE_NONE)
+        return 1;
+#endif
     return s_enabled && (s_open || s_alpha > 0.0f || xbox_SettingValue(XS_ADVANCED_PERF) != 0.0
                          || notice_on() || scripted_on() || sg_banner_on() || touch_on());
 }
@@ -4368,7 +4445,7 @@ static void rows_in_apply(ImDrawList *dl, int v0, int slot)
 static void draw_header(ImDrawList *dl)
 {
 #if defined(AMPED_SETTINGS_EXPERIMENT)
-    /* Single-page experiment: centered title like Amped's menu headings. */
+    /* Centered title and page tabs in the style of Amped's menu headings. */
     const float left = LY.cx + 0.09f * LY.cw, right = LY.cx + 0.97f * LY.cw;
     dl->AddRectFilled(ImVec2(left, 0.025f * LY.H), ImVec2(right, LY.y_rule), col({0x12, 0x3b, 0x66}, 0.96f), 0.014f * LY.H);
     dl->AddRectFilled(ImVec2(left + LY.H * 0.006f, 0.031f * LY.H), ImVec2(right - LY.H * 0.006f, LY.y_rule - LY.H * 0.006f), col(T->head_band, 0.96f), 0.010f * LY.H);
@@ -4384,8 +4461,20 @@ static void draw_header(ImDrawList *dl)
     }
     {
         Face body(s_f_body, SHEAR);
-        const float sz = LY.tab, x = LY.cx + (LY.cw - tw(sz, "DISPLAY")) * 0.5f;
-        txt(dl, sz, ImVec2(x, top_for(0.162f * LY.H, sz)), col(T->hint), "DISPLAY");
+        const float sz = LY.tab, cy = 0.162f * LY.H;
+        const float center = LY.cx + LY.cw * 0.5f;
+        for (int i = 0; i < visible_page_count(); ++i) {
+            const float x = center + (i ? 0.09f : -0.09f) * LY.cw;
+            const char *label = caps(k_page_name[i]);
+            const float width = tw(sz, label);
+            txt(dl, sz, ImVec2(x - width * 0.5f, top_for(cy, sz)), col(i == s_page ? T->attn : T->hint), label);
+            ImGui::SetCursorScreenPos(ImVec2(x - width * 0.5f - sz * 0.5f, cy - sz * 0.75f));
+            ImGui::PushID(i);
+            ImGui::InvisibleButton("##amped_page", ImVec2(width + sz, sz * 1.5f));
+            if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && i != s_page)
+                s_page_delta = i - s_page;
+            ImGui::PopID();
+        }
     }
     return;
 #endif
@@ -4854,14 +4943,17 @@ static void build_pages_inner()
     music_access_poll();
 
 #if defined(AMPED_UNIFIED_EXPERIMENT)
-    if (s_amped_restart_prompt) {
+    if (s_amped_restart_prompt || s_amped_quit_prompt) {
         collect_steps();
-        if (s_amped_restart_scale) {
+        const bool quit = s_amped_quit_prompt;
+        const bool scale = !quit && s_amped_restart_scale;
+        if (scale) {
             while (s_steps[D_LEFT]-- > 0) adjust(XS_GRAPHICS_RENDER_SCALE, -1);
             while (s_steps[D_RIGHT]-- > 0) adjust(XS_GRAPHICS_RENDER_SCALE, 1);
             if (s_steps[D_UP] > 0 || s_steps[D_DOWN] > 0)
                 s_amped_restart_yes = !s_amped_restart_yes;
-        } else if (s_steps[D_LEFT] > 0 || s_steps[D_RIGHT] > 0) {
+        } else if (s_steps[D_LEFT] > 0 || s_steps[D_RIGHT] > 0
+                   || (quit && (s_steps[D_UP] > 0 || s_steps[D_DOWN] > 0))) {
             s_amped_restart_yes = !s_amped_restart_yes;
         }
         memset(s_steps, 0, sizeof s_steps);
@@ -4869,15 +4961,17 @@ static void build_pages_inner()
         const float x = LY.body_x0 + 0.10f * LY.cw;
         const float y = LY.y_rows + 0.20f * LY.H;
         const float w = LY.body_x1 - LY.body_x0 - 0.20f * LY.cw;
-        const float box_bottom = y + (s_amped_restart_scale ? 0.32f : 0.22f) * LY.H;
+        const float box_bottom = y + (scale ? 0.32f : 0.22f) * LY.H;
         dl->AddRectFilled(ImVec2(x - 18, y - 18), ImVec2(x + w + 18, box_bottom), col({0x14, 0x3e, 0x72}, 1.0f), 8.0f);
         dl->AddRectFilled(ImVec2(x - 13, y - 13), ImVec2(x + w + 13, box_bottom - 5), col(T->panel, 1.0f), 5.0f);
         dl->AddRect(ImVec2(x - 18, y - 18), ImVec2(x + w + 18, box_bottom), col(T->edge), 8.0f, 0, 2.0f);
-        dl->AddText(ImGui::GetFont(), fs, ImVec2(x, y), col(T->attn), "Restart the game now?");
+        dl->AddText(ImGui::GetFont(), fs, ImVec2(x, y), col(T->attn),
+                    quit ? "Quit AMPEDUP!?" : "Restart the game now?");
         dl->AddText(ImGui::GetFont(), LY.hint, ImVec2(x, y + fs * 1.8f), col(T->hint),
-                    "The change needs a restart. Unsaved game progress will be lost.");
+                    quit ? "Unsaved game progress will be lost."
+                         : "The change needs a restart. Unsaved game progress will be lost.");
         float button_y = y + fs * 3.2f;
-        if (s_amped_restart_scale) {
+        if (scale) {
             ImGui::SetCursorScreenPos(ImVec2(x, button_y));
             if (ImGui::Button("-##scale", ImVec2(fs * 2.0f, fs * 1.5f)))
                 adjust(XS_GRAPHICS_RENDER_SCALE, -1);
@@ -4903,9 +4997,13 @@ static void build_pages_inner()
         ImGui::PopStyleColor();
         if (s_activate > 0) { yes = s_amped_restart_yes; no = !yes; }
         s_activate = 0;
-        if (no)
+        if (quit && yes)
+            quit_now();
+        else if (quit && no)
+            set_open(false);
+        else if (no)
             amped_cancel_restart_prompt();
-        if (yes) {
+        else if (yes) {
             const char *marker = getenv("AMPED_RESTART_MARKER");
             xbox_SettingsFlush();
             if (!xbox_SettingsFlushSucceeded()) {
@@ -5311,6 +5409,68 @@ static void draw_touch(ImDrawList *dl, ImVec2 disp)
 
 static float s_tgt_w, s_tgt_h;
 
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+static void draw_title_row(unsigned menu, ImVec2 disp)
+{
+    const bool selected = s_title_row_selected.load();
+    const bool quit = menu == TITLE_MAIN;
+    // The original menu uses a centered 4:3 layout even in widescreen.
+    const float aspect = 4.0f / 3.0f;
+    const bool wide = xbox_SettingGet(XS_AMPED_NATIVE_WIDE)->launch
+                   || xbox_SettingGet(XS_AMPED_ULTRAWIDE)->launch;
+    const float h = fminf(disp.y, disp.x / (wide ? 16.0f / 9.0f : aspect));
+    const float w = h * aspect;
+    const float x = (disp.x - w) * 0.5f;
+    const float y = (disp.y - h) * 0.5f;
+    const float cy = y + h * (quit ? 0.835f : 0.813f);
+    const float height = h * (quit ? 0.065f : 0.076f);
+    const ImVec2 lo(x + 0.571f * w, cy - height * 0.5f);
+    const ImVec2 hi(x + (quit ? 0.837f : 0.883f) * w, cy + height * 0.5f);
+    ImDrawList *dl = ImGui::GetBackgroundDrawList();
+    const float tilt = quit ? -0.015f : -0.024f;
+    const auto plate = [&](float inset, float bottom, ImU32 top_color, ImU32 bottom_color) {
+        const ImVec2 a(lo.x + inset, lo.y + inset);
+        const ImVec2 b(hi.x - inset * 0.25f, hi.y - bottom);
+        const int first = dl->VtxBuffer.Size;
+        dl->AddRectFilled(a, b, top_color, (b.y - a.y) * 0.48f, ImDrawFlags_RoundCornersLeft);
+        ImGui::ShadeVertsLinearColorGradientKeepAlpha(dl, first, dl->VtxBuffer.Size,
+            ImVec2(a.x, a.y), ImVec2(a.x, b.y), top_color, bottom_color);
+        for (int i = first; i < dl->VtxBuffer.Size; ++i)
+            dl->VtxBuffer[i].pos.y += tilt * (dl->VtxBuffer[i].pos.x - lo.x);
+    };
+    plate(0, 0, IM_COL32(50, 81, 124, 255), IM_COL32(5, 18, 59, 255));
+    plate(height * 0.029f, height * 0.045f, IM_COL32(229, 247, 255, 255), IM_COL32(144, 159, 220, 255));
+    plate(height * 0.064f, height * 0.086f, IM_COL32(29, 48, 102, 255), IM_COL32(36, 40, 111, 255));
+    plate(height * 0.112f, height * 0.125f,
+          selected ? IM_COL32(103, 240, 6, 255) : IM_COL32(59, 65, 242, 255),
+          selected ? IM_COL32(57, 203, 0, 255) : IM_COL32(51, 50, 220, 255));
+
+    const ImU32 ink = selected ? IM_COL32(251, 250, 139, 255) : IM_COL32(30, 217, 1, 255);
+    const float label_x = lo.x + height * 0.38f;
+    const ImVec2 baseline(label_x, cy + height * (quit ? 0.30f : 0.32f));
+    if (!gameart_menu_label(dl, quit, baseline, h * 0.039f, tilt, ink)) {
+        Face face(s_f_title ? s_f_title : ImGui::GetFont(), SHEAR);
+        const char *label = quit ? "Quit Game" : "Graphics";
+        const float size = height * 0.80f;
+        const ImVec2 at(label_x, top_for(cy, size));
+        const float edge = fmaxf(1.0f, size * 0.056f);
+        for (int i = -1; i <= 1; ++i)
+            for (int j = -1; j <= 1; ++j)
+                if (i || j)
+                    txt(dl, size, ImVec2(at.x + i * edge, at.y + j * edge), IM_COL32_BLACK, label);
+        txt(dl, size, at, ink, label);
+    }
+    if (selected) {
+        Face body(s_f_body, SHEAR);
+        const char *hint = quit ? "Close AMPEDUP!" : "Change graphics settings";
+        const float hint_size = h * 0.038f;
+        ImVec2 hint_at(x + w * 0.178f, y + h * 0.695f);
+        txt(dl, hint_size, ImVec2(hint_at.x + 1.5f, hint_at.y + 1.5f), IM_COL32_BLACK, hint);
+        txt(dl, hint_size, hint_at, IM_COL32_WHITE, hint);
+    }
+}
+#endif
+
 void overlay_set_target(uint32_t w, uint32_t h)
 {
     s_tgt_w = (float)w;
@@ -5330,7 +5490,12 @@ bool overlay_begin_frame()
     bool perf = xbox_SettingValue(XS_ADVANCED_PERF) != 0.0;
     bool note = notice_on(), scripted = scripted_on(), sg = sg_banner_on();
     bool touch = touch_on() && !s_open && s_alpha <= 0.0f;
-    if (!s_open && s_alpha <= 0.0f && !perf && !note && !scripted && !sg && !touch)
+    bool title_row = false;
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+    const auto title_menu = s_title_menu.load();
+    title_row = title_menu != TITLE_NONE;
+#endif
+    if (!s_open && s_alpha <= 0.0f && !perf && !note && !scripted && !sg && !touch && !title_row)
         return false;
 
     ImGuiIO &io = ImGui::GetIO();
@@ -5353,6 +5518,10 @@ bool overlay_begin_frame()
         io.DisplayFramebufferScale = ImVec2(s_tgt_w / io.DisplaySize.x, s_tgt_h / io.DisplaySize.y);
     ImGui::NewFrame();
     const float fs = ImGui::GetFontSize();
+#if defined(AMPED_UNIFIED_EXPERIMENT)
+    if (title_row && (int32_t)(now - s_title_row_ready_at.load()) >= 0)
+        draw_title_row(title_menu, io.DisplaySize);
+#endif
 
     if (perf) {
         ImVec2 at(fs * 0.6f, fs * 0.6f);

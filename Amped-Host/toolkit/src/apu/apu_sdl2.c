@@ -64,11 +64,15 @@
 
 #define SDLA_SAMPLE_RATE   48000
 #define SDLA_CHANNELS_MAX  6
-/* Device buffer size and count: the same defaults and knobs as the XAudio2
- * backend (512 x 4: 10.7 ms per buffer, 43 ms queued at the high mark). The
- * count is a pacing mark here, not a slot limit: SDL's queue is unbounded. */
+/* Each 512-sample buffer gives 10.7 ms of queue headroom. The count is a
+ * pacing mark here; SDL's queue has no slot limit. */
 #define SDLA_BUF_SAMPLES_DEFAULT 512
+#if defined(AMPED_SETTINGS_EXPERIMENT)
+/* The 4× Snow Summit audio trace occasionally drained the 4-buffer queue. */
+#define SDLA_NUM_BUFS_DEFAULT    6
+#else
 #define SDLA_NUM_BUFS_DEFAULT    4
+#endif
 #define SDLA_BUF_SAMPLES_MIN     128
 #define SDLA_BUF_SAMPLES_MAX     4096
 #define SDLA_NUM_BUFS_MIN        2

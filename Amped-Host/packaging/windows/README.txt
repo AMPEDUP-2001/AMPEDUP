@@ -1,4 +1,4 @@
-AMPEDUP! 0.5 - WINDOWS
+AMPEDUP! 0.6 - WINDOWS
 
 Requirements: 64-bit Windows 10/11, a Vulkan-capable GPU and current driver,
 about 6 GB of free space for installation and compilation, and your matching

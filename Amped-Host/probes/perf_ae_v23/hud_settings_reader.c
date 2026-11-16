@@ -23,7 +23,14 @@ int main(int argc, char **argv)
         recomp_cfg_free(cfg);
         return 2;
     }
-    wide = recomp_cfg_bool(cfg, "display.amped_native_wide", 0);
+    type = recomp_cfg_type_of(cfg, "display.amped_ultrawide");
+    if (type != RCFG_NONE && type != RCFG_BOOL) {
+        fputs("amped_ultrawide must be boolean\n", stderr);
+        recomp_cfg_free(cfg);
+        return 2;
+    }
+    wide = recomp_cfg_bool(cfg, "display.amped_native_wide", 0)
+        || recomp_cfg_bool(cfg, "display.amped_ultrawide", 0);
     recomp_cfg_free(cfg);
     puts(wide ? "wide" : "standard");
     return 0;

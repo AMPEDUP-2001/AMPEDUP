@@ -48,6 +48,8 @@ uint32_t mcpx_apu_xc_audio(void);
  * into FX sends routes them with this, as its GP effects image does. Call
  * before mcpx_apu_init_standalone. */
 void mcpx_apu_set_speaker_map(const int8_t map[32]);
+/* AMPEDUP! audio settings. Gains are percentages of the title's level. */
+void mcpx_apu_set_amped_audio(unsigned console_mix, unsigned music, unsigned effects, unsigned width);
 
 /* The settings overlay's speaker test: about a second of noise on one
  * speaker, 0..5 = FL FR FC LFE SL SR (a 60 Hz tone on the LFE), through the
