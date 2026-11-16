@@ -1,3 +1,4 @@
+param([switch]$Managed)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -35,7 +36,9 @@ $play.Add_Click({
     try {
         $ps = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
         $script = Join-Path $PSScriptRoot 'launch.ps1'
-        Start-Process -FilePath $ps -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File',('"' + $script + '"')) -WorkingDirectory $PSScriptRoot -WindowStyle Hidden | Out-Null
+        $arguments = @('-NoProfile','-ExecutionPolicy','Bypass','-File',('"' + $script + '"'))
+        if ($Managed) { $arguments += '-Managed' }
+        Start-Process -FilePath $ps -ArgumentList $arguments -WorkingDirectory $PSScriptRoot -WindowStyle Hidden | Out-Null
         $form.Close()
     } catch { [Windows.Forms.MessageBox]::Show($form, $_.Exception.Message, 'AMPEDUP!', 'OK', 'Error') | Out-Null }
 })

@@ -14,6 +14,12 @@ internal static class Bootstrap
 {
     private const string SetupResource = "AMPEDUP.Setup.zip";
 
+    private static string QuotePath(string path)
+    {
+        string trimmed = path.TrimEnd('\\');
+        return "\"" + trimmed + new string('\\', 2 * (path.Length - trimmed.Length)) + "\"";
+    }
+
     [STAThread]
     private static int Main(string[] args)
     {
@@ -34,7 +40,14 @@ internal static class Bootstrap
                     root = temporary;
                 }
             }
-            string script = Path.Combine(root, setup ? "setup-wizard.ps1" : "launcher-wizard.ps1");
+            bool managed = !setup && File.Exists(Path.Combine(root, "recomplauncher.json"));
+            bool prepare = !setup && args.Length > 0 && args[0] == "--prepare";
+            bool play = !setup && args.Length == 1 && args[0] == "--play";
+            if (prepare && (!managed || args.Length != 3 || args[1] != "--game"))
+                throw new ArgumentException("Use the Windows ZIP and pass --prepare --game <path>.");
+            string scriptName = setup ? "setup-wizard.ps1" : prepare ? "prepare-for-launcher.ps1"
+                : play ? "launch.ps1" : "launcher-wizard.ps1";
+            string script = Path.Combine(root, scriptName);
             if (!File.Exists(script)) throw new FileNotFoundException("The launcher files are incomplete.", script);
             string ps = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");
             var start = new ProcessStartInfo(ps, "-NoProfile -ExecutionPolicy Bypass -STA -File \"" + script + "\"");
@@ -46,6 +59,16 @@ internal static class Bootstrap
             string windowsModules = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\Modules");
             string sharedModules = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"WindowsPowerShell\Modules");
             start.EnvironmentVariables["PSModulePath"] = windowsModules + ";" + sharedModules;
+            if (prepare)
+                start.Arguments += " -Game " + QuotePath(Path.GetFullPath(args[2]));
+            else if (managed)
+                start.Arguments += " -Managed";
+            if (play) start.Arguments += " -Headless";
+            if (prepare || play)
+            {
+                start.RedirectStandardOutput = true;
+                start.RedirectStandardError = true;
+            }
             if (setup)
             {
                 start.RedirectStandardError = true;
@@ -64,6 +87,15 @@ internal static class Bootstrap
             }
             using (Process process = Process.Start(start))
             {
+                if (prepare || play)
+                {
+                    process.OutputDataReceived += (sender, line) => { if (line.Data != null) Console.WriteLine(line.Data); };
+                    process.ErrorDataReceived += (sender, line) => { if (line.Data != null) Console.Error.WriteLine(line.Data); };
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
+                    return process.ExitCode;
+                }
                 if (setup)
                 {
                     string error = process.StandardError.ReadToEnd();
@@ -84,6 +116,8 @@ internal static class Bootstrap
         {
             if (args.Length == 0)
                 MessageBox.Show(ex.Message, "AMPEDUP!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+                Console.Error.WriteLine(ex.Message);
             return 1;
         }
         finally

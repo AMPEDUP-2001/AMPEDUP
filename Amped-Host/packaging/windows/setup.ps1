@@ -1,13 +1,20 @@
-param([string]$Image, [string]$Destination, [switch]$NonInteractive, [string]$StatusFile)
+param([string]$Image, [string]$Destination, [switch]$NonInteractive, [string]$StatusFile,
+    [switch]$LauncherSetup)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 $sourceRoot = $PSScriptRoot
 $progress = $null
 $createdDestination = $false
-function Set-InstallStatus([string]$message) {
+function Set-InstallStatus([string]$message, [double]$fraction = 0) {
     if ($StatusFile) { [IO.File]::WriteAllText($StatusFile, $message, [Text.UTF8Encoding]::new($false)) }
+    if ($LauncherSetup -and $fraction -gt 0) {
+        [Console]::WriteLine("progress $($fraction.ToString('0.00', [Globalization.CultureInfo]::InvariantCulture)) $message")
+    }
 }
 try {
+    if ($LauncherSetup -and (-not $NonInteractive -or -not $Image -or -not $Destination)) {
+        throw 'Launcher setup requires a game path and a staging folder.'
+    }
     if (-not $Image) {
         $pick = New-Object Windows.Forms.OpenFileDialog
         $pick.Title = 'Select your Amped XISO image'
@@ -24,7 +31,8 @@ try {
     }
     $Image = [IO.Path]::GetFullPath($Image)
     $Destination = [IO.Path]::GetFullPath($Destination)
-    if (-not (Test-Path -LiteralPath $Image -PathType Leaf)) { throw 'The selected image does not exist.' }
+    $folderInput = $LauncherSetup -and (Test-Path -LiteralPath $Image -PathType Container)
+    if (-not $folderInput -and -not (Test-Path -LiteralPath $Image -PathType Leaf)) { throw 'The selected image does not exist.' }
     if (Test-Path -LiteralPath $Destination) { throw "Installation folder already exists; choose a different parent: $Destination" }
     if ($Image -match '[^\x20-\x7e]' -or $Destination -match '[^\x20-\x7e]' -or $Destination.Length -gt 105 -or $Destination.Contains(',')) {
         throw 'For this experimental build, use an image and destination with short ASCII-only paths and no commas.'
@@ -41,45 +49,67 @@ try {
         $progress.Controls.Add($label)
         $progress.Show(); $progress.Refresh(); [Windows.Forms.Application]::DoEvents()
     }
-    Set-InstallStatus 'Checking the ISO image...'
-    if ((Get-FileHash -LiteralPath $Image -Algorithm SHA256).Hash -ne '1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0') {
-        throw 'This build supports the exact Amped Europe XISO used to create it. The selected image does not match.'
+    $xbeHash = 'D825274C3A52B203E6065EF7B0109BCFFFDC175FE8B826FAC215A2ADB779E58E'
+    if ($folderInput) {
+        Set-InstallStatus 'Checking the extracted game folder...' 0.05
+        $originalXbe = Join-Path $Image 'default.xbe'
+        if (-not (Test-Path -LiteralPath $originalXbe -PathType Leaf) -or
+            (Get-FileHash -LiteralPath $originalXbe).Hash -ne $xbeHash) {
+            throw 'Choose an extracted folder from the supported European multilingual retail disc.'
+        }
+    } else {
+        Set-InstallStatus 'Checking the ISO image...' 0.05
+        if ((Get-FileHash -LiteralPath $Image -Algorithm SHA256).Hash -ne '1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0') {
+            throw 'This build supports the exact Amped Europe XISO used to create it. The selected image does not match.'
+        }
     }
     $extractor = Join-Path $sourceRoot 'tools\extract-xiso.exe'
     if (-not (Test-Path -LiteralPath $extractor -PathType Leaf)) { throw 'The extractor is missing from the package.' }
     $sourceBuilder = Join-Path $sourceRoot 'build-from-disc.ps1'
     $buildFromDisc = Test-Path -LiteralPath $sourceBuilder -PathType Leaf
     if ($buildFromDisc) {
-        & (Join-Path $sourceRoot 'get-build-tools.ps1') -ReportStatus ${function:Set-InstallStatus}
+        & (Join-Path $sourceRoot 'get-build-tools.ps1') -ReportStatus { param($message) Set-InstallStatus $message 0.15 }
     }
     [void](New-Item -ItemType Directory -Path $Destination -ErrorAction Stop)
     $createdDestination = $true
-    Set-InstallStatus 'Copying program files...'
+    Set-InstallStatus 'Copying program files...' 0.28
     Copy-Item -Path (Join-Path $sourceRoot 'payload\*') -Destination $Destination -Recurse
     $game = Join-Path $Destination 'Amped-Host\run-game'
     [void][IO.Directory]::CreateDirectory($game)
-    Set-InstallStatus 'Extracting game files from the ISO...'
-    if ($progress) { $label.Text = 'Extracting your game. Please wait...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
-    & $extractor -q -x -d $game $Image
-    if ($LASTEXITCODE -ne 0) { throw "Image extraction failed (exit $LASTEXITCODE)." }
+    if (-not $folderInput) {
+        Set-InstallStatus 'Extracting game files from the ISO...' 0.35
+        if ($progress) { $label.Text = 'Extracting your game. Please wait...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
+        & $extractor -q -x -d $game $Image
+        if ($LASTEXITCODE -ne 0) { throw "Image extraction failed (exit $LASTEXITCODE)." }
+    }
     $xbe = Join-Path $game 'default.xbe'
-    $menus = Join-Path $game 'Resource\Shell\Menus.res'
-    if (-not (Test-Path -LiteralPath $xbe -PathType Leaf) -or (Get-FileHash $xbe -Algorithm SHA256).Hash -ne 'D825274C3A52B203E6065EF7B0109BCFFFDC175FE8B826FAC215A2ADB779E58E') { throw 'Extracted game executable did not match.' }
-    if (-not (Test-Path -LiteralPath $menus -PathType Leaf) -or (Get-FileHash $menus -Algorithm SHA256).Hash -ne '336FD7CA3AEAB01B90421348F9F5C8E6996FC8A25B1D74BA07312F139C1653F4') { throw 'Extracted menu resource did not match.' }
+    if (-not $folderInput) {
+        $menus = Join-Path $game 'Resource\Shell\Menus.res'
+        if (-not (Test-Path -LiteralPath $xbe -PathType Leaf) -or (Get-FileHash $xbe -Algorithm SHA256).Hash -ne $xbeHash) { throw 'Extracted game executable did not match.' }
+        if (-not (Test-Path -LiteralPath $menus -PathType Leaf) -or (Get-FileHash $menus -Algorithm SHA256).Hash -ne '336FD7CA3AEAB01B90421348F9F5C8E6996FC8A25B1D74BA07312F139C1653F4') { throw 'Extracted menu resource did not match.' }
+    }
+    Set-InstallStatus 'Verifying the game files...' 0.45
     if ($progress) { $label.Text = 'Checking extracted game files...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
     $manifest = Get-Content -LiteralPath (Join-Path $sourceRoot 'disc-manifest.json') -Raw | ConvertFrom-Json
     $verified = 0
     foreach ($item in $manifest.files) {
         if ($item.path -match '(^/|(^|/)\.\.(/|$))' -or [IO.Path]::IsPathRooted($item.path)) { throw 'Invalid game manifest path.' }
-        $path = Join-Path $game ($item.path -replace '/', '\')
+        $relative = $item.path -replace '/', '\'
+        $path = Join-Path $game $relative
+        if ($folderInput) {
+            $original = Join-Path $Image $relative
+            if (-not (Test-Path -LiteralPath $original -PathType Leaf)) { throw "The game folder is missing $($item.path)." }
+            [void][IO.Directory]::CreateDirectory((Split-Path -Parent $path))
+            Copy-Item -LiteralPath $original -Destination $path
+        }
         if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or (Get-Item -LiteralPath $path).Length -ne $item.size -or (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $item.sha256.ToUpperInvariant()) { throw "Extracted game file did not match: $($item.path)" }
         $verified++
-        if ($verified % 25 -eq 0) { Set-InstallStatus "Verifying game files ($verified / $(@($manifest.files).Count))..." }
+        if ($verified % 25 -eq 0) { Set-InstallStatus "Verifying game files ($verified / $(@($manifest.files).Count))..." 0.52 }
     }
     if (@(Get-ChildItem -LiteralPath $game -File -Recurse -Force).Count -ne @($manifest.files).Count) { throw 'Extracted game file count did not match.' }
     $installedExe = Join-Path $Destination 'Amped-Host\bin\amped_recomp.exe'
     if ($buildFromDisc) {
-        Set-InstallStatus 'Building AMPEDUP! from your disc. This takes several minutes...'
+        Set-InstallStatus 'Building AMPEDUP! from your disc. This takes several minutes...' 0.65
         $buildLog = Join-Path $Destination 'setup-build.log'
         try {
             & $sourceBuilder -Xbe $xbe -Executable $installedExe -BuildLog $buildLog
@@ -91,7 +121,7 @@ try {
     }
     if (-not (Test-Path -LiteralPath $installedExe -PathType Leaf)) { throw 'The game executable is missing from the installation.' }
     if ($progress) { $label.Text = 'Preparing game resources...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
-    Set-InstallStatus 'Preparing the game...'
+    Set-InstallStatus 'Preparing the game...' 0.94
     & (Join-Path $Destination 'prepare-assets.ps1') -GameRoot $game -Destination $Destination
     if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the game resources.' }
     if (-not $NonInteractive) {
@@ -110,6 +140,7 @@ try {
     }
     Set-InstallStatus 'Installation complete.'
     Write-Output "Installed: $Destination"
+    if ($LauncherSetup) { exit 0 }
 } catch {
     $message = $_.Exception.Message
     if ($createdDestination) { $message += "`n`nThe incomplete installation is at: $Destination" }

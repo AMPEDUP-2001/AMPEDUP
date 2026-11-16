@@ -1,7 +1,8 @@
-param([switch]$OverlayTest, [string]$KeyLiveFile)
+param([switch]$OverlayTest, [string]$KeyLiveFile, [switch]$Managed, [switch]$Headless)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 $root = $PSScriptRoot
+$files = if ($Managed) { Join-Path $root 'runtime' } else { $root }
 $switches = @{
     snow_gather = 'AMPED_GATHER_SNOW'
     texture_set_cache = 'AMPED_TEXTURE_SET_CACHE'
@@ -21,7 +22,15 @@ $held = $false
 try {
     try { $held = $mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $held = $true }
     if (-not $held) { throw 'AMPEDUP! is already running.' }
-    $game = Join-Path $root 'Amped-Host\bin\amped_recomp.exe'
+    $game = Join-Path $files 'Amped-Host\bin\amped_recomp.exe'
+    if ($Managed -and (-not (Test-Path -LiteralPath (Join-Path $files '.ampedup-ready') -PathType Leaf) -or
+        -not (Test-Path -LiteralPath $game -PathType Leaf))) {
+        if ($Headless) {
+            [Console]::Error.WriteLine('Prepare your game copy in RecompLauncher before playing AMPEDUP!.')
+            exit 12
+        }
+        throw 'Prepare your game copy in RecompLauncher before playing AMPEDUP!.'
+    }
     $reader = Join-Path $root 'tools\hud_settings_reader.exe'
     $profile = Join-Path $root 'profile'
     $saves = Join-Path $profile 'saves'
@@ -50,7 +59,7 @@ public static class AmpedWindow {
     for ($restarts = 0; $restarts -lt 20; ++$restarts) {
         $mode = (& $reader $settings | Out-String).Trim()
         if ($LASTEXITCODE -ne 0 -or $mode -notin @('standard','wide')) { throw 'Settings could not be read. See profile/settings.toml.' }
-        $override = Join-Path $root ("overrides\$mode\Menus.res")
+        $override = Join-Path $files ("overrides\$mode\Menus.res")
         $expected = if ($mode -eq 'wide') { 'DE71459DD177B836D750A226ABCE61281A9410FFDFE685BCF7D2F4EA466A4DDF' } else { '357C9638C6D0298AE5AD6A5A2D366709D8EC61A4153330F9417157B818458350' }
         if ((Get-FileHash -LiteralPath $override -Algorithm SHA256).Hash -ne $expected) { throw 'A required menu resource is missing or changed.' }
         $disk = Join-Path $profile ('disk-' + $mode)
@@ -85,7 +94,7 @@ public static class AmpedWindow {
         if ($options.bounded_frame_cap) { $env:AMPED_CAP_PHASE = '2' }
         foreach ($name in @('CONTIG_TOPDOWN','FENCE_EXPERIMENT','FLIP_EXPERIMENT','MOVIE_RHW_EXPERIMENT','OHCI_OWNER_REPORT','MORE_THREAD_STACKS','DEPTH_ONLY_EXPERIMENT','SHADOW_EXPERIMENT','OCC_FF_TRANSFORM','CACHE_DRAW_ENV','CACHE_GUEST_PROBES')) { [Environment]::SetEnvironmentVariable('AMPED_' + $name, '1', 'Process') }
         if ($OverlayTest) { $env:RECOMP_OVERLAY_TEST = Join-Path $session 'overlay.txt'; [IO.File]::WriteAllText($env:RECOMP_OVERLAY_TEST, '') }
-        $p = Start-Process -FilePath $game -WorkingDirectory $root -WindowStyle Hidden -RedirectStandardOutput (Join-Path $session 'stdout.log') -RedirectStandardError (Join-Path $session 'stderr.log') -PassThru
+        $p = Start-Process -FilePath $game -WorkingDirectory $files -WindowStyle Hidden -RedirectStandardOutput (Join-Path $session 'stdout.log') -RedirectStandardError (Join-Path $session 'stderr.log') -PassThru
         $null = $p.Handle
         $until = [DateTime]::UtcNow.AddSeconds(30)
         $script:shown = $false
@@ -105,7 +114,7 @@ public static class AmpedWindow {
     }
     throw 'Too many consecutive restarts. Please start the game again.'
 } catch {
-    if (-not $OverlayTest) { [Windows.Forms.MessageBox]::Show($_.Exception.Message, 'AMPEDUP!', 'OK', 'Error') | Out-Null }
+    if (-not $OverlayTest -and -not $Headless) { [Windows.Forms.MessageBox]::Show($_.Exception.Message, 'AMPEDUP!', 'OK', 'Error') | Out-Null }
     Write-Error $_.Exception.Message
     exit 1
 } finally {
