@@ -237,6 +237,10 @@ struct nv2a_pb_vsh {
 
 /* Read-only views of the executor's state. */
 const struct nv2a_pb_gpu *nv2a_pb_gpu_state(void);
+/* Consume an eligible subchannel-0 parameter prefix. A zero return leaves
+ * the entire prefix to the normal per-word executor. */
+uint32_t nv2a_pb_exec_bulk(uint32_t method, int noninc,
+                           const uint32_t *params, uint32_t count);
 /* The index-batch counters of the [GPU] summary line: the largest batch,
  * the batches that lost indices past NV_MAX_INDICES, and the indices past
  * 0xFFFF truncated to 16 bits. For the backend smoke test. */

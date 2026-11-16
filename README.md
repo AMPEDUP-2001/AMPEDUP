@@ -1,19 +1,19 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.6
+# AMPEDUP! 0.6.1
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
 
 <a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/preview.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.6.1.md) · [Credits](#credits)
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.6 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.6).
+Choose a Windows installer from the [0.6.1 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.6.1).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.6-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6/Setup-AMPEDUP-0.6-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.6.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6/Setup-AMPEDUP-0.6.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.6.1-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6.1/Setup-AMPEDUP-0.6.1-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.6.1.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6.1/Setup-AMPEDUP-0.6.1.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
@@ -45,13 +45,17 @@ The development benchmark measured two 30-second gameplay samples per scale on *
 
 The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rendering work on the CPU, and GPU busy measures active GPU time using PresentMon. CPU and GPU work can overlap. The slowest five-second window at 4× averaged 55.94 displayed FPS.
 
-## Features in 0.6
+## Game features
 
 - Vulkan rendering, 4:3, native 16:9, optional 21:9 gameplay, and internal resolution from original through 4×.
 - FXAA, SMAA, anisotropic filtering, and optional CRT scanlines.
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
 - Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
 - **Quit Game** is available from the main menu. Settings that need a restart ask for confirmation.
+
+## Next
+
+Custom soundtracks will let players use their own music in the game, as on the original Xbox.
 
 ## Screenshots from 0.6
 
@@ -62,7 +66,7 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 
 ## Credits
 
-The original game and its assets belong to their respective rights holders. AMPEDUP! is a fan project. The runtime and recompiler are based on [xboxrecomp](https://github.com/sp00nznet/xboxrecomp) and the Windows work in [Takedawn](https://github.com/xenophobentx/takedawn). Setup uses [extract-xiso](https://github.com/XboxDev/extract-xiso). See the vendored [licence](Amped-Host/toolkit/LICENSE) and [third-party notices](Amped-Host/toolkit/NOTICE) for component credits and terms.
+The original game and its assets belong to their respective rights holders. AMPEDUP! is a fan project. The runtime and recompiler are based on [xboxrecomp](https://github.com/sp00nznet/xboxrecomp) and the Windows work in [Takedawn](https://github.com/xenophobentx/takedawn). The bulk dispatcher adapts [WNBDEV's pushbuffer work](https://github.com/WNBDEV/xboxrecomp/commit/83357acac82d6a82f2aeefd2888f670a4fd4bc2b). Setup uses [extract-xiso](https://github.com/XboxDev/extract-xiso). See the vendored [licence](Amped-Host/toolkit/LICENSE) and [third-party notices](Amped-Host/toolkit/NOTICE) for component credits and terms.
 
 Projects consulted or supplied for reference include [Burnout 3](https://github.com/sp00nznet/burnout3), [SSX3-recomp](https://github.com/koenhendriks/SSX3-recomp), [rePOP](https://github.com/FulGerNet/rePOP), [Finest Hour Remastered](https://github.com/crazyriddler/FinestHourRemastered), [RE-Amped2](https://github.com/Nico-D-eu/RE-Amped2), and [Amped 3 Revamped](https://github.com/minty-hippo/amped3revamped).
 

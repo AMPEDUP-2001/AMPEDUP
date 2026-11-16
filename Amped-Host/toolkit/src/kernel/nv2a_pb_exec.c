@@ -6714,12 +6714,44 @@ static inline void inline_array(uint32_t param)
                         " the rest is dropped\n", (unsigned)NV_MAX_INLINE);
 }
 
+static int s_method_initialized;
+
+/* These are the same operations as the per-word paths. In particular,
+ * ARRAY_ELEMENT16 still writes the low half when just one index slot remains. */
+uint32_t nv2a_pb_exec_bulk(uint32_t method, int noninc,
+                           const uint32_t *params, uint32_t count)
+{
+    if (!s_method_initialized)
+        return 0;
+
+    if (noninc && method == NV097_ARRAY_ELEMENT16) {
+        for (uint32_t i = 0; i < count; ++i)
+            array_element16(params[i]);
+    } else if (noninc && method == NV097_INLINE_ARRAY) {
+        for (uint32_t i = 0; i < count; ++i)
+            inline_array(params[i]);
+    } else if (!s_constant_fast && method >= NV097_SET_TRANSFORM_CONSTANT_M
+               && method < NV097_SET_TRANSFORM_CONSTANT_M + 0x80u) {
+        if (!noninc) {
+            uint32_t remaining = (NV097_SET_TRANSFORM_CONSTANT_M + 0x80u - method) / 4;
+            if (count > remaining)
+                count = remaining;
+        }
+        const uint32_t step = noninc ? 0 : 4;
+        for (uint32_t i = 0; i < count; ++i)
+            vsh_constant_word(method + i * step, params[i]);
+    } else {
+        return 0;
+    }
+    s_perf.methods += count;
+    return count;
+}
+
 void nv2a_pb_exec_method(uint32_t subch, uint32_t method, uint32_t param)
 {
-    static int inited;
-    if (!inited) {
+    if (!s_method_initialized) {
         int a;
-        inited = 1;
+        s_method_initialized = 1;
         {
             const char *e = getenv("AMPED_PB_CONST_FAST");
             s_constant_fast = e && !strcmp(e, "1");

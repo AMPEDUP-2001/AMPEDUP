@@ -484,12 +484,34 @@ static void amp_pb_control(const char *kind, uint32_t at, uint32_t word,
     }
 }
 
+/* Consume parameters only within this walk and the current memory window.
+ * The next walk resumes any remaining words through the original path. */
+static uint32_t bulk_packet_words(const uint8_t *mem, uint32_t va, uint32_t end,
+                                  uint32_t words)
+{
+    if (s_left < 2 || s_subch || va >= end || !pb_in_window(va)
+            || s_sm_r != __atomic_load_n(&s_sm_w, __ATOMIC_ACQUIRE))
+        return 0;
+    uint32_t limit = (end - va) / 4;
+    uint32_t mapped = (XBOX_CONTIG_SIZE - (va - XBOX_CONTIG_BASE)) / 4;
+    if (limit > mapped)
+        limit = mapped;
+    if (limit > 0x100000u - words)
+        limit = 0x100000u - words;
+    if (limit > s_left)
+        limit = s_left;
+    return limit > 1 ? nv2a_pb_exec_bulk(s_method, s_noninc,
+                                 (const uint32_t *)(mem + va), limit) : 0;
+}
+
 void nv2a_pb_scan(uint32_t start_va, uint32_t end_va)
 {
     const uint8_t *mem = (const uint8_t *)xbox_GetMemoryOffset();
     uint32_t va = start_va, ret_va = 0, at = start_va, w = 0;
     uint32_t words = 0, jumps = 0, unknown = 0;
-    static int inject = -1;
+    static int inject = -1, bulk_mode = -1, bulk_logged;
+    static uint64_t bulk_words, all_words, bulk_packets;
+    static uint32_t last_stats_flip;
     const char *why = NULL;
     int in_call = 0;
 
@@ -500,6 +522,16 @@ void nv2a_pb_scan(uint32_t start_va, uint32_t end_va)
     if (!(s_scan_enabled || s_exec_enabled) || end_va == start_va)
         return;
     amp_pb_init();
+    if (bulk_mode < 0) {
+        bulk_mode = 0;
+#if !defined(AMPED_MOVIE_BRIDGE_V23)
+        const char *mode = getenv("AMPED_PB_BULK");
+        if (mode && !strcmp(mode, "1"))
+            bulk_mode = 1;
+        else if (mode && !strcmp(mode, "stats"))
+            bulk_mode = 2;
+#endif
+    }
     if (s_exec_enabled)
         nv2a_pb_perf_scan_begin();
     if (s_slow_ns == UINT64_MAX) {
@@ -517,6 +549,8 @@ void nv2a_pb_scan(uint32_t start_va, uint32_t end_va)
     if (inject > 0 && s_tot_segments && s_tot_segments % (uint32_t)inject == 0)
         why = "injected (RECOMP_DEBUG=pb_inject_stop)";
 
+    int use_bulk = bulk_mode && s_exec_enabled && !s_scan_enabled
+                   && !s_amp_pb.enabled && !s_slow_ns && !inject;
     /* Bounded at 4 MB of words, a sane single-frame amount: GET that never
      * reaches PUT is a stream this walk is out of step with. */
     while (!why && va != end_va) {
@@ -630,6 +664,22 @@ void nv2a_pb_scan(uint32_t start_va, uint32_t end_va)
                 s_run_method = s_method;
                 s_run_have = 0;
             }
+            if (use_bulk) {
+                uint32_t n = bulk_packet_words(mem, va, end_va, words);
+                va += n * 4;
+                words += n;
+                s_left -= n;
+                if (!s_noninc)
+                    s_method += n * 4;
+                if (n && !bulk_logged) {
+                    bulk_logged = 1;
+                    (fprintf)(stderr, "[AMPED_PB_BULK] dispatched parameter run\n");
+                }
+                if (n && bulk_mode == 2) {
+                    bulk_words += n;
+                    bulk_packets++;
+                }
+            }
             continue;
         }
         unknown++;
@@ -670,6 +720,17 @@ void nv2a_pb_scan(uint32_t start_va, uint32_t end_va)
     s_run_t0 = 0;                   /* a run the walk left open is not timed */
     if (s_exec_enabled)
         nv2a_pb_perf_scan_end();
+    if (bulk_mode == 2) {
+        uint32_t flip = nv2a_pb_gpu_state()->flips;
+        all_words += words;
+        if (flip - last_stats_flip >= 120) {
+            (fprintf)(stderr, "[AMPED_PB_BULK] flip=%u words=%llu bulk=%llu packets=%llu\n",
+                      flip, (unsigned long long)all_words,
+                      (unsigned long long)bulk_words, (unsigned long long)bulk_packets);
+            all_words = bulk_words = bulk_packets = 0;
+            last_stats_flip = flip;
+        }
+    }
     s_tot_words += words;
     s_tot_unknown += unknown;
     s_tot_jumps += jumps;

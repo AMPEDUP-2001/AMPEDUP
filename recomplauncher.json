@@ -38,7 +38,7 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "3",
+    "version": "4",
     "done": [
       "{install}/runtime/.ampedup-ready",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe"

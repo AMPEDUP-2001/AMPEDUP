@@ -8,6 +8,7 @@ $switches = @{
     snow_gather = 'AMPED_GATHER_SNOW'
     texture_set_cache = 'AMPED_TEXTURE_SET_CACHE'
     texture_hash_memo = 'AMPED_TEXTURE_HASH_MEMO'
+    bulk_pushbuffer = 'AMPED_PB_BULK'
 }
 $options = $null
 $optionsPath = Join-Path $root 'package-options.json'
