@@ -1,0 +1,290 @@
+{
+  "$schema": "https://recomplauncher.com/schema/recomplauncher.json",
+  "format": 1,
+  "name": "AMPEDUP!",
+  "repo": "AMPEDUP-2001/AMPEDUP",
+  "min": "0.90.0-beta.51",
+  "game": {
+    "kind": "iso_or_folder",
+    "label": "Your European multilingual retail Amped XISO (.iso) or its extracted folder.",
+    "check": {
+      "file": "default.xbe",
+      "xdvdfs": "default.xbe"
+    },
+    "dumps": [
+      {
+        "name": "Europe (AMPEDUP! supported XISO)",
+        "size": 2016346112,
+        "crc32": "922d8f9c"
+      }
+    ]
+  },
+  "start": {
+    "program": [
+      "AMPEDUP!.exe"
+    ],
+    "args": [
+      "--play"
+    ]
+  },
+  "prepare": {
+    "program": [
+      "AMPEDUP!.exe"
+    ],
+    "args": [
+      "--prepare",
+      "--game",
+      "{game}"
+    ],
+    "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
+    "timeout": 2400,
+    "version": "1",
+    "done": [
+      "{install}/runtime/.ampedup-ready",
+      "{install}/runtime/Amped-Host/bin/amped_recomp.exe"
+    ]
+  },
+  "config": [
+    {
+      "format": "toml",
+      "file": [
+        {
+          "path": "{install}/profile/settings.toml"
+        }
+      ],
+      "new": {
+        "display/amped_native_wide": "true",
+        "graphics/render_scale": "4",
+        "graphics/aniso": "\"16x\"",
+        "graphics/aa": "\"off\"",
+        "graphics/amped_crt": "true"
+      }
+    }
+  ],
+  "settings": [
+    {
+      "id": "window",
+      "label": "Window mode",
+      "help": "Choose a window or fill the display.",
+      "choices": [
+        {
+          "label": "Windowed",
+          "set": {
+            "display/fullscreen": "false"
+          }
+        },
+        {
+          "label": "Fullscreen",
+          "set": {
+            "display/fullscreen": "true"
+          }
+        }
+      ],
+      "defaults": {
+        "display/fullscreen": "false"
+      }
+    },
+    {
+      "id": "aspect",
+      "label": "Aspect ratio",
+      "help": "Choose the original 4:3 view or the native widescreen mode.",
+      "choices": [
+        {
+          "label": "4:3",
+          "set": {
+            "display/amped_native_wide": "false"
+          }
+        },
+        {
+          "label": "16:9",
+          "set": {
+            "display/amped_native_wide": "true"
+          }
+        }
+      ],
+      "defaults": {
+        "display/amped_native_wide": "true"
+      }
+    },
+    {
+      "id": "scale",
+      "label": "Internal resolution",
+      "help": "Higher scales sharpen 3D rendering and use more GPU time.",
+      "choices": [
+        {
+          "label": "Original",
+          "set": {
+            "graphics/render_scale": "1"
+          }
+        },
+        {
+          "label": "2×",
+          "set": {
+            "graphics/render_scale": "2"
+          }
+        },
+        {
+          "label": "3×",
+          "set": {
+            "graphics/render_scale": "3"
+          }
+        },
+        {
+          "label": "4×",
+          "set": {
+            "graphics/render_scale": "4"
+          }
+        }
+      ],
+      "defaults": {
+        "graphics/render_scale": "4"
+      }
+    },
+    {
+      "id": "aa",
+      "label": "Anti-aliasing",
+      "help": "Smooth jagged edges with FXAA or SMAA.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "graphics/aa": "\"off\""
+          }
+        },
+        {
+          "label": "FXAA",
+          "set": {
+            "graphics/aa": "\"fxaa\""
+          }
+        },
+        {
+          "label": "SMAA",
+          "set": {
+            "graphics/aa": "\"smaa\""
+          }
+        }
+      ],
+      "defaults": {
+        "graphics/aa": "\"off\""
+      }
+    },
+    {
+      "id": "aniso",
+      "label": "Texture filtering",
+      "help": "Higher values sharpen textures viewed at an angle.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "graphics/aniso": "\"off\""
+          }
+        },
+        {
+          "label": "2×",
+          "set": {
+            "graphics/aniso": "\"2x\""
+          }
+        },
+        {
+          "label": "4×",
+          "set": {
+            "graphics/aniso": "\"4x\""
+          }
+        },
+        {
+          "label": "8×",
+          "set": {
+            "graphics/aniso": "\"8x\""
+          }
+        },
+        {
+          "label": "16×",
+          "set": {
+            "graphics/aniso": "\"16x\""
+          }
+        }
+      ],
+      "defaults": {
+        "graphics/aniso": "\"16x\""
+      }
+    },
+    {
+      "id": "crt",
+      "label": "CRT scanlines",
+      "help": "Add scanlines to the final game image.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "graphics/amped_crt": "false"
+          }
+        },
+        {
+          "label": "On",
+          "set": {
+            "graphics/amped_crt": "true"
+          }
+        }
+      ],
+      "defaults": {
+        "graphics/amped_crt": "true"
+      }
+    },
+    {
+      "id": "fps",
+      "label": "Frame-rate cap",
+      "help": "Choose how often the game can present a frame. Timing above 60 FPS is experimental.",
+      "choices": [
+        {
+          "label": "30 FPS",
+          "set": {
+            "display/amped_fps_cap": "\"30\""
+          }
+        },
+        {
+          "label": "60 FPS",
+          "set": {
+            "display/amped_fps_cap": "\"60\""
+          }
+        },
+        {
+          "label": "120 FPS",
+          "set": {
+            "display/amped_fps_cap": "\"120\""
+          }
+        },
+        {
+          "label": "Off",
+          "set": {
+            "display/amped_fps_cap": "\"off\""
+          }
+        }
+      ],
+      "defaults": {
+        "display/amped_fps_cap": "\"60\""
+      }
+    }
+  ],
+  "saves": [
+    "{install}/profile/saves"
+  ],
+  "folders": {
+    "saves": [
+      {
+        "path": "{install}/profile/saves"
+      }
+    ],
+    "logs": [
+      {
+        "path": "{install}/profile/logs"
+      }
+    ]
+  },
+  "looks": {
+    "allowed": false,
+    "reason": "Use AMPEDUP!’s built-in CRT scanlines and anti-aliasing."
+  },
+  "exit_codes": {
+    "12": "Prepare your own copy from the AMPEDUP! page before playing."
+  }
+}

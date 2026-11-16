@@ -57,3 +57,19 @@ The download URLs and SHA-256 hashes are listed in
 [`build-tool-archives.json`](../Amped-Host/packaging/windows/build-tool-archives.json).
 For the all-in-one build, put the LLVM-MinGW zip in `windows-deps/dl/` and
 the other listed files in the directory passed to `-ToolArchives`.
+
+## Package for RecompLauncher
+
+```powershell
+./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-0.5-RecompLauncher -DependencyRoot C:/AmpedDeps -RecompLauncher
+```
+
+This produces a Windows x64 ZIP with `recomplauncher.json` beside
+`AMPEDUP!.exe`. Easy Setup calls `--prepare --game <path>` with the supported
+XISO or extracted game folder. Setup verifies the player's copy and compiles
+the game. `--play` starts it directly. The prepared build is in `runtime/`,
+and settings, saves, and logs are in `profile/` at the top of the installation.
+
+The XISO listed for verification in the manifest has CRC32 `922d8f9c` and
+size 2,016,346,112 bytes. Both values were computed from the verified
+European multilingual XISO that matches the project's documented SHA-256.

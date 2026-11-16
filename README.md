@@ -4,6 +4,8 @@
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
 
+<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
+
 [Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/preview.md) · [Credits](#credits)
 
 ## Play on Windows
@@ -19,6 +21,8 @@ Choose a Windows installer from the [0.5 release](https://github.com/AMPEDUP-200
 4. Start `AMPEDUP!.exe` from the shortcut or the installation folder.
 
 Use your own European multilingual retail disc image. The supported XISO has SHA‑256 `1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0`. Other editions and disc layouts are unverified. The repository contains the runtime, patch recipes and build tools. Bring your own disc to generate the executable and install game content.
+
+For RecompLauncher, use the Windows x64 ZIP and select the matching XISO or its extracted folder in Easy Setup. Setup downloads the build tools and compiles the game locally. Play opens the game directly and settings, saves, and logs live under `profile/` in the ZIP's installation folder. See [launcher setup details](docs/building.md#package-for-recomplauncher).
 
 ## System requirements
 

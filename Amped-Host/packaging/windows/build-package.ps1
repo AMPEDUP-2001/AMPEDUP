@@ -1,10 +1,11 @@
 param(
-    [ValidatePattern('^[a-zA-Z0-9_-]+$')][string]$PackageName = 'AMPEDUP-Private',
+    [ValidatePattern('^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*$')][string]$PackageName = 'AMPEDUP-Private',
     [Parameter(Mandatory=$true)][string]$DependencyRoot,
     [string]$ExecutablePath,
     [ValidatePattern('^[a-fA-F0-9]{64}$')][string]$ExpectedExecutableSha256,
     [string]$ToolArchives,
     [switch]$Online,
+    [switch]$RecompLauncher,
     [switch]$SnowGather = $true
 )
 $ErrorActionPreference = 'Stop'
@@ -14,11 +15,19 @@ $winDeps = Join-Path $dependencyDir 'windows-deps'
 if (-not (Test-Path -LiteralPath $winDeps -PathType Container)) {
     $winDeps = Join-Path $dependencyDir 'takedawn-windeps'
 }
-$target = Join-Path $hostDir ('dist\' + $PackageName)
-if (Test-Path -LiteralPath $target) { throw "Package already exists: $target" }
+$package = Join-Path $hostDir ('dist\' + $PackageName)
+$zip = $package + '-Windows-x64.zip'
+if ((Test-Path -LiteralPath $package) -or ($RecompLauncher -and (Test-Path -LiteralPath $zip))) {
+    throw "Package already exists: $package"
+}
+$target = $package
+if ($RecompLauncher) {
+    $target = Join-Path $package 'setup'
+    $Online = $true
+}
 $sourceSetup = $Online -or $ToolArchives
 if ($sourceSetup -eq [bool]$ExecutablePath -or ($Online -and $ToolArchives)) {
-    throw 'Choose one package mode: Online, ToolArchives, or ExecutablePath.'
+    throw 'Choose RecompLauncher, Online, ToolArchives, or ExecutablePath.'
 }
 if ($sourceSetup) {
     if ($ToolArchives) { $archiveRoot = (Resolve-Path -LiteralPath $ToolArchives).Path }
@@ -83,17 +92,28 @@ $common = @('/nologo', '/target:winexe', '/platform:x64', '/optimize+', "/win32i
 & $csc @common "/out:$payload\AMPEDUP!.exe" $bootstrap
 if ($LASTEXITCODE -ne 0) { throw 'Could not compile the game launcher.' }
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-$bundle = Join-Path (Split-Path -Parent $target) ($PackageName + '-' + [Guid]::NewGuid().ToString('N') + '.zip')
-try {
-    [IO.Compression.ZipFile]::CreateFromDirectory($target, $bundle, [IO.Compression.CompressionLevel]::Optimal, $false)
-    & $csc @common "/resource:$bundle,AMPEDUP.Setup.zip" "/out:$target\Setup-AMPEDUP.exe" $bootstrap
-    if ($LASTEXITCODE -ne 0) { throw 'Could not compile the standalone setup.' }
-} finally {
-    if (Test-Path -LiteralPath $bundle -PathType Leaf) { Remove-Item -LiteralPath $bundle }
+if ($RecompLauncher) {
+    Copy-Item -Path (Join-Path $payload '*') -Destination $package -Recurse
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'prepare-for-launcher.ps1') -Destination $package
+    Copy-Item -LiteralPath (Join-Path $hostDir '../recomplauncher.json') -Destination $package
+    [IO.File]::WriteAllText((Join-Path $package 'portable.txt'), '')
+} else {
+    $bundle = Join-Path (Split-Path -Parent $target) ($PackageName + '-' + [Guid]::NewGuid().ToString('N') + '.zip')
+    try {
+        [IO.Compression.ZipFile]::CreateFromDirectory($target, $bundle, [IO.Compression.CompressionLevel]::Optimal, $false)
+        & $csc @common "/resource:$bundle,AMPEDUP.Setup.zip" "/out:$target\Setup-AMPEDUP.exe" $bootstrap
+        if ($LASTEXITCODE -ne 0) { throw 'Could not compile the standalone setup.' }
+    } finally {
+        if (Test-Path -LiteralPath $bundle -PathType Leaf) { Remove-Item -LiteralPath $bundle }
+    }
 }
-$files = @(Get-ChildItem -LiteralPath $target -Recurse -File | Sort-Object FullName | ForEach-Object {
-    @{ path = $_.FullName.Substring($target.Length + 1).Replace('\','/'); size = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
+$files = @(Get-ChildItem -LiteralPath $package -Recurse -File | Sort-Object FullName | ForEach-Object {
+    @{ path = $_.FullName.Substring($package.Length + 1).Replace('\','/'); size = $_.Length; sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
 })
 $exeHash = if ($sourceSetup) { $null } else { $ExpectedExecutableSha256.ToUpperInvariant() }
-@{ schema = 1; executable_sha256 = $exeHash; build_from_disc = $sourceSetup; download_build_tools = [bool]$Online; snow_gather = [bool]$SnowGather; files = $files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $target 'package-manifest.json') -Encoding Ascii
-Get-ChildItem $target -Recurse -File | Measure-Object Length -Sum | Format-List Count,Sum
+@{ schema = 1; executable_sha256 = $exeHash; build_from_disc = $sourceSetup; download_build_tools = [bool]$Online; snow_gather = [bool]$SnowGather; files = $files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $package 'package-manifest.json') -Encoding Ascii
+if ($RecompLauncher) {
+    [IO.Compression.ZipFile]::CreateFromDirectory($package, $zip, [IO.Compression.CompressionLevel]::Optimal, $false)
+    Get-Item -LiteralPath $zip | Select-Object Name,Length
+}
+Get-ChildItem -LiteralPath $package -Recurse -File | Measure-Object Length -Sum | Format-List Count,Sum
