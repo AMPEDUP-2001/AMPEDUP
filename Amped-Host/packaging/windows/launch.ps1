@@ -51,7 +51,6 @@ public static class AmpedWindow {
   [DllImport("user32.dll")] public static extern bool EnumWindows(Callback cb, IntPtr state);
   [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr window, out uint pid);
   [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr window, StringBuilder text, int n);
-  [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern bool SetWindowText(IntPtr window, string text);
   [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr window, int command);
 }
 '@
@@ -99,7 +98,21 @@ public static class AmpedWindow {
         $until = [DateTime]::UtcNow.AddSeconds(30)
         $script:shown = $false
         while (-not $p.HasExited -and -not $script:shown -and [DateTime]::UtcNow -lt $until) {
-            [AmpedWindow]::EnumWindows({ param($w,$state) $pidValue=0; [void][AmpedWindow]::GetWindowThreadProcessId($w,[ref]$pidValue); if ($pidValue -eq $p.Id) { $t=New-Object Text.StringBuilder 512; [void][AmpedWindow]::GetWindowText($w,$t,512); if ($t.ToString() -eq 'Amped - diagnostic build') { [void][AmpedWindow]::SetWindowText($w,'AMPEDUP!'); [void][AmpedWindow]::ShowWindowAsync($w,5); $script:shown=$true } }; return $true }, [IntPtr]::Zero) | Out-Null
+            [AmpedWindow]::EnumWindows({
+                param($window, $state)
+                $owner = 0
+                [void][AmpedWindow]::GetWindowThreadProcessId($window, [ref]$owner)
+                if ($owner -eq $p.Id) {
+                    $title = New-Object Text.StringBuilder 128
+                    [void][AmpedWindow]::GetWindowText($window, $title, $title.Capacity)
+                    if ($title.ToString() -in @('AMPEDUP!', 'Amped - diagnostic build')) {
+                        [void][AmpedWindow]::ShowWindowAsync($window, 5)
+                        $script:shown = $true
+                        return $false
+                    }
+                }
+                return $true
+            }, [IntPtr]::Zero) | Out-Null
             if (-not $script:shown) { Start-Sleep -Milliseconds 200 }
         }
         $p.WaitForExit()

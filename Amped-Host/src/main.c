@@ -555,7 +555,7 @@ int main(int argc, char **argv)
 #if defined(AMPED_MENU_LIFECYCLE_V23)
     { extern void amped_menu_lifecycle_install_v23(void); amped_menu_lifecycle_install_v23(); }
 #endif
-    xbox_HostWindowSetTitle("Amped - diagnostic build");
+    xbox_HostWindowSetTitle("AMPEDUP!");
     return xbox_HostWindowMain(amped_guest_main);
 }
 
