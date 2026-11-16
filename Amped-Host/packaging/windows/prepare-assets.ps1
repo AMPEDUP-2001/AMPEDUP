@@ -13,6 +13,28 @@ foreach ($mode in @('standard','wide')) {
         if ($index -lt 0 -or $index -ge $bytes.Length -or $bytes[$index] -ne [byte]$edit[1]) { throw "Invalid $mode resource patch." }
         $bytes[$index] = [byte]$edit[2]
     }
+    if ($patch.menu_edits) {
+        $assembled = [IO.MemoryStream]::new()
+        try {
+            $last = 0
+            foreach ($edit in $patch.menu_edits) {
+                $index = [int]$edit[0]
+                $length = [int]$edit[1]
+                $hex = [string]$edit[2]
+                if ($index -lt $last -or $length -lt 0 -or $index + $length -gt $bytes.Length -or
+                    $hex.Length % 2 -ne 0 -or $hex -cnotmatch '^[a-f0-9]*$') {
+                    throw 'Invalid menu entry patch.'
+                }
+                $assembled.Write($bytes, $last, $index - $last)
+                for ($i = 0; $i -lt $hex.Length; $i += 2) {
+                    $assembled.WriteByte([Convert]::ToByte($hex.Substring($i, 2), 16))
+                }
+                $last = $index + $length
+            }
+            $assembled.Write($bytes, $last, $bytes.Length - $last)
+            $bytes = $assembled.ToArray()
+        } finally { $assembled.Dispose() }
+    }
     $dir = Join-Path $Destination ('overrides\' + $mode)
     [void][IO.Directory]::CreateDirectory($dir)
     $path = Join-Path $dir 'Menus.res'
