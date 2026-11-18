@@ -61,7 +61,7 @@ the other listed files in the directory passed to `-ToolArchives`.
 ## Package for RecompLauncher
 
 ```powershell
-./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-0.6.1-RecompLauncher -DependencyRoot C:/AmpedDeps -RecompLauncher
+./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-0.7-RecompLauncher -DependencyRoot C:/AmpedDeps -RecompLauncher
 ```
 
 This produces a Windows x64 ZIP with `recomplauncher.json` beside

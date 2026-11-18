@@ -1,4 +1,4 @@
-AMPEDUP! 0.6.1 - WINDOWS
+AMPEDUP! 0.7 - WINDOWS
 
 Requirements: 64-bit Windows 10/11, a Vulkan-capable GPU and current driver,
 about 6 GB of free space for installation and compilation, and your matching
@@ -23,6 +23,10 @@ to cancel the change. In the resolution prompt, use left/right to choose
 the scale and up/down to choose No or Yes. Restarting loses unsaved progress.
 Choose Quit Game at the bottom of settings and press the select button again
 to exit.
+
+For custom music, open Options > Soundtracks and press Y or Ctrl. Select
+a folder with MP3, FLAC, WAV, or Ogg Vorbis files. After restart it appears
+as a genre. Toggle it with X, then accept with A and use Save As Defaults.
 
 Saves, settings and logs are in the installed folder's profile subfolder.
 Back up profile before moving or removing the installation. The profile is not

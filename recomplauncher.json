@@ -38,7 +38,7 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "4",
+    "version": "5",
     "done": [
       "{install}/runtime/.ampedup-ready",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe"
@@ -276,7 +276,8 @@
     }
   ],
   "saves": [
-    "{install}/profile/saves"
+    "{install}/profile/saves/UDATA/4d530005",
+    "{install}/profile/saves/TDATA/4d530005"
   ],
   "folders": {
     "saves": [

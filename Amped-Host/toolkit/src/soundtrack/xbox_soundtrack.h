@@ -89,6 +89,8 @@ typedef struct xst_library {
  * what it has (budget_hit). NULL when `dir` cannot be read; a folder with
  * no playable file gives a library with n_st == 0. */
 xst_library *xst_scan(const char *dir);
+/* Treat a selected folder and its album subfolders as one soundtrack. */
+xst_library *xst_scan_single(const char *dir);
 /* The same, watched: the counts grow while it runs (another thread may read
  * them), and setting `cancel` ends it early with NULL. */
 typedef struct xst_progress {

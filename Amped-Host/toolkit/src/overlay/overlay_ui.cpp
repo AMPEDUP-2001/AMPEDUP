@@ -36,6 +36,12 @@
 #include <mutex>
 #include "imgui_internal.h"
 #include "backends/imgui_impl_sdl2.h"
+#if defined(_WIN32) && defined(AMPED_UNIFIED_EXPERIMENT)
+#include <SDL_syswm.h>
+extern "C" void amped_music_pick_folder(void *owner);
+extern "C" const char *amped_music_status(void);
+extern "C" int amped_music_take_restart_prompt(void);
+#endif
 
 #include "input_backend.h"
 #include "input_map.h"
@@ -423,6 +429,7 @@ static int restart_count()
  * then the port's own reason. */
 static void restart_reason(char *out, size_t n);
 static void restart_now();
+static void set_open(bool on, bool from_title = false);
 
 static int s_host_n;
 static const char *(*s_host_fn)(int row, int activate);
@@ -453,15 +460,23 @@ enum { CS_NONE, CS_ON, CS_ASK, CS_DISCARDED };
 static int s_confirm;
 #if defined(AMPED_UNIFIED_EXPERIMENT)
 static bool s_amped_restart_prompt, s_amped_restart_yes, s_amped_restart_scale;
+static bool s_amped_restart_music;
 static bool s_amped_quit_prompt;
-enum TitleMenu { TITLE_NONE, TITLE_MAIN, TITLE_OPTIONS };
+enum TitleMenu { TITLE_NONE, TITLE_MAIN, TITLE_OPTIONS, TITLE_SOUNDTRACKS };
 static std::atomic<unsigned> s_title_menu{TITLE_NONE};
+static std::atomic<bool> s_music_request{false};
 static std::atomic<bool> s_title_row_selected{false};
 static std::atomic<uint32_t> s_title_row_ready_at{0};
 static double s_amped_restart_before[XS_COUNT];
 static char s_amped_restart_error[180];
 static void amped_cancel_restart_prompt()
 {
+    if (s_amped_restart_music) {
+        s_amped_restart_music = false;
+        s_amped_restart_prompt = false;
+        set_open(false);
+        return;
+    }
     for (int i = 0; i < XS_COUNT; ++i)
         if ((xbox_SettingGet((xs_id)i)->flags & XS_RESTART)
                 && xbox_SettingValue((xs_id)i) != s_amped_restart_before[i])
@@ -2025,7 +2040,7 @@ static void pause_sync()
  * plays no sound of its own over it, and the pause waits until that sound
  * is out (a paused title's voices stop where they are and would finish
  * when the overlay closes). Its input is held at once all the same. */
-static void set_open(bool on, bool from_title = false)
+static void set_open(bool on, bool from_title)
 {
     if (on == s_open)
         return;
@@ -2158,6 +2173,13 @@ extern "C" void amped_title_menu_command(unsigned command)
         break;
     case 7:
         s_title_menu.store(TITLE_NONE);
+        break;
+    case 8:
+        s_title_row_ready_at.store(now_ms() + 320);
+        s_title_menu.store(TITLE_SOUNDTRACKS);
+        break;
+    case 9:
+        s_music_request.store(true);
         break;
     }
     if (getenv("RECOMP_OVERLAY_TEST"))
@@ -2527,6 +2549,17 @@ void xbox_OverlayPoll(void)
     std::lock_guard<std::mutex> g(s_ov_mu);
     test_poll();
 
+#if defined(_WIN32) && defined(AMPED_UNIFIED_EXPERIMENT)
+    if (!s_open && s_title_menu.load() == TITLE_SOUNDTRACKS && amped_music_take_restart_prompt()) {
+        set_open(true, true);
+        s_amped_restart_music = true;
+        s_amped_restart_prompt = true;
+        s_amped_restart_scale = false;
+        s_amped_restart_yes = false;
+        s_amped_restart_error[0] = 0;
+    }
+#endif
+
     const int open_request = s_open_request.exchange(0);
     if (open_request && !s_open) {
 #if defined(AMPED_SETTINGS_EXPERIMENT)
@@ -2779,6 +2812,17 @@ void xbox_OverlayPlatformFrame(int vulkan)
 {
     if (!s_enabled)
         return;
+#if defined(_WIN32) && defined(AMPED_UNIFIED_EXPERIMENT)
+    if (s_music_request.exchange(false) && s_title_menu.load() == TITLE_SOUNDTRACKS && !s_open) {
+        SDL_SysWMinfo wm{};
+        SDL_VERSION(&wm.version);
+        if (SDL_GetWindowWMInfo(s_win, &wm) && wm.subsystem == SDL_SYSWM_WINDOWS) {
+            xbox_InputSetBlocked(1);
+            amped_music_pick_folder(wm.info.win.window);
+            xbox_InputSetBlocked(0);
+        }
+    }
+#endif
     std::lock_guard<std::mutex> g(s_ov_mu);
     if (!s_core_ready) {
         /* The context and ImGui's SDL half (cursors, the window's id) are
@@ -4953,7 +4997,7 @@ static void build_pages_inner()
             if (s_steps[D_UP] > 0 || s_steps[D_DOWN] > 0)
                 s_amped_restart_yes = !s_amped_restart_yes;
         } else if (s_steps[D_LEFT] > 0 || s_steps[D_RIGHT] > 0
-                   || (quit && (s_steps[D_UP] > 0 || s_steps[D_DOWN] > 0))) {
+                   || ((quit || s_amped_restart_music) && (s_steps[D_UP] > 0 || s_steps[D_DOWN] > 0))) {
             s_amped_restart_yes = !s_amped_restart_yes;
         }
         memset(s_steps, 0, sizeof s_steps);
@@ -4969,8 +5013,12 @@ static void build_pages_inner()
                     quit ? "Quit AMPEDUP!?" : "Restart the game now?");
         dl->AddText(ImGui::GetFont(), LY.hint, ImVec2(x, y + fs * 1.8f), col(T->hint),
                     quit ? "Unsaved game progress will be lost."
-                         : "The change needs a restart. Unsaved game progress will be lost.");
-        float button_y = y + fs * 3.2f;
+                    : s_amped_restart_music ? "The new genre will appear after restarting."
+                    : "The change needs a restart. Unsaved game progress will be lost.");
+        if (s_amped_restart_music)
+            dl->AddText(ImGui::GetFont(), LY.hint, ImVec2(x, y + fs * 2.7f), col(T->hint),
+                        "Choose No to restart later.");
+        float button_y = y + fs * (s_amped_restart_music ? 4.0f : 3.2f);
         if (scale) {
             ImGui::SetCursorScreenPos(ImVec2(x, button_y));
             if (ImGui::Button("-##scale", ImVec2(fs * 2.0f, fs * 1.5f)))
@@ -5019,6 +5067,7 @@ static void build_pages_inner()
                 } else {
                     SDL_Event q;
                     s_amped_restart_prompt = false;
+                    s_amped_restart_music = false;
                     set_open(false);
                     memset(&q, 0, sizeof q);
                     q.type = SDL_QUIT;
@@ -5422,6 +5471,23 @@ static void draw_title_row(unsigned menu, ImVec2 disp)
     const float w = h * aspect;
     const float x = (disp.x - w) * 0.5f;
     const float y = (disp.y - h) * 0.5f;
+#ifdef _WIN32
+    if (menu == TITLE_SOUNDTRACKS) {
+        ImDrawList *dl = ImGui::GetBackgroundDrawList();
+        Face body(s_f_body, SHEAR);
+        const float size = h * 0.032f;
+        const auto caption = [&](const char *text, float position) {
+            const float tw = ImGui::GetFont()->CalcTextSizeA(size, FLT_MAX, 0, text).x;
+            const ImVec2 at((disp.x - tw) * 0.5f, y + h * position);
+            txt(dl, size, ImVec2(at.x + 1, at.y + 1), IM_COL32_BLACK, text);
+            txt(dl, size, at, IM_COL32_WHITE, text);
+        };
+        caption("Y   Add Music Folder", 0.943f);
+        if (const char *status = amped_music_status())
+            caption(status, 0.056f);
+        return;
+    }
+#endif
     const float cy = y + h * (quit ? 0.835f : 0.813f);
     const float height = h * (quit ? 0.065f : 0.076f);
     const ImVec2 lo(x + 0.571f * w, cy - height * 0.5f);

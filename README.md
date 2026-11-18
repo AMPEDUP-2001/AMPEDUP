@@ -1,19 +1,19 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.6.1
+# AMPEDUP! 0.7
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
 
-<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
+<a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.6.1.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.md) · [Credits](#credits)
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.6.1 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.6.1).
+Choose a Windows installer from the [0.7 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.6.1-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6.1/Setup-AMPEDUP-0.6.1-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.6.1.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.6.1/Setup-AMPEDUP-0.6.1.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7/Setup-AMPEDUP-0.7-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7/Setup-AMPEDUP-0.7.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
@@ -53,9 +53,14 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 - Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
 - **Quit Game** is available from the main menu. Settings that need a restart ask for confirmation.
 
-## Next
+## Custom soundtracks
 
-Custom soundtracks will let players use their own music in the game, as on the original Xbox.
+1. Open **Options → Soundtracks** and press **Y** on a controller or **Ctrl** on the keyboard.
+2. Choose a folder containing MP3, FLAC, WAV, or Ogg Vorbis tracks. Each folder adds one genre.
+3. Choose **Yes** to restart now or **No** to load the new genre the next time you start the game.
+4. Open Soundtracks, press **X** to enable the new genre, then **A** to accept. Use **Save As Defaults** in Options to keep your selection.
+
+Imports use the Windows Media components and save converted copies in your local profile. The import keeps existing genres, and short tracks below the game's encoded size minimum are skipped.
 
 ## Screenshots from 0.6
 

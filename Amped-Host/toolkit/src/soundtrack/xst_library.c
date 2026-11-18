@@ -528,6 +528,15 @@ xst_library *xst_scan(const char *dir)
     return xst_scan_progress(dir, NULL);
 }
 
+xst_library *xst_scan_single(const char *dir)
+{
+    int budget = XST_SCAN_BUDGET;
+    xst_library *lib = calloc(1, sizeof *lib);
+    if (lib)
+        add_soundtrack(lib, dir, XST_MAX_DEPTH - 1, NULL, &budget);
+    return lib;
+}
+
 xst_library *xst_scan_progress(const char *dir, xst_progress *pr)
 {
     xst_library *lib;
