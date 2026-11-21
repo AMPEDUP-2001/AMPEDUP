@@ -27,7 +27,8 @@ The gable crops alternate pairs. Each reference crop is followed by a crop with 
 ## What you can play and configure
 
 - **Quick Start, Career, and replays.** Controller testing covered downhill runs and results, Career creation and progress through a restart, replay recording and playback, and Xbox controller vibration. Keyboard controls are also available.
-- **Graphics.** Vulkan rendering at Original, 2×, 3×, and 4× internal resolution. Choose 4:3, native 16:9, or optional 21:9 gameplay, along with FXAA or SMAA, anisotropic filtering, optional CRT scanlines, and a 60 FPS cap. Settings that require a restart prompt for confirmation.
+- **Graphics.** Vulkan rendering at Original, 2×, 3×, and 4× internal resolution. Choose 4:3 or native 16:9, along with FXAA or SMAA, anisotropic filtering, optional CRT scanlines, and a 60 FPS cap.
+- **21:9 ultrawide.** A wider course camera with a centered HUD and menus. Enable **Options → Graphics → Ultrawide (21:9)** and confirm the restart, or choose **21:9** under **Aspect ratio** in RecompLauncher before launching.
 - **Audio.** Choose Console-style or Legacy mixing, speaker layout, spatial width, and separate soundtrack, effects, and master volume. The Brighton 1 Drop Point soundtrack fix is included.
 - **Your music.** From **Options → Soundtracks**, press **Y** on a controller or **Ctrl** on the keyboard to add a folder. It appears as its own genre after restart, and you can toggle it alongside the original genres. Import supports MP3, FLAC, WAV, and Ogg Vorbis.
 - **Windows setup.** Choose the online installer, the all-in-one installer, or Easy Setup in RecompLauncher. Setup verifies the supported European multilingual retail XISO and generates the updated menus, rail geometry, and texture pack from your game files. RecompLauncher rebuilds the runtime during the update and keeps the settings and saves in your profile.

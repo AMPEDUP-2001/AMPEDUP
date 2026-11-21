@@ -2,7 +2,7 @@
 
 # AMPEDUP! 0.7.1
 
-An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
+An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc, with optional **21:9 ultrawide gameplay**.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
@@ -47,7 +47,8 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 
 ## Game features
 
-- Vulkan rendering, 4:3, native 16:9, optional 21:9 gameplay, and internal resolution from original through 4×.
+- Vulkan rendering, 4:3 and native 16:9, and internal resolution from original through 4×.
+- **21:9 ultrawide** widens the course camera and keeps the HUD and menus centered. Turn on **Options → Graphics → Ultrawide (21:9)** and confirm the restart. In RecompLauncher, choose **21:9** under **Aspect ratio** before launching.
 - FXAA, SMAA, anisotropic filtering, and optional CRT scanlines.
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
 - Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
