@@ -18,7 +18,7 @@ void sub_0002D200(void)
     uint32_t top = MEM32(state);
     if (top == base + 9 && MEM8(base + 8) == 2) {
         uint64_t bits = (uint64_t)MEM32(base + 4) << 32 | MEM32(base);
-        for (unsigned command = 1; command <= 9; ++command) {
+        for (unsigned command = 1; command <= 11; ++command) {
             union { double number; uint64_t bits; } value = { (double)command };
             if (bits == value.bits) {
                 amped_title_menu_command(command);

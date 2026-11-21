@@ -2797,8 +2797,6 @@ static bool touch_on()
     return xbox_InputTouchVisible() != 0;
 }
 
-static std::atomic<unsigned> s_amp_demo_notice{0};
-extern "C" void amped_demo_unavailable_notice(void) { if (getenv("AMPED_DEMO_NOTICE_TRACE")) (fprintf)(stderr, "[AMPED_DEMO_NOTICE] requested\n"); s_amp_demo_notice.store(1, std::memory_order_release); }
 int xbox_OverlayWants(void)
 {
 #if defined(AMPED_UNIFIED_EXPERIMENT)
@@ -2806,7 +2804,7 @@ int xbox_OverlayWants(void)
         return 1;
 #endif
     return s_enabled && (s_open || s_alpha > 0.0f || xbox_SettingValue(XS_ADVANCED_PERF) != 0.0
-                         || notice_on() || scripted_on() || sg_banner_on() || touch_on() || s_amp_demo_notice.load(std::memory_order_acquire) != 0);
+                         || notice_on() || scripted_on() || sg_banner_on() || touch_on());
 }
 
 void xbox_OverlayFramePresented(void)
@@ -5590,11 +5588,6 @@ bool overlay_begin_frame()
     s_alpha += (s_open ? 1.0f : -1.0f) * dt / 0.14f;
     s_alpha = s_alpha < 0 ? 0 : s_alpha > 1 ? 1 : s_alpha;
     bool perf = xbox_SettingValue(XS_ADVANCED_PERF) != 0.0;
-    static uint32_t amp_demo_start = 0;
-    static bool amp_demo_show = false;
-    unsigned amp_demo_pending = 1;
-    if (s_amp_demo_notice.compare_exchange_strong(amp_demo_pending, 2, std::memory_order_acq_rel)) { amp_demo_start = now; amp_demo_show = true; if (getenv("AMPED_DEMO_NOTICE_TRACE")) (fprintf)(stderr, "[AMPED_DEMO_NOTICE] consumed at=%u\n", now); }
-    if (amp_demo_show && (uint32_t)(now - amp_demo_start) >= 4000u) { amp_demo_show = false; unsigned active = 2; s_amp_demo_notice.compare_exchange_strong(active, 0, std::memory_order_acq_rel); if (getenv("AMPED_DEMO_NOTICE_TRACE")) (fprintf)(stderr, "[AMPED_DEMO_NOTICE] expired at=%u\n", now); }
     bool note = notice_on(), scripted = scripted_on(), sg = sg_banner_on();
     bool touch = touch_on() && !s_open && s_alpha <= 0.0f;
     bool title_row = false;
@@ -5602,7 +5595,7 @@ bool overlay_begin_frame()
     const auto title_menu = s_title_menu.load();
     title_row = title_menu != TITLE_NONE;
 #endif
-    if (!s_open && s_alpha <= 0.0f && !perf && !note && !scripted && !sg && !touch && !title_row && !amp_demo_show)
+    if (!s_open && s_alpha <= 0.0f && !perf && !note && !scripted && !sg && !touch && !title_row)
         return false;
 
     ImGuiIO &io = ImGui::GetIO();
@@ -5694,15 +5687,6 @@ bool overlay_begin_frame()
         const ImVec2 p((disp.x - tw) * 0.5f, disp.y * 0.72f);
         dl->AddRectFilled(ImVec2(p.x - fs, p.y - fs * 0.5f), ImVec2(p.x + tw + fs, p.y + fs * 1.5f),
                           solid(T->toast_bg, 235 / 255.0f), fs * 0.5f);
-        dl->AddText(p, solid(T->toast_text), text);
-    }
-    if (amp_demo_show) {
-        const char *text = "Game Demos is unavailable in this version";
-        ImDrawList *dl = ImGui::GetForegroundDrawList();
-        const ImVec2 disp = ImGui::GetIO().DisplaySize;
-        const float tw = ImGui::CalcTextSize(text).x;
-        const ImVec2 p((disp.x - tw) * 0.5f, disp.y * 0.045f);
-        dl->AddRectFilled(ImVec2(p.x - fs, p.y - fs * 0.5f), ImVec2(p.x + tw + fs, p.y + fs * 1.5f), solid(T->toast_bg, 235 / 255.0f), fs * 0.5f);
         dl->AddText(p, solid(T->toast_text), text);
     }
     if (scripted) {
