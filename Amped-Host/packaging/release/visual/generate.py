@@ -9,13 +9,14 @@ import sys
 
 import numpy as np
 
+HERE = Path(__file__).resolve().parent
+# The embeddable Windows Python uses a fixed module search path.
+sys.path[:0] = [str(HERE), str(HERE.parents[2] / "research/vrtdrive")]
+
 from bevel_posts import bevel
 from refine_rail import refine
 from round_funbox import round_lip
 from textures import BC1, decode_xpr, groomed, replace_texture, tile_detail
-
-HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parents[2] / "research/vrtdrive"))
 from inspect_directory import directory
 
 COURSE = "Resource/Terrain/SS_EgoTrip"
