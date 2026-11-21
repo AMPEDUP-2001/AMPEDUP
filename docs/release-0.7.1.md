@@ -1,5 +1,7 @@
 # AMPEDUP! 0.7.1
 
+![Snow Summit 1, Miracle Mile, in 21:9 ultrawide at 4× internal resolution](screenshots/0.7.1/ultrawide-snow-summit.jpg)
+
 ## What's new
 
 - **Native menu entries.** Open **Options → Graphics** from the game's animated 3D menu. **Quit Game** takes the former **Game Demos** slot on the Main Menu and asks for confirmation.

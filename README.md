@@ -67,6 +67,8 @@ Imports use the Windows Media components and save converted copies in your local
 
 ## Screenshots from 0.7.1
 
+![Snow Summit 1, Miracle Mile, in 21:9 ultrawide at 4× internal resolution](docs/screenshots/0.7.1/ultrawide-snow-summit.jpg)
+
 ![Original Xbox and AMPEDUP! Main Menus, showing Quit Game in the sixth slot](docs/screenshots/0.7.1/main-menu-comparison.jpg)
 
 ![The native Graphics entry selected and the settings it opens](docs/screenshots/0.7.1/graphics-menu.jpg)
