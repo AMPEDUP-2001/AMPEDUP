@@ -352,6 +352,7 @@ static constexpr Meta k_meta[XS_COUNT] = {
     /* XS_INPUT_TOUCH_SCALE */  { XS_INPUT_TOUCH_SCALE, "Touch controls size", "100% suits a phone or a 6-7 inch handheld held in both hands.", 0.1, FMT_PERCENT, NULL, 0 },
     /* XS_INPUT_TOUCH_AUTO_GAS */ { XS_INPUT_TOUCH_AUTO_GAS, "Touch: accelerate automatically", "In a race the car accelerates by itself; hold BRAKE to slow down or reverse. Touch controls only.", 1, FMT_PLAIN, NULL, 0 },
 #endif
+    /* XS_AMPED_HD_TEXTURES */ { XS_AMPED_HD_TEXTURES, "HD Texture Pack", "Adds high-resolution detail to selected course materials.", 1, FMT_PLAIN, NULL, 0 },
 };
 /* One entry per setting, in xbox_settings.h's order: a row shows its own
  * label, help and choices only while k_meta[id] is id's (BO-245: a merge
@@ -1160,6 +1161,7 @@ static int page_rows(int page, Row *r)
 #if defined(AMPED_GRAPHICS_UI_EXPERIMENT)
     SET(XS_GRAPHICS_RENDER_SCALE);
     SET(XS_GRAPHICS_AA);
+    SET(XS_AMPED_HD_TEXTURES);
 #if defined(AMPED_UNIFIED_EXPERIMENT)
     SET(XS_AMPED_CRT);
 #endif
@@ -2172,6 +2174,8 @@ extern "C" void amped_title_menu_command(unsigned command)
         s_open_request.store(command == 5 ? 2 : 3);
         break;
     case 7:
+    case 10: // Main Menu uses its own native scene node.
+    case 11: // Options Menu uses its own native scene node.
         s_title_menu.store(TITLE_NONE);
         break;
     case 8:
@@ -2793,6 +2797,8 @@ static bool touch_on()
     return xbox_InputTouchVisible() != 0;
 }
 
+static std::atomic<unsigned> s_amp_demo_notice{0};
+extern "C" void amped_demo_unavailable_notice(void) { if (getenv("AMPED_DEMO_NOTICE_TRACE")) (fprintf)(stderr, "[AMPED_DEMO_NOTICE] requested\n"); s_amp_demo_notice.store(1, std::memory_order_release); }
 int xbox_OverlayWants(void)
 {
 #if defined(AMPED_UNIFIED_EXPERIMENT)
@@ -2800,7 +2806,7 @@ int xbox_OverlayWants(void)
         return 1;
 #endif
     return s_enabled && (s_open || s_alpha > 0.0f || xbox_SettingValue(XS_ADVANCED_PERF) != 0.0
-                         || notice_on() || scripted_on() || sg_banner_on() || touch_on());
+                         || notice_on() || scripted_on() || sg_banner_on() || touch_on() || s_amp_demo_notice.load(std::memory_order_acquire) != 0);
 }
 
 void xbox_OverlayFramePresented(void)
@@ -5459,7 +5465,33 @@ static void draw_touch(ImDrawList *dl, ImVec2 disp)
 static float s_tgt_w, s_tgt_h;
 
 #if defined(AMPED_UNIFIED_EXPERIMENT)
-static void draw_title_row(unsigned menu, ImVec2 disp)
+static ImU32 title_row_color(ImU32 normal, ImU32 active, float focus)
+{
+    return ImGui::ColorConvertFloat4ToU32(ImLerp(ImGui::ColorConvertU32ToFloat4(normal),
+                                                ImGui::ColorConvertU32ToFloat4(active), focus));
+}
+
+static void draw_title_plate(ImDrawList *dl, ImVec2 lo, ImVec2 hi, float tilt, float origin,
+                             ImU32 top, ImU32 bottom)
+{
+    const float height = hi.y - lo.y;
+    const float head = height * 0.5f, tail = height * 0.125f;
+    const int first = dl->VtxBuffer.Size;
+    dl->PathArcTo(ImVec2(lo.x + head, lo.y + head), head, IM_PI * 0.5f, IM_PI * 1.5f, 16);
+    // The menu's far end tapers across its full height under perspective.
+    for (int i = 0; i <= 12; ++i) {
+        const float angle = IM_PI * (i / 12.0f - 0.5f);
+        dl->PathLineTo(ImVec2(hi.x - tail + tail * cosf(angle),
+                              lo.y + head + head * sinf(angle)));
+    }
+    dl->PathFillConvex(top);
+    ImGui::ShadeVertsLinearColorGradientKeepAlpha(dl, first, dl->VtxBuffer.Size, lo,
+                                                  ImVec2(lo.x, hi.y), top, bottom);
+    for (int i = first; i < dl->VtxBuffer.Size; ++i)
+        dl->VtxBuffer[i].pos.y += tilt * (dl->VtxBuffer[i].pos.x - origin);
+}
+
+static void draw_title_row(unsigned menu, ImVec2 disp, float dt)
 {
     const bool selected = s_title_row_selected.load();
     const bool quit = menu == TITLE_MAIN;
@@ -5488,32 +5520,36 @@ static void draw_title_row(unsigned menu, ImVec2 disp)
         return;
     }
 #endif
-    const float cy = y + h * (quit ? 0.835f : 0.813f);
-    const float height = h * (quit ? 0.065f : 0.076f);
-    const ImVec2 lo(x + 0.571f * w, cy - height * 0.5f);
-    const ImVec2 hi(x + (quit ? 0.837f : 0.883f) * w, cy + height * 0.5f);
+    static unsigned prior_menu = TITLE_NONE;
+    static float selection = 0.0f;
+    if (prior_menu != menu) {
+        selection = 0.0f;
+        prior_menu = menu;
+    }
+    selection = ImClamp(selection + dt * (selected ? 9.0f : -9.0f), 0.0f, 1.0f);
+    const float focus = selection * selection * (3.0f - 2.0f * selection);
+    const float height = h * (quit ? 0.072f : 0.081f);
+    const ImVec2 lo(x + w * (quit ? 0.570f : 0.566f),
+                    y + h * (quit ? 0.798f : 0.776f));
+    const ImVec2 hi(x + w * (quit ? ImLerp(0.875f, 0.841f, focus) : 0.883f), lo.y + height);
     ImDrawList *dl = ImGui::GetBackgroundDrawList();
-    const float tilt = quit ? -0.015f : -0.024f;
-    const auto plate = [&](float inset, float bottom, ImU32 top_color, ImU32 bottom_color) {
-        const ImVec2 a(lo.x + inset, lo.y + inset);
-        const ImVec2 b(hi.x - inset * 0.25f, hi.y - bottom);
-        const int first = dl->VtxBuffer.Size;
-        dl->AddRectFilled(a, b, top_color, (b.y - a.y) * 0.48f, ImDrawFlags_RoundCornersLeft);
-        ImGui::ShadeVertsLinearColorGradientKeepAlpha(dl, first, dl->VtxBuffer.Size,
-            ImVec2(a.x, a.y), ImVec2(a.x, b.y), top_color, bottom_color);
-        for (int i = first; i < dl->VtxBuffer.Size; ++i)
-            dl->VtxBuffer[i].pos.y += tilt * (dl->VtxBuffer[i].pos.x - lo.x);
+    const float tilt = quit ? ImLerp(0.006f, -0.004f, focus) : -0.008f;
+    const auto plate = [&](float inset, float top, float bottom, ImU32 light, ImU32 shade) {
+        draw_title_plate(dl, ImVec2(lo.x + height * inset, lo.y + height * top),
+                         ImVec2(hi.x - height * inset * 0.30f, hi.y - height * bottom),
+                         tilt, lo.x, light, shade);
     };
-    plate(0, 0, IM_COL32(50, 81, 124, 255), IM_COL32(5, 18, 59, 255));
-    plate(height * 0.029f, height * 0.045f, IM_COL32(229, 247, 255, 255), IM_COL32(144, 159, 220, 255));
-    plate(height * 0.064f, height * 0.086f, IM_COL32(29, 48, 102, 255), IM_COL32(36, 40, 111, 255));
-    plate(height * 0.112f, height * 0.125f,
-          selected ? IM_COL32(103, 240, 6, 255) : IM_COL32(59, 65, 242, 255),
-          selected ? IM_COL32(57, 203, 0, 255) : IM_COL32(51, 50, 220, 255));
+    plate(0.0f, 0.040f, -0.042f, IM_COL32(11, 19, 41, 105), IM_COL32(7, 14, 34, 105));
+    plate(0.0f, 0.0f, 0.0f, IM_COL32(216, 235, 247, 255), IM_COL32(32, 52, 96, 255));
+    plate(0.041f, 0.047f, 0.051f, IM_COL32(42, 64, 108, 255), IM_COL32(139, 174, 210, 255));
+    plate(0.076f, 0.094f, 0.086f,
+          title_row_color(IM_COL32(48, 56, 225, 255), IM_COL32(60, 198, 8, 255), focus),
+          title_row_color(IM_COL32(55, 68, 251, 255), IM_COL32(55, 187, 8, 255), focus));
 
-    const ImU32 ink = selected ? IM_COL32(251, 250, 139, 255) : IM_COL32(30, 217, 1, 255);
-    const float label_x = lo.x + height * 0.38f;
-    const ImVec2 baseline(label_x, cy + height * (quit ? 0.30f : 0.32f));
+    const ImU32 ink = title_row_color(IM_COL32(27, 209, 4, 255), IM_COL32(254, 251, 159, 255), focus);
+    const float label_x = lo.x + height * 0.39f;
+    const float cy = (lo.y + hi.y) * 0.5f;
+    const ImVec2 baseline(label_x, cy + height * 0.29f);
     if (!gameart_menu_label(dl, quit, baseline, h * 0.039f, tilt, ink)) {
         Face face(s_f_title ? s_f_title : ImGui::GetFont(), SHEAR);
         const char *label = quit ? "Quit Game" : "Graphics";
@@ -5554,6 +5590,11 @@ bool overlay_begin_frame()
     s_alpha += (s_open ? 1.0f : -1.0f) * dt / 0.14f;
     s_alpha = s_alpha < 0 ? 0 : s_alpha > 1 ? 1 : s_alpha;
     bool perf = xbox_SettingValue(XS_ADVANCED_PERF) != 0.0;
+    static uint32_t amp_demo_start = 0;
+    static bool amp_demo_show = false;
+    unsigned amp_demo_pending = 1;
+    if (s_amp_demo_notice.compare_exchange_strong(amp_demo_pending, 2, std::memory_order_acq_rel)) { amp_demo_start = now; amp_demo_show = true; if (getenv("AMPED_DEMO_NOTICE_TRACE")) (fprintf)(stderr, "[AMPED_DEMO_NOTICE] consumed at=%u\n", now); }
+    if (amp_demo_show && (uint32_t)(now - amp_demo_start) >= 4000u) { amp_demo_show = false; unsigned active = 2; s_amp_demo_notice.compare_exchange_strong(active, 0, std::memory_order_acq_rel); if (getenv("AMPED_DEMO_NOTICE_TRACE")) (fprintf)(stderr, "[AMPED_DEMO_NOTICE] expired at=%u\n", now); }
     bool note = notice_on(), scripted = scripted_on(), sg = sg_banner_on();
     bool touch = touch_on() && !s_open && s_alpha <= 0.0f;
     bool title_row = false;
@@ -5561,7 +5602,7 @@ bool overlay_begin_frame()
     const auto title_menu = s_title_menu.load();
     title_row = title_menu != TITLE_NONE;
 #endif
-    if (!s_open && s_alpha <= 0.0f && !perf && !note && !scripted && !sg && !touch && !title_row)
+    if (!s_open && s_alpha <= 0.0f && !perf && !note && !scripted && !sg && !touch && !title_row && !amp_demo_show)
         return false;
 
     ImGuiIO &io = ImGui::GetIO();
@@ -5586,7 +5627,7 @@ bool overlay_begin_frame()
     const float fs = ImGui::GetFontSize();
 #if defined(AMPED_UNIFIED_EXPERIMENT)
     if (title_row && (int32_t)(now - s_title_row_ready_at.load()) >= 0)
-        draw_title_row(title_menu, io.DisplaySize);
+        draw_title_row(title_menu, io.DisplaySize, dt);
 #endif
 
     if (perf) {
@@ -5653,6 +5694,15 @@ bool overlay_begin_frame()
         const ImVec2 p((disp.x - tw) * 0.5f, disp.y * 0.72f);
         dl->AddRectFilled(ImVec2(p.x - fs, p.y - fs * 0.5f), ImVec2(p.x + tw + fs, p.y + fs * 1.5f),
                           solid(T->toast_bg, 235 / 255.0f), fs * 0.5f);
+        dl->AddText(p, solid(T->toast_text), text);
+    }
+    if (amp_demo_show) {
+        const char *text = "Game Demos is unavailable in this version";
+        ImDrawList *dl = ImGui::GetForegroundDrawList();
+        const ImVec2 disp = ImGui::GetIO().DisplaySize;
+        const float tw = ImGui::CalcTextSize(text).x;
+        const ImVec2 p((disp.x - tw) * 0.5f, disp.y * 0.045f);
+        dl->AddRectFilled(ImVec2(p.x - fs, p.y - fs * 0.5f), ImVec2(p.x + tw + fs, p.y + fs * 1.5f), solid(T->toast_bg, 235 / 255.0f), fs * 0.5f);
         dl->AddText(p, solid(T->toast_text), text);
     }
     if (scripted) {

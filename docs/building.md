@@ -5,10 +5,10 @@ compile the game during installation. Choose the online download to fetch the
 build tools during setup or the all-in-one download to install offline.
 Follow this guide to work on the source or reproduce the release.
 
-Build on 64-bit Windows. Install Python 3.11 or newer, CMake 3.20 or newer and Ninja. Make them available on PATH. Install the disassembly dependency in the Python environment you pass to the build.
+Build on 64-bit Windows. Install Python 3.11 or newer, CMake 3.20 or newer and Ninja. Make them available on PATH. Use a 64-bit Python environment for guest disassembly and visual asset generation. The release installers use Python 3.11.9 with these dependencies.
 
 ```powershell
-python -m pip install capstone==5.0.9
+python -m pip install capstone==5.0.9 numpy==2.2.6 Pillow==11.3.0
 ```
 
 Use short paths for the game image, extracted files and install directory. The installer accepts ASCII paths and supports spaces.
@@ -39,9 +39,9 @@ Extract your own supported XISO with `extract-xiso.exe -x -d <disc-folder> <imag
   -DependencyRoot C:/AmpedDeps -Installer
 ```
 
-Regeneration checks the SHA-256 of the input and the generated C files against the preview recipe. It builds the game and packages `Amped-Host/dist/AMPEDUP-Private/Setup-AMPEDUP.exe`. The `-ReuseGenerated` switch resumes compilation after successful regeneration. The `Analysis/` and `Amped-Host/build/` directories hold local build output.
+Regeneration verifies the executable and the course archives. Keep the extracted Resource folder beside default.xbe. The build derives the matching mesh data and HD Texture Pack from those local files. It builds the game and packages `Amped-Host/dist/AMPEDUP-Private/Setup-AMPEDUP.exe`. The `-ReuseGenerated` switch resumes compilation after successful regeneration. The `Analysis/` and `Amped-Host/build/` directories hold local build output.
 
-Run the standalone setup and select the matching XISO, installation folder and desktop shortcut option. The install keeps saves and settings in its `profile/` subdirectory. Windows may show a publisher prompt because this preview is unsigned.
+Use a public installer from the section below for the full native menu setup. Run setup and select the matching XISO, installation folder and desktop shortcut option. The install keeps saves and settings in its `profile/` subdirectory. Windows may show a publisher prompt because this preview is unsigned.
 
 ## Package the public installers
 
@@ -61,7 +61,7 @@ the other listed files in the directory passed to `-ToolArchives`.
 ## Package for RecompLauncher
 
 ```powershell
-./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-0.7-RecompLauncher -DependencyRoot C:/AmpedDeps -RecompLauncher
+./Amped-Host/packaging/windows/build-package.ps1 -PackageName AMPEDUP-0.7.1-RecompLauncher -DependencyRoot C:/AmpedDeps -RecompLauncher
 ```
 
 This produces a Windows x64 ZIP with `recomplauncher.json` beside

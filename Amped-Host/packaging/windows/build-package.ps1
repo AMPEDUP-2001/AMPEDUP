@@ -66,6 +66,10 @@ if ($sourceSetup) {
     & (Join-Path $PSScriptRoot 'stage-build-tools.ps1') -Bundle $target -Archives $archiveRoot -WindowsDeps $winDeps -Online:$Online
 } else {
     Copy-Item -LiteralPath $exe -Destination (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe')
+    $pack = Join-Path (Split-Path -Parent $exe) 'snow-summit-visible.ahd'
+    if (Test-Path -LiteralPath $pack -PathType Leaf) {
+        Copy-Item -LiteralPath $pack -Destination (Join-Path $payload 'Amped-Host\bin')
+    }
     if ((Get-FileHash -LiteralPath (Join-Path $payload 'Amped-Host\bin\amped_recomp.exe') -Algorithm SHA256).Hash -ne $ExpectedExecutableSha256) { throw 'Packaged executable hash does not match.' }
 }
 Copy-Item -LiteralPath $sdl -Destination (Join-Path $payload 'Amped-Host\bin\SDL2.dll')

@@ -10,9 +10,17 @@ int amped_demo_asset_redirect(const char *path,uint32_t access,uint32_t disposit
  const char *value; int count;
  if (!path) return 0;
  if (_strnicmp(path,"\\??\\",4)==0) path+=4;
- if (_stricmp(path,"d:\\resource\\shell\\Menus.res")!=0 && _stricmp(path,"\\Device\\CdRom0\\resource\\shell\\Menus.res")!=0) return 0;
+ if (_stricmp(path,"d:\\resource\\shell\\Menus.res")==0 ||
+     _stricmp(path,"\\Device\\CdRom0\\resource\\shell\\Menus.res")==0) {
+    value=getenv("AMPED_DEMO_ASSET_OVERRIDE");
+ } else if (_stricmp(path,"d:\\resource\\Shell.res")==0 ||
+            _stricmp(path,"\\Device\\CdRom0\\resource\\Shell.res")==0) {
+    value=getenv("AMPED_SHELL_ASSET_OVERRIDE");
+    if (!value || !*value) return 0;
+ } else {
+    return 0;
+ }
  if ((access & denied)!=0 || disposition!=1u || (options & 1u)!=0) return -1;
- value=getenv("AMPED_DEMO_ASSET_OVERRIDE");
  if (!value || !*value || !out || cap==0) return -1;
  count=MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,value,-1,out,(int)cap);
  if (count==0 || GetFileAttributesW(out)==INVALID_FILE_ATTRIBUTES || (GetFileAttributesW(out)&FILE_ATTRIBUTE_DIRECTORY)) return -1;

@@ -127,6 +127,7 @@ typedef enum {
     XS_INPUT_TOUCH_SCALE,
     XS_INPUT_TOUCH_AUTO_GAS,
 #endif
+    XS_AMPED_HD_TEXTURES,
     XS_COUNT
 } xs_id;
 

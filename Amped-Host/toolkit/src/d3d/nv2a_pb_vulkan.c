@@ -994,8 +994,10 @@ static uint64_t      s_grows, s_partial_clears;
 /* Called only by explicit core shutdown, after the executor is parked and
  * vkDeviceWaitIdle has returned. The normal Windows process-exit path, like
  * the rest of the backend, leaves device objects to process termination. */
+static void rail_mesh_cleanup(int idle);
 static void amped_diagnostic_idle_cleanup(int idle)
 {
+    rail_mesh_cleanup(idle);
     int i;
     nvk_texture_hash_memo_clear(&s_tex_hash_memo);
     if (idle) {
@@ -1386,6 +1388,8 @@ static int upload_layer(struct nvk_image *im, uint32_t layer, uint32_t level, ui
     else
         memcpy(dst, px, (size_t)w * h * 4u);
     ensure_up();
+    if (!s_up)
+        return 0;
     if (im->layout != VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
         nvk_image_to(s_up, im, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     memset(&bc, 0, sizeof bc);
@@ -2188,7 +2192,9 @@ static VkShaderModule vs_build(const uint32_t *slots, int n, uint32_t hash, uint
 
     snprintf(what, sizeof what, "program %08X", hash);
     d3d8_vsh_parse(slots, n, parsed);
-    if (d3d8_vsh_generate_glsl(parsed, D3D8_GLSL_SCREEN_SPACE, glsl, 65536) <= 0) {
+    extern int nvk_board_powder_enabled(void);
+    unsigned flags = D3D8_GLSL_SCREEN_SPACE | (nvk_board_powder_enabled() ? 256u : 0u);
+    if (d3d8_vsh_generate_glsl(parsed, flags, glsl, 65536) <= 0) {
         COUNT(s_compile_errors);
         fprintf(stderr, LOGP "%s: no GLSL\n", what);
     } else if ((m = module_from_glsl(NVK_STAGE_VERTEX, glsl, what)) != VK_NULL_HANDLE) {
@@ -2230,6 +2236,9 @@ static VsEntry *vs_take(uint32_t hash, uint64_t kid, VkShaderModule mod, uint16_
 static uint64_t vs_kid(const void *slots, size_t bytes)
 {
     uint64_t kid = nv2a_fnv64(slots, bytes, NV2A_FNV64_INIT);
+    extern int nvk_board_powder_enabled(void);
+    if (nvk_board_powder_enabled())
+        kid ^= 0x424f415244505453ull;
     return kid <= PC_FS_BASIC ? kid + 3 : kid;
 }
 
@@ -2382,9 +2391,34 @@ static uint32_t fnv(const void *p, size_t n)
 typedef struct nv2a_stage Stage;
 static Stage s_stage[4];
 
+/* Identify the original dense board plume, including the material bytes. */
+static int board_powder(const struct nv2a_pb_draw *draw, const struct nv2a_pb_gpu *gpu,
+                        const struct nv2a_pb_vsh *shader)
+{
+    extern int nvk_board_powder_enabled(void);
+    const Stage *t = &s_stage[3];
+    if (draw->prim != 1 || !nvk_board_powder_enabled() || !gpu->blend_enable
+            || !shader->depth_enable || shader->depth_mask || shader->stencil_enable
+            || !shader->rc_set || (shader->rc_ctl & 0xffu) != 1
+            || shader->rc_cicw[0] != 0x0b040000u || shader->rc_aicw[0] != 0x1b140000u
+            || shader->rc_cocw[0] != 0x00000c00u || shader->rc_aocw[0] != 0x00000c00u
+            || shader->rc_fcw0 != 0x0000000cu || shader->rc_fcw1 != 0x00001c80u)
+        return 0;
+    if (!t->valid || t->mode != 1 || t->raw_mode != 1 || t->dims != 2 || t->cube
+            || t->levels != 1 || t->color != 0x06 || t->width != 64 || t->height != 64 || t->pitch)
+        return 0;
+    const uint64_t end = (uint64_t)t->offset + 64u * 64u * 4u;
+    if (!t->offset || (end > xbox_GetMappedSize() && (t->offset < NV2A_RT_CONTIG_BASE
+            || end > (uint64_t)NV2A_RT_CONTIG_BASE + NV2A_RT_CONTIG_SIZE)))
+        return 0;
+    const uint8_t *memory = (const uint8_t *)xbox_GetMemoryOffset();
+    return nv2a_texrep_hash(memory + t->offset, t->color, t->width, t->height, t->pitch)
+        == 0x0f431568487ba487ull;
+}
+
 /* As Metal's fs_select: the combiners when programmed, else fs_basic; only
  * 2D textures are bound, so every sampling mode goes to the combiners as 2D. */
-static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mask)
+static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mask, int powder)
 {
     static char glsl[65536];
     /* The registers a module was chosen for, 64 of them by a hash of the
@@ -2419,7 +2453,7 @@ static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mas
     key[32] = v->rc_ctl;
     key[33] = v->rc_fcw0;
     key[34] = v->rc_fcw1;
-    key[35] = modes;
+    key[35] = modes | (powder ? 0x80000000u : 0u);
     key[36] = signs;
     key[37] = v->shader_ctl & 0x00FF0000u;  /* stage 2 and 3 input stages */
     key[38] = v->clip_plane_mode | (nv2a_alpha_kill_mask(s_stage, nv2a_pb_gpu_state()->flips) << 16);
@@ -2443,6 +2477,7 @@ static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mas
         st.clip_mode[n] = (uint8_t)((v->clip_plane_mode >> (4 * n)) & 0xFu);
     }
     st.alpha_kill = (uint8_t)nv2a_alpha_kill_mask(s_stage, nv2a_pb_gpu_state()->flips);
+    if (powder) st.alpha_kill |= 192u;
     st.input_tex[2] = (uint8_t)((v->shader_ctl >> 16) & 0xFu);
     st.input_tex[3] = (uint8_t)((v->shader_ctl >> 20) & 0xFu);
     hash = fnv(&st, sizeof st);
@@ -2815,6 +2850,7 @@ typedef struct {
     uint8_t          ui;            /* a 2D draw has bound it (nv2a_texscale.h); stays */
     uint8_t          scale;         /* the factor wanted when it was uploaded: 0, 2, 4 */
     uint8_t          salgo;         /* and the scaler */
+    uint8_t          hd_levels;
     uint8_t          up_scale;      /* the factor the image has (0 where the scaler refused) */
     uint8_t          use;           /* RECOMP_DEBUG=ui_scale_log: the kinds of draw seen */
     uint8_t          pend;          /* its scaled picture is being made (nv2a_texscale_get) */
@@ -3037,6 +3073,180 @@ static int tex_upload_scaled(const Stage *t, unsigned f, int algo, struct nvk_im
     return 0;
 }
 
+/* Read a bounded local pack. HD1 carries one added mip per entry. HD2 adds
+ * a mip count to each entry and stores the new levels from largest to smallest. */
+#define AMPED_HD_MAX_ENTRIES 8
+#define AMPED_HD_MAX_DIM 256u
+#define AMPED_HD_MAX_FILE (12u + AMPED_HD_MAX_ENTRIES * \
+    (16u + AMPED_HD_MAX_DIM * AMPED_HD_MAX_DIM * 161u / 2u))
+
+static struct {
+    uint32_t width, height;
+    unsigned levels;
+    const uint8_t *original, *replacement;
+    int logged;
+} s_hd_entries[AMPED_HD_MAX_ENTRIES];
+static unsigned s_hd_count, s_hd_levels;
+static uint8_t *s_hd_data;
+
+static uint32_t amped_hd_word(const uint8_t *bytes)
+{
+    return (uint32_t)bytes[0] | (uint32_t)bytes[1] << 8
+        | (uint32_t)bytes[2] << 16 | (uint32_t)bytes[3] << 24;
+}
+
+static int amped_hd_opaque_bc1(const uint8_t *bytes, size_t length)
+{
+    for (size_t i = 0; i < length; i += 8) {
+        uint32_t palette = amped_hd_word(bytes + i);
+        uint32_t selectors = amped_hd_word(bytes + i + 4);
+        if ((palette & 65535u) <= (palette >> 16)
+                && (selectors & (selectors >> 1) & 0x55555555u))
+            return 0;
+    }
+    return 1;
+}
+
+static void amped_hd_free(void)
+{
+    free(s_hd_data);
+}
+
+static void amped_hd_load(const char *path)
+{
+    FILE *file = fopen(path, "rb");
+    uint8_t *data = NULL;
+    long length;
+    unsigned entries;
+    int version;
+    size_t pos = 12;
+
+    if (!file)
+        goto invalid;
+    if (fseek(file, 0, SEEK_END) || (length = ftell(file)) < 12
+            || length > (long)AMPED_HD_MAX_FILE || fseek(file, 0, SEEK_SET))
+        goto invalid;
+    data = (uint8_t *)malloc((size_t)length);
+    if (!data || fread(data, 1, (size_t)length, file) != (size_t)length
+            || memcmp(data, "AMPEDHD", 7) || (data[7] != '1' && data[7] != '2'))
+        goto invalid;
+    version = data[7] - '0';
+    entries = amped_hd_word(data + 8);
+    if (!entries || entries > AMPED_HD_MAX_ENTRIES)
+        goto invalid;
+    for (unsigned i = 0; i < entries; ++i) {
+        unsigned header = version == 2 ? 16u : 12u;
+        if ((size_t)length - pos < header)
+            goto invalid;
+        uint32_t w = amped_hd_word(data + pos), h = amped_hd_word(data + pos + 4);
+        uint32_t format = amped_hd_word(data + pos + 8);
+        unsigned levels = version == 2 ? amped_hd_word(data + pos + 12) : 1u;
+        pos += header;
+        if (w < 16 || h < 16 || w > AMPED_HD_MAX_DIM || h > AMPED_HD_MAX_DIM
+                || (w & (w - 1)) || (h & (h - 1)) || format != 0x0C
+                || levels < 1 || levels > 2)
+            goto invalid;
+        size_t original_bytes = (size_t)w * h / 2;
+        size_t replacement_bytes = (size_t)w * h * (levels == 2 ? 80u : 16u);
+        if ((size_t)length - pos < original_bytes + replacement_bytes)
+            goto invalid;
+        if (!amped_hd_opaque_bc1(data + pos, original_bytes))
+            goto invalid;
+        for (size_t a = 3; a < replacement_bytes; a += 4)
+            if (data[pos + original_bytes + a] != 255u)
+                goto invalid;
+        for (unsigned j = 0; j < i; ++j) {
+            if (w == s_hd_entries[j].width && h == s_hd_entries[j].height
+                    && !memcmp(data + pos, s_hd_entries[j].original, original_bytes))
+                goto invalid;
+        }
+        s_hd_entries[i].width = w;
+        s_hd_entries[i].height = h;
+        s_hd_entries[i].levels = levels;
+        s_hd_entries[i].original = data + pos;
+        s_hd_entries[i].replacement = data + pos + original_bytes;
+        pos += original_bytes + replacement_bytes;
+    }
+    if (pos != (size_t)length || atexit(amped_hd_free))
+        goto invalid;
+    fclose(file);
+    s_hd_data = data;
+    s_hd_count = entries;
+    (fprintf)(stderr, "[AMPED_HD] loaded HD%d %u textures, %ld bytes\n", version, entries, length);
+    return;
+
+invalid:
+    if (file)
+        fclose(file);
+    free(data);
+    (fprintf)(stderr, "[AMPED_HD] invalid or unavailable pack, using original textures\n");
+}
+
+static int amped_hd_upload(const Stage *t, const uint8_t *bytes, struct nvk_image *out)
+{
+    static int loaded;
+    if (!loaded) {
+        extern int amped_hd_textures_enabled(void);
+        loaded = 1;
+        if (amped_hd_textures_enabled()) {
+            char path[2048];
+            int n = snprintf(path, sizeof path, "%s/snow-summit-visible.ahd", recomp_exe_dir());
+            if (n > 0 && (size_t)n < sizeof path)
+                amped_hd_load(path);
+        }
+    }
+    if (!s_hd_count || t->color != 0x0C || t->dims != 2 || t->cube
+            || stage_signed(t) || t->levels < 2
+            || t->width > AMPED_HD_MAX_DIM || t->height > AMPED_HD_MAX_DIM)
+        return 0;
+    for (unsigned i = 0; i < s_hd_count; ++i) {
+        uint32_t w = s_hd_entries[i].width, h = s_hd_entries[i].height;
+        unsigned added = s_hd_entries[i].levels;
+        uint32_t top_w = w << added, top_h = h << added;
+        if (w != t->width || h != t->height || top_w > s_max_dim || top_h > s_max_dim
+                || memcmp(bytes, s_hd_entries[i].original, (size_t)w * h / 2))
+            continue;
+        unsigned max_levels = 1;
+        for (uint32_t dim = w > h ? w : h; dim > 1u; dim >>= 1)
+            ++max_levels;
+        if (t->levels > max_levels)
+            return 0;
+        if (!nvk_image_new(out, RT_FORMAT, top_w, top_h, t->levels + added,
+                           VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT
+                           | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT))
+            return 0;
+        const uint8_t *replacement = s_hd_entries[i].replacement;
+        for (unsigned level = 0; level < added; ++level) {
+            uint32_t lw = top_w >> level, lh = top_h >> level;
+            if (!upload_level(out, level, lw, lh, replacement,
+                              VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 0))
+                goto failed;
+            replacement += (size_t)lw * lh * 4u;
+        }
+        const uint32_t *src = s_texels;
+        for (uint32_t level = 0; level < t->levels; ++level) {
+            uint32_t lw = nv2a_tex_level_dim(w, level), lh = nv2a_tex_level_dim(h, level);
+            if (!upload_level(out, level + added, lw, lh, src,
+                              VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, level + 1 == t->levels))
+                goto failed;
+            src += (size_t)lw * lh;
+        }
+        s_hd_levels = added;
+        if (!s_hd_entries[i].logged) {
+            s_hd_entries[i].logged = 1;
+            (fprintf)(stderr, "[AMPED_HD] texture=%u %ux%u -> %ux%u added=%u original_mips=%u present=%llu\n",
+                      i + 1, w, h, top_w, top_h, added, t->levels, (unsigned long long)s_presents);
+        }
+        return 1;
+    }
+    return 0;
+
+failed:
+    garbage_push(out, VK_NULL_HANDLE, NULL);
+    memset(out, 0, sizeof *out);
+    return 0;
+}
+
 static int tex_upload(const Stage *t, unsigned scale, int algo, uint32_t cut,
                       struct nvk_image *out)
 {
@@ -3077,6 +3287,12 @@ static int tex_upload(const Stage *t, unsigned scale, int algo, uint32_t cut,
     }
     s_bind_scale = 0;
     s_up_pend = 0;
+    s_hd_levels = 0;
+    if (!scale && !s_tex_rep && amped_hd_upload(t, mem + t->offset, out)) {
+        s_tex_uploads++;
+        s_sn.uploads++;
+        return 1;
+    }
     if (scale && tex_upload_scaled(t, scale, algo, out)) {
         s_bind_scale = scale;
         s_tex_uploads++;
@@ -4964,6 +5180,7 @@ static VkImageView tex_bind(const Stage *t)
                 e->scale = (uint8_t)want;
                 e->salgo = (uint8_t)algo;
                 e->up_scale = (uint8_t)s_bind_scale;
+                e->hd_levels = (uint8_t)s_hd_levels;
                 e->pend = (uint8_t)s_up_pend;
                 e->skey = s_up_key;
                 e->pgen = g->flips;
@@ -4986,6 +5203,7 @@ static VkImageView tex_bind(const Stage *t)
         e->scale = (uint8_t)want;
         e->salgo = (uint8_t)algo;
         e->up_scale = (uint8_t)s_bind_scale;
+        e->hd_levels = (uint8_t)s_hd_levels;
         e->pend = (uint8_t)s_up_pend;
         e->skey = s_up_key;
         e->pgen = g->flips;
@@ -5021,9 +5239,9 @@ static VkImageView tex_bind(const Stage *t)
     }
     /* BO-245: graphics.texture_upscale's steps (Off: only an entry with a
      * slot still out). */
-    if (nv2a_texup_algo() || e->tu_slot)
+    if (!e->hd_levels && (nv2a_texup_algo() || e->tu_slot))
         texup_bind(e, t, mem);
-    s_bind_tu = e->tu_add;
+    s_bind_tu = e->hd_levels ? -(int)e->hd_levels : e->tu_add;
     /* Its scaled picture was being made: asked for once a flip, swapped in
      * when it is there (as Metal). The old image goes when the frames that
      * may use it are done. */
@@ -5128,6 +5346,9 @@ static VkSampler sampler(const Stage *t, unsigned scale, int add, int force_poin
     int mn, mg, mip, i, aniso;
     uint64_t key;
 
+    const int pack_mips = add < 0;
+    if (pack_mips)
+        add = -add;
     if (point < 0)
         point = recomp_env(RENV_VK_POINT) != NULL;
     mn = !point && !force_point && nv2a_tex_filter_linear(t->filter, 0);
@@ -5139,7 +5360,7 @@ static VkSampler sampler(const Stage *t, unsigned scale, int add, int force_poin
         mip = 2;
     /* BO-245: an upscaled texture has 'add' levels above the title's; one
      * the title gave one level is blended down to its own size. */
-    if (add && !mip)
+    if (add && !mip && !pack_mips)
         mip = 2;
     /* Anisotropy only on a mipmapped sampler with a linear minification
      * filter, as asked (RECOMP_GFX_ANISO), within the device's limit. */
@@ -5154,7 +5375,7 @@ static VkSampler sampler(const Stage *t, unsigned scale, int add, int force_poin
         key |= (uint64_t)t->lod_min << 25 | (uint64_t)t->lod_max << 29;
     key |= (uint64_t)aniso << 33;       /* the level is part of the sampler */
     key |= (uint64_t)scale << 40;
-    key |= (uint64_t)add << 44;
+    key |= (uint64_t)add << 44 | (uint64_t)pack_mips << 48;
     for (i = 0; i < s_smp_n; i++)
         if (s_smp[i].key == key) {
             AMPED_SAMPLER_OBSERVE(0);
@@ -5175,7 +5396,7 @@ static VkSampler sampler(const Stage *t, unsigned scale, int add, int force_poin
     /* Not mipmapped: level 0, with the min/mag choice kept (the Vulkan
      * spec's maxLod 0.25 for Metal's MipFilterNotMipmapped). */
     sc.maxLod = scale ? (float)(scale_levels(scale) - 1u) : mip ? (float)t->lod_max : 0.25f;
-    if (add) {
+    if (add && (!pack_mips || mip)) {
         /* The title's clamps move down by the levels added, except a
          * minimum of 0, which keeps the new detail (as Metal). */
         sc.minLod = t->levels > 1 && t->lod_min ? (float)(t->lod_min + (uint32_t)add) : 0.0f;
@@ -6970,8 +7191,179 @@ static int split_long_batch(RenderTarget *rt)
     return flush(0, FL_DRAW_SPLIT);
 }
 
+#include "amped_visual_data.h"
+
+
+
+
+static const struct { uint32_t width, height; const unsigned char *bytes; size_t size; } rail_materials[] = {
+    {64, 64, rail_texture_bare, sizeof rail_texture_bare},
+    {64, 64, rail_texture_red, sizeof rail_texture_red},
+    {128, 256, rail_texture_deck, sizeof rail_texture_deck},
+    {128, 64, rail_texture_trim, sizeof rail_texture_trim},
+};
+/* The stage must refer to the exact top mip in the guest GPU window. */
+static int rail_material_matches(const Stage *t, unsigned material)
+{
+    extern uint32_t xbox_ContiguousAllocatedBytes(void);
+    if (material == 0 || material > sizeof rail_materials / sizeof *rail_materials)
+        return 0;
+    unsigned slot = material - 1;
+    size_t n = rail_materials[slot].size;
+    if (!t->valid || !t->mode || t->mode == 4 || t->color != 0x0c || t->dims != 2 || t->cube
+            || t->width != rail_materials[slot].width || t->height != rail_materials[slot].height
+            || t->offset < 0x80000000u
+            || (uint64_t)t->offset - 0x80000000u + n > xbox_ContiguousAllocatedBytes())
+        return 0;
+    const uint8_t *mem = (const uint8_t *)xbox_GetMemoryOffset();
+    return !memcmp(mem + t->offset, rail_materials[slot].bytes, n);
+}
+
+static const int rail_mesh_slots[] = {0, 1, 2};
+
+
+
+
+
+
+
+
+
+
+
+
+/* Optional host geometry. Keep the original draw as the fallback. */
+typedef struct {
+    const char *id;
+    const char *option;
+    unsigned material;
+    uint32_t shader, source_index_count, index_count;
+    const void *original_vertices, *original_indices, *vertices, *indices;
+    size_t original_vertex_bytes, vertex_bytes, index_bytes;
+    struct nvk_buffer buffer;
+    int tried;
+    unsigned matches;
+} RailMesh;
+
+static RailMesh rail_meshes[] = {
+    {.id="bdfe78d915fa", .option=NULL, .material=1,
+     .shader=0x3c45d5f5u, .source_index_count=705, .index_count=936,
+     .original_vertices=mesh_0_original_vertices, .original_indices=mesh_0_original_indices,
+     .vertices=mesh_0_vertices, .indices=mesh_0_indices,
+     .original_vertex_bytes=sizeof mesh_0_original_vertices,
+     .vertex_bytes=sizeof mesh_0_vertices, .index_bytes=sizeof mesh_0_indices},
+    {.id="be045b402851", .option="AMPED_TEST_RAIL_POSTS", .material=2,
+     .shader=0x3c45d5f5u, .source_index_count=132, .index_count=288,
+     .original_vertices=mesh_1_original_vertices, .original_indices=mesh_1_original_indices,
+     .vertices=mesh_1_vertices, .indices=mesh_1_indices,
+     .original_vertex_bytes=sizeof mesh_1_original_vertices,
+     .vertex_bytes=sizeof mesh_1_vertices, .index_bytes=sizeof mesh_1_indices},
+    {.id="092ae60dabc6", .option="AMPED_TEST_FUNBOX_MESH", .material=4,
+     .shader=0x3c45d5f5u, .source_index_count=1074, .index_count=1632,
+     .original_vertices=mesh_2_original_vertices, .original_indices=mesh_2_original_indices,
+     .vertices=mesh_2_vertices, .indices=mesh_2_indices,
+     .original_vertex_bytes=sizeof mesh_2_original_vertices,
+     .vertex_bytes=sizeof mesh_2_vertices, .index_bytes=sizeof mesh_2_indices},
+};
+static _Alignas(16) float rail_mesh_scratch[2640];
+static uint32_t rail_mesh_count_mask(uint32_t count)
+{
+    switch (count) {
+    case 32: return 0x2u;
+    case 88: return 0x1u;
+    case 220: return 0x4u;
+    default: return 0;
+    }
+}
+
+
+static int rail_mesh_initialized;
+static uint32_t rail_enabled_meshes;
+
+static void rail_mesh_cleanup(int idle)
+{
+    for (unsigned i = 0; i < sizeof rail_meshes / sizeof *rail_meshes; ++i) {
+        RailMesh *mesh = &rail_meshes[i];
+        if (mesh->matches)
+            (fprintf)(stderr, "[AMPED_RAIL_MESH] %s total draws=%u\n", mesh->id, mesh->matches);
+        if (idle)
+            nvk_buffer_free(&mesh->buffer);
+        else
+            memset(&mesh->buffer, 0, sizeof mesh->buffer);
+        mesh->matches = 0;
+        mesh->tried = 0;
+    }
+}
+
+static uint32_t rail_mesh_candidates(uint32_t shader, const int *slots, uint32_t nf4,
+                                     uint32_t count, uint32_t nidx, const uint32_t *indices)
+{
+    if (!rail_mesh_initialized) {
+        const char *value = getenv("AMPED_TEST_RAIL_MESH");
+        if (!value || !strcmp(value, "1")) {
+            for (unsigned i = 0; i < sizeof rail_meshes / sizeof *rail_meshes; ++i) {
+                const char *option = rail_meshes[i].option;
+                value = option ? getenv(option) : NULL;
+                if (!value || !strcmp(value, "1"))
+                    rail_enabled_meshes |= 1u << i;
+            }
+        }
+        rail_mesh_initialized = 1;
+    }
+    uint32_t pending = rail_mesh_count_mask(count) & rail_enabled_meshes;
+    if (!pending || nf4 != 3 || memcmp(slots, rail_mesh_slots, sizeof rail_mesh_slots))
+        return 0;
+    uint32_t matched = 0;
+    while (pending) {
+        unsigned i = (unsigned)__builtin_ctz(pending);
+        pending &= pending - 1;
+        const RailMesh *mesh = &rail_meshes[i];
+        if (shader == mesh->shader && nidx == mesh->source_index_count
+                && !memcmp(indices, mesh->original_indices, (size_t)nidx * sizeof *indices))
+            matched |= 1u << i;
+    }
+    return matched;
+}
+
+static int rail_mesh_upload(RailMesh *mesh)
+{
+    if (!mesh->tried) {
+        mesh->tried = 1;
+        if (nvk_buffer_new(&mesh->buffer, mesh->vertex_bytes + mesh->index_bytes,
+                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) && mesh->buffer.map) {
+            memcpy(mesh->buffer.map, mesh->vertices, mesh->vertex_bytes);
+            memcpy((uint8_t *)mesh->buffer.map + mesh->vertex_bytes, mesh->indices, mesh->index_bytes);
+            nvk_core_set_diagnostic_idle_cleanup(amped_diagnostic_idle_cleanup);
+        } else {
+            nvk_buffer_free(&mesh->buffer);
+            (fprintf)(stderr, "[AMPED_RAIL_MESH] Vulkan buffer unavailable, using original\n");
+        }
+    }
+    if (mesh->buffer.buf && ++mesh->matches == 1)
+        (fprintf)(stderr, "[AMPED_RAIL_MESH] matched %s at flip=%llu source=%u new=%u triangles\n",
+                mesh->id, (unsigned long long)s_presents, mesh->source_index_count / 3, mesh->index_count / 3);
+    return mesh->buffer.buf != VK_NULL_HANDLE;
+}
+
+static RailMesh *rail_mesh_for_vertices(uint32_t pending, const float *vertices)
+{
+    while (pending) {
+        RailMesh *mesh = &rail_meshes[(unsigned)__builtin_ctz(pending)];
+        pending &= pending - 1;
+        if (memcmp(vertices, mesh->original_vertices, mesh->original_vertex_bytes))
+            continue;
+        for (unsigned stage = 0; stage < 4; ++stage)
+            if (rail_material_matches(&s_stage[stage], mesh->material) && rail_mesh_upload(mesh))
+                return mesh;
+    }
+    return NULL;
+}
+
 static void vk_on_draw(const struct nv2a_pb_draw *d)
 {
+    RailMesh *rail = NULL;
     static uint32_t *idx;
     static uint32_t idx_cap;
     const struct nv2a_pb_gpu *g = nv2a_pb_gpu_state();
@@ -7006,6 +7398,7 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
     VkImageView sview[4];
     VkImageView shadow_view[4] = {VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE};
     uint32_t shadow_mask = 0;
+    int powder = 0;
     VkSampler   ssmp[4];
 #if defined(AMPED_SETTINGS_EXPERIMENT)
     int amped_sampler_levels[4] = {0}, amped_sampler_fallbacks[4] = {0};
@@ -7304,17 +7697,33 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
                       v->shadow_depth_func_set, v->shadow_depth_func);
         }
     }
-    fmod = fs_select(v, shadow_mask);
+    powder = !s_occ_q && !shadow_mask && trial_shader == 0x1cd0b088u
+        && rt->w == 640 && rt->h == 480 && board_powder(d, g, v);
+    fmod = fs_select(v, shadow_mask, powder);
+    if (powder && fmod == s_fs_basic) {
+        powder = 0;
+        fmod = fs_select(v, shadow_mask, 0);
+    }
     if (shadow_mask && fmod == s_fs_basic) {
         static int said;
         if (!said++) (fprintf)(stderr, "[AMPED_SHADOW] shader unavailable; using normal texture path\n");
         shadow_mask = 0;
-        fmod = fs_select(v, 0);
+        fmod = fs_select(v, 0, 0);
     } else if (shadow_mask) {
         static unsigned said;
         if (said++ < 4)
             (fprintf)(stderr, "[AMPED_SHADOW] bound mask=%x compare=%u flip=%llu\n",
                       shadow_mask, v->shadow_depth_func, (unsigned long long)s_presents);
+    }
+    if (powder) {
+        /* xemu uses the authored programmable point size in host pixels. */
+        vc.c[6] = C->props.limits.pointSizeRange[1];
+        static uint64_t last = UINT64_MAX;
+        if (last == UINT64_MAX || s_presents - last >= 300) {
+            last = s_presents;
+            (fprintf)(stderr, "[BOARD_POWDER] particle2 key=0f431568487ba487 indices=%u host=%ux%u flip=%llu\n",
+                      nidx, rt->hw, rt->hh, (unsigned long long)s_presents);
+        }
     }
     ADP_STAMP(ADP_DEPTH_SHADER);
     s_signed_on = fmod != s_fs_basic;   /* fs_basic has no signed channels */
@@ -7468,16 +7877,22 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
                                           g_xbox_flip_count, s_presents, d->program, rt->offset); }
 #endif
     ADP_STAMP(ADP_RINGS);
+    /* The Vulkan upload ring can be write-combined. Match from CPU memory. */
+    uint32_t rail_candidate = d->program && topo == NV2A_TOPO_TRIANGLES && rt->w == 640
+            && rt->h == 480 && g->color_keep == 0 && !use_s && !s_occ_q
+            && s_occ_slot < 0 && !zb_split && !g->blend_enable
+            ? rail_mesh_candidates(trial_shader, slot, nf4, count, nidx, idx) : 0;
+    float *gathered = rail_candidate ? rail_mesh_scratch : vf;
     {
         uint64_t gt0 = amped_gather_trace_begin(), gt1;
         int fast_match = amped_gather_fast_on() &&
             amped_gather_fast(d, slot, (int)nf4, lo, count,
-                              (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                              (const uint8_t *)xbox_GetMemoryOffset(), gathered);
         int used_fast = fast_match;
 #if defined(AMPED_FAST_GATHER_VERIFY)
         if (fast_match)
             amped_fast_verify(d, slot, (int)nf4, lo, count, v->inl,
-                              (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                              (const uint8_t *)xbox_GetMemoryOffset(), gathered);
 #endif
 #if defined(AMPED_SNOW_GATHER_TEST)
         {
@@ -7493,17 +7908,17 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
             }
             if (!used_fast && (snow_test_control ? nv2a_host_snow_gather_test() : snow_on)) {
                 used_fast = amped_gather_snow(d, slot, (int)nf4, lo, count,
-                                              (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                                              (const uint8_t *)xbox_GetMemoryOffset(), gathered);
                 if (!used_fast)
                     used_fast = amped_gather_snow4(d, slot, (int)nf4, lo, count,
-                                                   (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                                                   (const uint8_t *)xbox_GetMemoryOffset(), gathered);
                 if (!used_fast)
                     used_fast = amped_gather_snowuv(d, slot, (int)nf4, lo, count,
-                                                    (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                                                    (const uint8_t *)xbox_GetMemoryOffset(), gathered);
 #if defined(AMPED_SNOW_GATHER_VERIFY)
                 if (used_fast)
                     amped_snow_verify(d, slot, (int)nf4, lo, count, v->inl,
-                                      (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                                      (const uint8_t *)xbox_GetMemoryOffset(), gathered);
 #endif
                 if (s_snow_stats && s_snow_reports < 100) { ++s_snow_tries; s_snow_hits += used_fast != 0; }
             }
@@ -7514,8 +7929,13 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
         }
         if (!used_fast)
             nv2a_vtx_gather(d, slot, nf4, lo, count, v->inl,
-                            (const uint8_t *)xbox_GetMemoryOffset(), vf);
+                            (const uint8_t *)xbox_GetMemoryOffset(), gathered);
         gt1 = amped_gather_trace_split(gt0);
+        if (rail_candidate) {
+            rail = rail_mesh_for_vertices(rail_candidate, gathered);
+            if (!rail)
+                memcpy(vf, gathered, (size_t)vbytes);
+        }
         memcpy(ip, idx, (size_t)nidx * 4u);
         amped_gather_trace_end(gt0, gt1, d, slot, nf4, count, nidx);
     }
@@ -7640,8 +8060,14 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
                             &s_set0, 3, dyn_off);
     vkCmdBindDescriptorSets(s_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, s_playout, 1, 1,
                             &tset, 0, NULL);
-    vkCmdBindVertexBuffers(s_cmd, 0, 1, &s_ring[RING_VB].buf, &vb_off);
-    vkCmdBindIndexBuffer(s_cmd, s_ring[RING_IB].buf, ib_off, VK_INDEX_TYPE_UINT32);
+    if (rail) {
+        VkDeviceSize first = 0;
+        vkCmdBindVertexBuffers(s_cmd, 0, 1, &rail->buffer.buf, &first);
+        vkCmdBindIndexBuffer(s_cmd, rail->buffer.buf, rail->vertex_bytes, VK_INDEX_TYPE_UINT32);
+    } else {
+        vkCmdBindVertexBuffers(s_cmd, 0, 1, &s_ring[RING_VB].buf, &vb_off);
+        vkCmdBindIndexBuffer(s_cmd, s_ring[RING_IB].buf, ib_off, VK_INDEX_TYPE_UINT32);
+    }
 #if defined(AMPED_SETTINGS_EXPERIMENT)
     {
         static int enabled = -1;
@@ -7664,7 +8090,7 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
         }
     }
 #endif
-    vkCmdDrawIndexed(s_cmd, nidx, 1, 0, 0, 0);
+    vkCmdDrawIndexed(s_cmd, rail ? rail->index_count : nidx, 1, 0, 0, 0);
     if (s_enc_dt && s_dyn.zwrite && amped_shadow_enabled()) {
         s_enc_dt->amped_write_flip = s_presents + 1;
         ++s_enc_dt->amped_write_gen;

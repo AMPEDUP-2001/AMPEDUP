@@ -2,7 +2,6 @@ param([switch]$OverlayTest, [string]$KeyLiveFile, [switch]$Managed, [switch]$Hea
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 $root = $PSScriptRoot
-$menuRecipe = Get-Content -LiteralPath (Join-Path $root 'hud-patches.json') -Raw | ConvertFrom-Json
 $files = if ($Managed) { Join-Path $root 'runtime' } else { $root }
 $switches = @{
     snow_gather = 'AMPED_GATHER_SNOW'
@@ -33,6 +32,7 @@ try {
         }
         throw 'Prepare your game copy in RecompLauncher before playing AMPEDUP!.'
     }
+    $menuRecipe = Get-Content -LiteralPath (Join-Path $files 'hud-patches.json') -Raw | ConvertFrom-Json
     $reader = Join-Path $root 'tools\hud_settings_reader.exe'
     $profile = Join-Path $root 'profile'
     $saves = Join-Path $profile 'saves'
@@ -70,6 +70,30 @@ public static class AmpedWindow {
         Get-ChildItem Env: | Where-Object { $_.Name -like 'AMPED_*' -or $_.Name -like 'RECOMP_*' } | ForEach-Object { [Environment]::SetEnvironmentVariable($_.Name, $null, 'Process') }
         $env:AMPED_RESTART_MARKER = Join-Path $session 'restart-request.txt'
         $env:AMPED_DEMO_ASSET_OVERRIDE = $override
+        if ($menuRecipe.PSObject.Properties['native_shell_sha256']) {
+            $shell = Join-Path $files 'overrides/Shell.res'
+            if ((Get-FileHash -LiteralPath $shell -Algorithm SHA256).Hash -ne $menuRecipe.native_shell_sha256) {
+                throw 'The native menu string table is missing or changed.'
+            }
+            $env:AMPED_SHELL_ASSET_OVERRIDE = $shell
+            # The guest can read these archives from its persistent utility cache.
+            foreach ($archive in @(
+                @{ relative = 'Cache/Resource/Shell/Menus.res'; source = $override; sha256 = $expected },
+                @{ relative = 'Cache/Resource/Shell.res'; source = $shell; sha256 = $menuRecipe.native_shell_sha256 }
+            )) {
+                $cached = Join-Path $disk $archive.relative
+                if ((Test-Path -LiteralPath $cached -PathType Leaf) -and
+                    (Get-FileHash -LiteralPath $cached -Algorithm SHA256).Hash -ne $archive.sha256) {
+                    $temporary = Join-Path (Split-Path -Parent $cached) ('.amped-menu-' + [Guid]::NewGuid().ToString('N'))
+                    try {
+                        [IO.File]::Copy($archive.source, $temporary)
+                        [IO.File]::Replace($temporary, $cached, [NullString]::Value)
+                    } finally {
+                        [IO.File]::Delete($temporary)
+                    }
+                }
+            }
+        }
         $env:AMPED_SETTINGS_TEST_ROOT = $disk
         $env:RECOMP_SAVE_DIR = $saves
         $env:RECOMP_SETTINGS = $settings

@@ -38,10 +38,11 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "5",
+    "version": "6",
     "done": [
       "{install}/runtime/.ampedup-ready",
-      "{install}/runtime/Amped-Host/bin/amped_recomp.exe"
+      "{install}/runtime/Amped-Host/bin/amped_recomp.exe",
+      "{install}/runtime/Amped-Host/bin/snow-summit-visible.ahd"
     ]
   },
   "config": [
@@ -128,19 +129,19 @@
           }
         },
         {
-          "label": "2Ã—",
+          "label": "2\u00c3\u2014",
           "set": {
             "graphics/render_scale": "2"
           }
         },
         {
-          "label": "3Ã—",
+          "label": "3\u00c3\u2014",
           "set": {
             "graphics/render_scale": "3"
           }
         },
         {
-          "label": "4Ã—",
+          "label": "4\u00c3\u2014",
           "set": {
             "graphics/render_scale": "4"
           }
@@ -179,6 +180,28 @@
       }
     },
     {
+      "id": "hd-textures",
+      "label": "HD Texture Pack",
+      "help": "Use the optional high-resolution detail for selected snow, bark and metal materials.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "graphics/amped_hd_textures": "false"
+          }
+        },
+        {
+          "label": "On",
+          "set": {
+            "graphics/amped_hd_textures": "true"
+          }
+        }
+      ],
+      "defaults": {
+        "graphics/amped_hd_textures": "false"
+      }
+    },
+    {
       "id": "aniso",
       "label": "Texture filtering",
       "help": "Higher values sharpen textures viewed at an angle.",
@@ -190,25 +213,25 @@
           }
         },
         {
-          "label": "2Ã—",
+          "label": "2\u00c3\u2014",
           "set": {
             "graphics/aniso": "\"2x\""
           }
         },
         {
-          "label": "4Ã—",
+          "label": "4\u00c3\u2014",
           "set": {
             "graphics/aniso": "\"4x\""
           }
         },
         {
-          "label": "8Ã—",
+          "label": "8\u00c3\u2014",
           "set": {
             "graphics/aniso": "\"8x\""
           }
         },
         {
-          "label": "16Ã—",
+          "label": "16\u00c3\u2014",
           "set": {
             "graphics/aniso": "\"16x\""
           }
@@ -293,7 +316,7 @@
   },
   "looks": {
     "allowed": false,
-    "reason": "Use AMPEDUP!â€™s built-in CRT scanlines and anti-aliasing."
+    "reason": "Use AMPEDUP!\u00e2\u20ac\u2122s built-in CRT scanlines and anti-aliasing."
   },
   "exit_codes": {
     "12": "Prepare your own copy from the AMPEDUP! page before playing."

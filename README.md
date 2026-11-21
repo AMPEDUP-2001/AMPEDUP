@@ -1,19 +1,19 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.7
+# AMPEDUP! 0.7.1
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.1.md) · [Credits](#credits)
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.7 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7).
+Choose a Windows installer from the [0.7.1 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.1).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7/Setup-AMPEDUP-0.7-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7/Setup-AMPEDUP-0.7.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.1-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.1/Setup-AMPEDUP-0.7.1-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.1.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.1/Setup-AMPEDUP-0.7.1.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
@@ -51,7 +51,9 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 - FXAA, SMAA, anisotropic filtering, and optional CRT scanlines.
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
 - Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
-- **Quit Game** is available from the main menu. Settings that need a restart ask for confirmation.
+- **Quit Game** replaces **Game Demos** on the Main Menu. Settings that need a restart ask for confirmation.
+- Optional **HD Texture Pack** adds detail to selected snow, pine bark, and metal. It starts Off.
+- Miracle Mile has rounder rail and funbox details and restored snowboard powder. Brighton 1 / Hawkeye has targeted flicker fixes at Molly’s Lodge.
 
 ## Custom soundtracks
 
@@ -62,12 +64,13 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 
 Imports use the Windows Media components and save converted copies in your local profile. The import keeps existing genres, and short tracks below the game's encoded size minimum are skipped.
 
-## Screenshots from 0.6
+## Screenshots from 0.7.1
 
-![Snow Summit 1 at 4× internal resolution](docs/screenshots/snow-summit.jpg)
+![Original Xbox and AMPEDUP! Main Menus, showing Quit Game in the sixth slot](docs/screenshots/0.7.1/main-menu-comparison.jpg)
 
-<img src="docs/screenshots/graphics-settings.jpg" width="440" alt="Graphics settings with 4× rendering and FXAA">
-<img src="docs/screenshots/audio-settings.jpg" width="440" alt="Audio settings with Console-style mix, speaker layout, separate levels and spatial width">
+![The native Graphics entry selected and the settings it opens](docs/screenshots/0.7.1/graphics-menu.jpg)
+
+See the [release notes and comparisons](docs/release-0.7.1.md) for board powder, rails, HD textures, and the Brighton window fix.
 
 ## Credits
 

@@ -229,6 +229,7 @@ static xs_setting s_set[XS_COUNT] = {
     [XS_AMPED_MUSIC_LEVEL] = SETTING("audio.amped_music_level", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1.5, 1),
     [XS_AMPED_EFFECTS_LEVEL] = SETTING("audio.amped_effects_level", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1.5, 1),
     [XS_AMPED_SPATIAL_WIDTH] = SETTING("audio.amped_spatial_width", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1, 0.25),
+    [XS_AMPED_HD_TEXTURES] = SETTING("graphics.amped_hd_textures", XS_BOOL, XS_RESTART | XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1, 0),
     [XS_GAME_LANGUAGE]      = SETTING("game.language", XS_CHOICE, XS_RESTART, RENV_GAME_LANGUAGE, k_language, NULL, 0, 0, 0),
 #if defined(__ANDROID__)
     [XS_INPUT_VIBRATION]    = SETTING("input.vibration", XS_CHOICE, XS_RESTART, RENV_ANDROID_VIBRATION, k_vibration, NULL, 0, 0, 0),
@@ -1078,6 +1079,11 @@ void xbox_SettingsFinish(void)
 }
 
 /* ── access ────────────────────────────────────────────────────────── */
+
+int amped_hd_textures_enabled(void)
+{
+    return s_set[XS_AMPED_HD_TEXTURES].launch != 0.0;
+}
 
 const xs_setting *xbox_SettingGet(xs_id id)
 {

@@ -112,7 +112,7 @@ try {
         Set-InstallStatus 'Building AMPEDUP! from your disc. This takes several minutes...' 0.65
         $buildLog = Join-Path $Destination 'setup-build.log'
         try {
-            & $sourceBuilder -Xbe $xbe -Executable $installedExe -BuildLog $buildLog
+            & $sourceBuilder -Xbe $xbe -Executable $installedExe -Destination $Destination -BuildLog $buildLog
         } catch {
             $detail = $_.Exception.Message
             if (Test-Path -LiteralPath $buildLog -PathType Leaf) { $detail += " See $buildLog." }
@@ -122,8 +122,10 @@ try {
     if (-not (Test-Path -LiteralPath $installedExe -PathType Leaf)) { throw 'The game executable is missing from the installation.' }
     if ($progress) { $label.Text = 'Preparing game resources...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
     Set-InstallStatus 'Preparing the game...' 0.94
-    & (Join-Path $Destination 'prepare-assets.ps1') -GameRoot $game -Destination $Destination
-    if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the game resources.' }
+    if (-not $buildFromDisc) {
+        & (Join-Path $Destination 'prepare-assets.ps1') -GameRoot $game -Destination $Destination
+        if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the game resources.' }
+    }
     if (-not $NonInteractive) {
         if ($progress) { $progress.Close(); $progress.Dispose(); $progress = $null }
         $desktop = [Environment]::GetFolderPath('DesktopDirectory')

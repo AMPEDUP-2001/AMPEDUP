@@ -34,5 +34,17 @@
     "label": "the Ninja license",
     "url": "https://raw.githubusercontent.com/ninja-build/ninja/v1.13.2/COPYING",
     "sha256": "EB7E9AB9690124C5C9F42BDC81383D886A3DEDE26345B6ED15BBAD7CAF81F7EA"
+  },
+  {
+    "name": "numpy-2.2.6-cp311-cp311-win_amd64.whl",
+    "label": "NumPy",
+    "url": "https://files.pythonhosted.org/packages/31/0a/f354fb7176b81747d870f7991dc763e157a934c717b67b58456bc63da3df/numpy-2.2.6-cp311-cp311-win_amd64.whl",
+    "sha256": "E8213002E427C69C45A52BBD94163084025F533A55A59D6F9C5B820774EF3303"
+  },
+  {
+    "name": "pillow-11.3.0-cp311-cp311-win_amd64.whl",
+    "label": "Pillow",
+    "url": "https://files.pythonhosted.org/packages/f1/cc/29c0f5d64ab8eae20f3232da8f8571660aa0ab4b8f1331da5c2f5f9a938e/pillow-11.3.0-cp311-cp311-win_amd64.whl",
+    "sha256": "1A992E86B0DD7AEB1F053CD506508C0999D710A8F07B4C791C63843FC6A807AC"
   }
 ]

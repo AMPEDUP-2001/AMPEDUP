@@ -22,6 +22,12 @@
 #include "../platform/xr_log.h"   /* the print gate (also force-included) */
 
 static struct nvk_core s_core;
+
+static int s_board_powder_enabled;
+int nvk_board_powder_enabled(void)
+{
+    return s_board_powder_enabled;
+}
 static int             s_state;          /* 0 not tried, 1 up, -1 failed */
 static char            s_err[256];
 static pthread_mutex_t s_init_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -375,6 +381,14 @@ static int make_device(void)
     memset(&f2, 0, sizeof f2);
     f2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
     f2.pNext = &f12;
+    {
+        const char *flag = getenv("AMPED_BOARD_POWDER");
+        s_board_powder_enabled = (!flag || strcmp(flag, "0")) && have2.features.largePoints;
+        f2.features.largePoints = s_board_powder_enabled ? VK_TRUE : VK_FALSE;
+        if (s_board_powder_enabled)
+            (fprintf)(stderr, "[BOARD_POWDER] largePoints enabled, range max=%.2f\n",
+                      s_core.props.limits.pointSizeRange[1]);
+    }
     /* Exact zpass counts, as Metal's counting visibility results. */
     f2.features.occlusionQueryPrecise = have2.features.occlusionQueryPrecise;
     /* Anisotropic filtering (RECOMP_GFX_ANISO): on where the device has it,

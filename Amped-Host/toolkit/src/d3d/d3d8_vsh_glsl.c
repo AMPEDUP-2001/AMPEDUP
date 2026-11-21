@@ -365,7 +365,12 @@ int d3d8_vsh_generate_glsl(const NV2AVshProgram *program, unsigned flags,
         "    o_d1 = saturate(oD1);\n"
         "    o_t0 = oT0; o_t1 = oT1; o_t2 = oT2; o_t3 = oT3;\n"
         "    o_fog = oFog.x;\n"
-        "    gl_PointSize = max(oPts.x, 1.0);\n"
-        "}\n");
+        "");
+    if (flags & 256u)
+        sb_append(&sb, "    gl_PointSize = vp.vp_off.z > 0.0 ? "
+                       "clamp(oPts.x, 1.0, vp.vp_off.z) : 1.0;\n");
+    else
+        sb_append(&sb, "    gl_PointSize = max(oPts.x, 1.0);\n");
+    sb_append(&sb, "}\n");
     return sb.overflow ? -1 : sb.pos;
 }

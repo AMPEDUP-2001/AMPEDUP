@@ -24,6 +24,8 @@ $glslang = Join-Path $winDeps 'glslang'
 $vulkan = Join-Path $winDeps 'vulkan'
 $build = Join-Path $hostDir 'build'
 $pythonPath = (Get-Command $Python -CommandType Application).Source
+& $pythonPath -B (Join-Path $PSScriptRoot 'visual/generate.py') (Split-Path -Parent $xbePath) $build
+if ($LASTEXITCODE -ne 0) { throw 'Visual asset generation failed.' }
 $env:PATH = (Join-Path $llvm 'bin') + ';' + $env:PATH
 $generated = [IO.Path]::GetFullPath((Join-Path $hostDir '../Analysis/seeded-v23/generated')).Replace('\','/')
 $regenArgs = @((Join-Path $PSScriptRoot 'regenerate.py'), $xbePath, '--jobs', $AnalysisJobs)

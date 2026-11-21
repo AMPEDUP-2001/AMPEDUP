@@ -130,6 +130,8 @@ static int generate(const NV2ACombinerState *state, char *buf, int bufsize, int 
     EMIT("%s", hdr ? D3D8_GLSL_PSCONSTS_HDR : D3D8_GLSL_PSCONSTS);
     EMIT("%s", D3D8_GLSL_FS_IN);
     EMIT("layout(location = 0) out vec4 o_color;\n");
+    if (state->alpha_kill & 64u)
+        EMIT("layout(early_fragment_tests) in;\n");
     for (i = 0; i < NV2A_MAX_TEXTURES; i++) {
         int m = (int)state->tex_mode[i];
         if (m == NV2A_TEXMODE_NONE || m == NV2A_TEXMODE_PASSTHRU
@@ -227,8 +229,12 @@ static int generate(const NV2ACombinerState *state, char *buf, int bufsize, int 
             EMIT("    }\n");
         } else {
             EMIT("    {\n");
-            EMIT("        vec2 uv = i_t%d.xy;\n", i);
-            if (m == NV2A_TEXMODE_2D)
+            int powder_sprite = i == 3 && (state->alpha_kill & 128u);
+            if (powder_sprite)
+                EMIT("        vec2 uv = gl_PointCoord;\n");
+            else
+                EMIT("        vec2 uv = i_t%d.xy;\n", i);
+            if (m == NV2A_TEXMODE_2D && !powder_sprite)
                 /* As the MSL: only true 2D stages divide by q. */
                 EMIT("        if (pc.tex_mode[%d] == 1u && i_t%d.w != 0.0 && i_t%d.w != 1.0)"
                      " uv /= i_t%d.w;\n", i, i, i, i);
