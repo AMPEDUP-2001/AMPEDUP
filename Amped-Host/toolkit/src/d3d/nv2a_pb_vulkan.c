@@ -7361,6 +7361,59 @@ static RailMesh *rail_mesh_for_vertices(uint32_t pending, const float *vertices)
     return NULL;
 }
 
+#if defined(AMPED_ULTRAWIDE_TRIAL_V23)
+/* Keep the guest HUD in its original culling volume. After it has emitted
+ * the native draw, add the extra border width to the projection of each
+ * corner group. Use one anchor per draw so glyph and mesh shapes stay rigid. */
+static float amped_ultrawide_corner_offset(const struct nv2a_pb_draw *d,
+        const struct nv2a_pb_vsh *v, uint32_t first_vertex)
+{
+    const int position[] = {0};
+    float p[4];
+    nv2a_vtx_gather(d, position, 1, first_vertex, 1, v->inl,
+                    (const uint8_t *)xbox_GetMemoryOffset(), p);
+    if (d->program) {
+        /* The 4673ef5f HUD program transforms v0 by c96..99 and then
+         * applies the Xbox viewport epilogue (c58 and c59). */
+        float clip[4] = {0};
+        for (unsigned axis = 0; axis < 4; ++axis)
+            for (unsigned component = 0; component < 4; ++component)
+                clip[axis] += p[component] * v->c[96 + axis][component];
+        if (!(clip[3] > 0.0f))
+            return 0.0f;
+        /* The animated trick value uses its own mesh scale and font
+         * atlases. Its glyphs are emitted separately and cross the corner
+         * boundary together. Anchor the flight from its projected baseline
+         * rather than snapping each glyph at the corner cutoff. */
+        const Stage *font = &s_stage[0];
+        if (font->valid && font->height == 256
+                && ((font->width == 256 && font->color == 0x0e)
+                    || (font->width == 512 && font->color == 0x0f))
+                && fabsf(v->c[96][0] - 1.75f) < 0.01f && v->c[99][3] > 0.0f) {
+            const float inv_w = 1.0f / v->c[99][3];
+            const float x = v->c[96][3] * v->c[58][0] * inv_w + v->c[59][0];
+            const float y = v->c[97][3] * v->c[58][1] * inv_w + v->c[59][1];
+            if (x < 320.0f) {
+                /* Start after the left-going number has cleared the centre.
+                 * Each glyph then uses the same vertical progress so the
+                 * flight keeps its spacing as it reaches the score tray. */
+                const float t = fminf(1.0f, fmaxf(0.0f, (260.0f - y) / 170.0f));
+                return -0.5f * t * t * (3.0f - 2.0f * t);
+            }
+        }
+        p[0] = clip[0] * v->c[58][0] / clip[3] + v->c[59][0];
+        p[1] = clip[1] * v->c[58][1] / clip[3] + v->c[59][1];
+    }
+    if (!(p[1] >= 0.0f && p[1] < 192.0f))
+        return 0.0f;
+    if (p[0] >= 0.0f && p[0] < 224.0f)
+        return -0.25f;
+    if (p[0] > 416.0f && p[0] <= 640.0f)
+        return 0.25f;
+    return 0.0f;
+}
+#endif
+
 static void vk_on_draw(const struct nv2a_pb_draw *d)
 {
     RailMesh *rail = NULL;
@@ -7644,11 +7697,22 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
     }
     nv2a_vp_consts_fill(v, g->format, rt->w, rt->h, &vc);
 #if defined(AMPED_ULTRAWIDE_TRIAL_V23)
-    if (trial_shader == 0x4673ef5fu && rt->w == 640 && rt->h == 480 && !s_occ_q) {
-        extern int amped_ultrawide_trial_hud(uint32_t flip);
-        if (amped_ultrawide_trial_hud(g->flips + 1u)) {
-            vc.c[0] *= 0.75f;
-            vc.c[4] *= 0.75f;
+    if (rt->w == 640 && rt->h == 480 && !s_occ_q) {
+        const int hud_program = trial_shader == 0x4673ef5fu;
+        /* The score bar also has small pre-transformed helper draws using
+         * the same 512-square atlas. Keep their mask with their panel. */
+        const int score_mask = !d->program && nidx == 6 && !v->depth_enable
+                && !g->blend_enable && s_stage[0].valid && s_stage[0].color == 0x0e
+                && s_stage[0].width == 512 && s_stage[0].height == 512;
+        if (hud_program || score_mask) {
+            extern int amped_ultrawide_trial_hud(uint32_t flip);
+            if (amped_ultrawide_trial_hud(g->flips + 1u)) {
+                if (hud_program) {
+                    vc.c[0] *= 0.75f;
+                    vc.c[4] *= 0.75f;
+                }
+                vc.c[4] += amped_ultrawide_corner_offset(d, v, lo + idx[0]);
+            }
         }
     }
 #endif

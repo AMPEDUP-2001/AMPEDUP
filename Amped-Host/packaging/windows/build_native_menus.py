@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import struct
 import sys
@@ -226,6 +227,41 @@ def graphics_animations(main):
     return main[:12] + struct.pack("<I", 3) + tracks
 
 
+WIDE_MENU_DISTANCE = 0.55
+PREFIX = b'|LightGroup|GUI|HUD_MENU|Master_Hud_GROUP|TOP_STUFF|'
+SWITCH = b'|LightGroup|GUI|Switch_Icon_Group_Translate'
+ONE_KEY = b'\x08\x04\x00\x00\x01\x00\x00\x00'
+TWO_KEYS = b'\x08\x04\x00\x00\x02\x00\x00\x00'
+
+
+def tracks(scene, name, header):
+    return [match.end() for match in re.finditer(re.escape(name + header), scene)]
+
+def move_key(scene, position, expected, delta):
+    field = struct.Struct("<f")
+    if scene[position:position + field.size] != field.pack(expected):
+        raise ValueError(f"Unexpected HUD coordinate at {position:#x}")
+    field.pack_into(scene, position, expected + delta)
+
+def corner_layout(archive, distance):
+    (_, offset, length), = [row for row in directory(archive) if row[0] == "hud.ani"]
+    scene = bytearray(archive[offset:offset + length])
+    for suffix, initial, delta in ((b"left_side_stuff", -1.5, -distance),
+                                   (b"right_side_stuff", 1.5, distance)):
+        anchor, = tracks(scene, PREFIX + suffix, ONE_KEY)
+        move_key(scene, anchor + 4, initial, delta)
+
+    neutral, switch = -1.5, 2.5914392471313477
+    phases = ((neutral, switch), (switch, neutral), (switch, neutral), (neutral, switch))
+    for anchor, (start, end) in zip(tracks(scene, SWITCH, TWO_KEYS), phases, strict=True):
+        move_key(scene, anchor + 8, start, -distance)
+        move_key(scene, anchor + 20, end, -distance)
+    return archive[:offset] + scene + archive[offset + length:]
+
+def wide_menu(source):
+    return corner_layout(source, WIDE_MENU_DISTANCE)
+
+
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument("--game-root", type=Path, required=True)
@@ -253,6 +289,8 @@ def main():
                 raise ValueError("Widescreen edit overlaps a new native menu resource")
             data[offset] = new
         output = patched(data, edits)
+        if name == "wide":
+            output = wide_menu(output)
         rebuilt = {name: output[off:off + size] for name, off, size in directory(output)}
         if set(rebuilt) != set(entries) or any(rebuilt[name] != payload for name, payload in models.items()):
             raise ValueError("The new archive directory did not round trip")

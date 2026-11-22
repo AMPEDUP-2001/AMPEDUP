@@ -1,19 +1,19 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.7.1
+# AMPEDUP! 0.7.2
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc, with optional **21:9 ultrawide gameplay**.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.1.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.2.md) · [Credits](#credits)
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.7.1 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.1).
+Choose a Windows installer from the [0.7.2 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.2).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.1-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.1/Setup-AMPEDUP-0.7.1-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.1.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.1/Setup-AMPEDUP-0.7.1.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.2-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.2/Setup-AMPEDUP-0.7.2-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.2.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.2/Setup-AMPEDUP-0.7.2.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
@@ -48,7 +48,7 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 ## Game features
 
 - Vulkan rendering, 4:3 and native 16:9, and internal resolution from original through 4×.
-- **21:9 ultrawide** widens the course camera and keeps the HUD and menus centered. Turn on **Options → Graphics → Ultrawide (21:9)** and confirm the restart. In RecompLauncher, choose **21:9** under **Aspect ratio** before launching.
+- **21:9 ultrawide** widens the course camera, anchors the score HUD near the corners, and keeps menus centered. Turn on **Options → Graphics → Ultrawide (21:9)** and confirm the restart. In RecompLauncher, choose **21:9** under **Aspect ratio** before launching.
 - FXAA, SMAA, anisotropic filtering, and optional CRT scanlines.
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
 - Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
@@ -65,15 +65,19 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 
 Imports use the Windows Media components and save converted copies in your local profile. The import keeps existing genres, and short tracks below the game's encoded size minimum are skipped.
 
-## Screenshots from 0.7.1
+## 0.7.2 widescreen HUD
 
-![Snow Summit 1, Miracle Mile, in 21:9 ultrawide at 4× internal resolution](docs/screenshots/0.7.1/ultrawide-snow-summit.jpg)
+![The corrected 21:9 HUD and earned-points animation on Miracle Mile](docs/screenshots/0.7.2/ultrawide-score-flight.jpg)
+
+[Watch the same Brighton 1 replay in 4:3, 16:9, and 21:9](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.2/AMPEDUP-0.7.2-Aspect-Ratio-Comparison.mp4) · [See what changed](docs/release-0.7.2.md)
+
+## Menus and visual upgrades
 
 ![Original Xbox and AMPEDUP! Main Menus, showing Quit Game in the sixth slot](docs/screenshots/0.7.1/main-menu-comparison.jpg)
 
 ![The native Graphics entry selected and the settings it opens](docs/screenshots/0.7.1/graphics-menu.jpg)
 
-See the [release notes and comparisons](docs/release-0.7.1.md) for board powder, rails, HD textures, and the Brighton window fix.
+See the [0.7.1 release notes and comparisons](docs/release-0.7.1.md) for board powder, rails, HD textures, and the Brighton window fix.
 
 ## Credits
 
