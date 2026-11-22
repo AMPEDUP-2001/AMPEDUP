@@ -69,6 +69,8 @@ Imports use the Windows Media components and save converted copies in your local
 
 ![The corrected 21:9 HUD and earned-points animation on Miracle Mile](docs/screenshots/0.7.2/ultrawide-score-flight.jpg)
 
+![Before and after the 21:9 points animation fix](docs/screenshots/0.7.2/points-animation-comparison.jpg)
+
 [Watch the same Brighton 1 replay in 4:3, 16:9, and 21:9](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.2/AMPEDUP-0.7.2-Aspect-Ratio-Comparison.mp4) · [See what changed](docs/release-0.7.2.md)
 
 ## Menus and visual upgrades
