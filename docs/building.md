@@ -24,10 +24,8 @@ Make a dependency directory with the following layout. The compiler, SDL2, Vulka
 | `windows-deps/glslang/` | The installed CMake package from [glslang 16.6.0](https://github.com/KhronosGroup/glslang/releases/tag/16.6.0), compiled for the same target |
 | `windows-deps/glslang-src/` | The glslang source directory, which provides the licence files used by setup |
 | `windows-deps/vulkan/` | [Vulkan headers 1.4.363.0](https://github.com/KhronosGroup/Vulkan-Headers) under `include/` and `lib/libvulkan-1.dll.a` |
-| `extract-xiso/source/` | [extract-xiso at `3f5b62c`](https://github.com/XboxDev/extract-xiso/tree/3f5b62cfe68f000b0e3c8a30104973f3a297948e), which provides the extractor licence |
-| `extract-xiso/build-ucrt/` | `extract-xiso.exe` built from that source for x86-64 Windows |
 
-For glslang, use the included Windows toolchain and set `CMAKE_BUILD_TYPE=Release`, `ENABLE_OPT=OFF` and `BUILD_SHARED_LIBS=OFF`. Set `CMAKE_INSTALL_PREFIX` to the glslang install directory and run `cmake --build <glslang-build> --target install`. Use the same toolchain for extract-xiso. It takes `-DLLVM_MINGW_ROOT=<path>` to locate the compiler.
+For glslang, use the included Windows toolchain and set `CMAKE_BUILD_TYPE=Release`, `ENABLE_OPT=OFF` and `BUILD_SHARED_LIBS=OFF`. Set `CMAKE_INSTALL_PREFIX` to the glslang install directory and run `cmake --build <glslang-build> --target install`. The standalone installer builds its disc reader from the vendored toolkit.
 
 ## Generate and compile
 
@@ -41,7 +39,7 @@ Extract your own supported XISO with `extract-xiso.exe -x -d <disc-folder> <imag
 
 Regeneration verifies the executable and the course archives. Keep the extracted Resource folder beside default.xbe. The build derives the matching mesh data and HD Texture Pack from those local files. It builds the game and packages `Amped-Host/dist/AMPEDUP-Private/Setup-AMPEDUP.exe`. The `-ReuseGenerated` switch resumes compilation after successful regeneration. The `Analysis/` and `Amped-Host/build/` directories hold local build output.
 
-Use a public installer from the section below for the full native menu setup. Run setup and select the matching XISO, installation folder and desktop shortcut option. The install keeps saves and settings in its `profile/` subdirectory. Windows may show a publisher prompt because this preview is unsigned.
+Use a public installer from the section below for the full native menu setup. Select your XISO, installation folder and desktop shortcut option. The updated standalone setup accepts a repack with the same 610 files. To create one from a verified extracted folder, run `extract-xiso.exe -m -c <disc-folder> <new-image.iso>`. The -m option preserves the executable bytes. The install keeps saves and settings in its `profile/` subdirectory. Windows may show a publisher prompt because this preview is unsigned.
 
 ## Package the public installers
 

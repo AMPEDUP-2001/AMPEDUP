@@ -2,9 +2,11 @@ AMPEDUP! 0.7.3 - WINDOWS
 
 Requirements: 64-bit Windows 10/11, a Vulkan-capable GPU and current driver,
 about 6 GB of free space for installation and compilation, and your matching
-European multilingual retail XISO (SHA-256:
-1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0).
-Other editions or differently packaged images have not been validated.
+European multilingual retail disc. Setup verifies all 610 files by path, size
+and SHA-256. A repacked XISO works when all retail files are intact. When
+using extract-xiso to repack a folder, use -m -c to preserve its executables.
+The reference image has SHA-256
+1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0.
 
 1. Open Setup-AMPEDUP.exe. Select your matching ISO and installation folder,
    choose whether to create a desktop shortcut, and press Install. The folder

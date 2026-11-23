@@ -42,8 +42,7 @@ if (-not (Test-Path -LiteralPath $sdl -PathType Leaf)) { throw "SDL2.dll is miss
 $icon = Join-Path $PSScriptRoot 'ampedup.ico'
 $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $compiler = Join-Path $winDeps 'llvm-mingw\bin\x86_64-w64-mingw32-clang.exe'
-$extractor = Join-Path $dependencyDir 'extract-xiso\build-ucrt\extract-xiso.exe'
-foreach ($path in @($icon, $csc, $compiler, $extractor)) {
+foreach ($path in @($icon, $csc, $compiler)) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing packaging input: $path" }
 }
 $payload = Join-Path $target 'payload'
@@ -79,8 +78,9 @@ $configParser = Join-Path $hostDir 'toolkit\src\enhance'
 $reader = Join-Path $hostDir 'probes\perf_ae_v23\hud_settings_reader.c'
 & $compiler -O2 -I $configParser $reader (Join-Path $configParser 'recomp_cfg.c') -o (Join-Path $payload 'tools\hud_settings_reader.exe')
 if ($LASTEXITCODE -ne 0) { throw 'Could not compile the settings reader.' }
-Copy-Item -LiteralPath $extractor -Destination (Join-Path $target 'tools')
-Copy-Item (Join-Path $dependencyDir 'extract-xiso\source\LICENSE.TXT') (Join-Path $payload 'notices\extract-xiso-LICENSE.txt')
+$discLib = Join-Path $hostDir 'toolkit/src/install'
+& $compiler -O2 -I $discLib (Join-Path $PSScriptRoot 'disc-file-table.c') (Join-Path $discLib 'xdvdfs.c') -o (Join-Path $target 'tools/disc-file-table.exe')
+if ($LASTEXITCODE -ne 0) { throw 'Could not compile the disc reader.' }
 Copy-Item (Join-Path $winDeps 'SDL2\LICENSE.txt') (Join-Path $payload 'notices\SDL2-LICENSE.txt')
 Copy-Item (Join-Path $hostDir 'toolkit\LICENSE') (Join-Path $payload 'notices\xboxrecomp-LICENSE.txt')
 Copy-Item (Join-Path $hostDir 'toolkit\NOTICE') (Join-Path $payload 'notices\xboxrecomp-NOTICE.txt')

@@ -12,17 +12,17 @@ An unofficial static recompilation of the original Xbox version of *Amped: Frees
 
 Choose a Windows installer from the [0.7.3 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.3).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.3-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.3.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.3-Online-DiscFix.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3-Online-DiscFix.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.3-DiscFix.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3-DiscFix.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
-3. Click **Install**. Setup checks the disc's SHA-256, extracts the game data and compiles the game on your PC. The build takes several minutes, plus download time with the online installer.
+3. Click **Install**. Setup checks the paths, sizes and SHA-256 hashes of all 610 retail files as it extracts them, then compiles the game on your PC. The build takes several minutes, plus download time with the online installer.
 4. Start `AMPEDUP!.exe` from the shortcut or the installation folder. Choose **Game language**, then **Play**. The European release supports English, Deutsch, Français, Italiano and Español. RecompLauncher offers the same choice in the game's settings.
 
-Use your own European multilingual retail disc image. The supported XISO has SHA‑256 `1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0`. Other editions and disc layouts are unverified. The repository contains the runtime, patch recipes and build tools. Bring your own disc to generate the executable and install game content.
+Use your own European multilingual retail disc image. The standalone installers above also accept a rebuilt XISO when it contains the same 610 retail files. Keep the original executables intact when converting or repacking. The reference image has SHA-256 `1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0`. Other disc editions remain unverified. The repository contains the runtime, patch recipes and build tools. Bring your own disc to generate the executable and install game content.
 
-For RecompLauncher, use the Windows x64 ZIP and select the matching XISO or its extracted folder in Easy Setup. Setup downloads the build tools and compiles the game locally. Play opens the game directly and settings, saves, and logs live under `profile/` in the ZIP's installation folder. See [launcher setup details](docs/building.md#package-for-recomplauncher).
+For RecompLauncher, use the Windows x64 ZIP and select the reference XISO or the extracted folder containing `default.xbe` in Easy Setup. Setup downloads the build tools and compiles the game locally. Play opens the game directly and settings, saves, and logs live under `profile/` in the ZIP's installation folder. See [launcher setup details](docs/building.md#package-for-recomplauncher).
 
 ## System requirements
 
@@ -83,7 +83,7 @@ See the [0.7.1 release notes and comparisons](docs/release-0.7.1.md) for board p
 
 ## Credits
 
-The original game and its assets belong to their respective rights holders. AMPEDUP! is a fan project. The runtime and recompiler are based on [xboxrecomp](https://github.com/sp00nznet/xboxrecomp) and the Windows work in [Takedawn](https://github.com/xenophobentx/takedawn). The bulk dispatcher adapts [WNBDEV's pushbuffer work](https://github.com/WNBDEV/xboxrecomp/commit/83357acac82d6a82f2aeefd2888f670a4fd4bc2b). Setup uses [extract-xiso](https://github.com/XboxDev/extract-xiso). See the vendored [licence](Amped-Host/toolkit/LICENSE) and [third-party notices](Amped-Host/toolkit/NOTICE) for component credits and terms.
+The original game and its assets belong to their respective rights holders. AMPEDUP! is a fan project. The runtime and recompiler are based on [xboxrecomp](https://github.com/sp00nznet/xboxrecomp) and the Windows work in [Takedawn](https://github.com/xenophobentx/takedawn). The bulk dispatcher adapts [WNBDEV's pushbuffer work](https://github.com/WNBDEV/xboxrecomp/commit/83357acac82d6a82f2aeefd2888f670a4fd4bc2b). Disc repacking was tested with [extract-xiso](https://github.com/XboxDev/extract-xiso). See the vendored [licence](Amped-Host/toolkit/LICENSE) and [third-party notices](Amped-Host/toolkit/NOTICE) for component credits and terms.
 
 Projects consulted or supplied for reference include [Burnout 3](https://github.com/sp00nznet/burnout3), [SSX3-recomp](https://github.com/koenhendriks/SSX3-recomp), [rePOP](https://github.com/FulGerNet/rePOP), [Finest Hour Remastered](https://github.com/crazyriddler/FinestHourRemastered), [RE-Amped2](https://github.com/Nico-D-eu/RE-Amped2), and [Amped 3 Revamped](https://github.com/minty-hippo/amped3revamped).
 

@@ -5,6 +5,7 @@ Add-Type -AssemblyName System.Windows.Forms
 $sourceRoot = $PSScriptRoot
 $progress = $null
 $createdDestination = $false
+$discStage = $null
 function Set-InstallStatus([string]$message, [double]$fraction = 0) {
     if ($StatusFile) { [IO.File]::WriteAllText($StatusFile, $message, [Text.UTF8Encoding]::new($false)) }
     if ($LauncherSetup -and $fraction -gt 0) {
@@ -57,58 +58,85 @@ try {
             (Get-FileHash -LiteralPath $originalXbe).Hash -ne $xbeHash) {
             throw 'Choose an extracted folder from the supported European multilingual retail disc.'
         }
-    } else {
-        Set-InstallStatus 'Checking the ISO image...' 0.05
-        if ((Get-FileHash -LiteralPath $Image -Algorithm SHA256).Hash -ne '1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0') {
-            throw 'This build supports the exact Amped Europe XISO used to create it. The selected image does not match.'
-        }
     }
-    $extractor = Join-Path $sourceRoot 'tools\extract-xiso.exe'
-    if (-not (Test-Path -LiteralPath $extractor -PathType Leaf)) { throw 'The extractor is missing from the package.' }
+    $manifest = Get-Content -Encoding UTF8 -LiteralPath (Join-Path $sourceRoot 'disc-manifest.json') -Raw | ConvertFrom-Json
+    $parent = [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($Destination))
+    $stagePath = Join-Path $parent.FullName ('.ampedup-disc-' + [guid]::NewGuid().ToString('N'))
+    $discStage = (New-Item -ItemType Directory -Path $stagePath -ErrorAction Stop).FullName
+    $stream = $null
+    try {
+        if (-not $folderInput) {
+            Set-InstallStatus 'Reading the Xbox disc file table...' 0.05
+            $stream = [IO.File]::OpenRead($Image)
+            $reader = New-Object Diagnostics.ProcessStartInfo
+            $reader.FileName = Join-Path $sourceRoot 'tools/disc-file-table.exe'
+            $reader.Arguments = '"' + $Image + '"'
+            $reader.UseShellExecute = $false
+            $reader.CreateNoWindow = $true
+            $reader.RedirectStandardOutput = $true
+            $reader.StandardOutputEncoding = [Text.Encoding]::GetEncoding(1252)
+            $process = [Diagnostics.Process]::Start($reader)
+            try {
+                $table = $process.StandardOutput.ReadToEnd()
+                $process.WaitForExit()
+                if ($process.ExitCode -ne 0) { throw "Could not read the Xbox disc image. $($table.Trim())" }
+            } finally { $process.Dispose() }
+            $entries = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::OrdinalIgnoreCase)
+            foreach ($line in $table.TrimEnd().Split([char]10)) {
+                $fields = $line.TrimEnd([char]13) -split "`t", 3
+                if ($fields.Count -ne 3 -or $entries.ContainsKey($fields[2])) { throw 'Invalid or duplicate disc file entry.' }
+                $entries.Add($fields[2], @([long]$fields[0], [long]$fields[1]))
+            }
+            if ($entries.Count -ne $manifest.files.Count) {
+                throw "The image contains $($entries.Count) files. The European retail disc contains $($manifest.files.Count)."
+            }
+            $buffer = New-Object byte[] (1MB)
+        }
+        Set-InstallStatus 'Verifying and copying the retail game files...' 0.10
+        $verified = 0
+        foreach ($item in $manifest.files) {
+            if ($item.path -match '(^/|(^|/)\.\.(/|$))' -or [IO.Path]::IsPathRooted($item.path)) { throw 'Invalid game manifest path.' }
+            $file = Join-Path $discStage $item.path
+            [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($file))
+            if ($folderInput) {
+                $original = Join-Path $Image $item.path
+                if (-not (Test-Path -LiteralPath $original -PathType Leaf)) { throw "The game folder is missing $($item.path)." }
+                Copy-Item -LiteralPath $original -Destination $file
+            } else {
+                $extent = $entries[$item.path]
+                if ($null -eq $extent -or $extent[1] -ne $item.size) { throw "Missing or wrong-size retail file: $($item.path)." }
+                $stream.Position = $extent[0]
+                $out = [IO.File]::Create($file)
+                try {
+                    $remaining = [long]$item.size
+                    while ($remaining -gt 0) {
+                        $n = $stream.Read($buffer, 0, [int][Math]::Min([long]$buffer.Length, $remaining))
+                        if ($n -eq 0) { throw "Unexpected end of image reading $($item.path)." }
+                        $out.Write($buffer, 0, $n)
+                        $remaining -= $n
+                    }
+                } finally { $out.Dispose() }
+            }
+            if ((Get-Item -LiteralPath $file).Length -ne $item.size -or (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash -ne $item.sha256) {
+                throw "Retail file failed verification: $($item.path). Use the original, unpatched European multilingual disc files."
+            }
+            $verified++
+            if ($verified % 25 -eq 0) { Set-InstallStatus "Verifying game files ($verified / $($manifest.files.Count))..." (0.10 + 0.40 * $verified / $manifest.files.Count) }
+        }
+    } finally { if ($stream) { $stream.Dispose() } }
     $sourceBuilder = Join-Path $sourceRoot 'build-from-disc.ps1'
     $buildFromDisc = Test-Path -LiteralPath $sourceBuilder -PathType Leaf
-    if ($buildFromDisc) {
-        & (Join-Path $sourceRoot 'get-build-tools.ps1') -ReportStatus { param($message) Set-InstallStatus $message 0.15 }
-    }
     [void](New-Item -ItemType Directory -Path $Destination -ErrorAction Stop)
     $createdDestination = $true
-    Set-InstallStatus 'Copying program files...' 0.28
+    Set-InstallStatus 'Copying program files...' 0.55
     Copy-Item -Path (Join-Path $sourceRoot 'payload\*') -Destination $Destination -Recurse
     $game = Join-Path $Destination 'Amped-Host\run-game'
-    [void][IO.Directory]::CreateDirectory($game)
-    if (-not $folderInput) {
-        Set-InstallStatus 'Extracting game files from the ISO...' 0.35
-        if ($progress) { $label.Text = 'Extracting your game. Please wait...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
-        & $extractor -q -x -d $game $Image
-        if ($LASTEXITCODE -ne 0) { throw "Image extraction failed (exit $LASTEXITCODE)." }
-    }
+    [IO.Directory]::Move($discStage, $game)
+    $discStage = $null
     $xbe = Join-Path $game 'default.xbe'
-    if (-not $folderInput) {
-        $menus = Join-Path $game 'Resource\Shell\Menus.res'
-        if (-not (Test-Path -LiteralPath $xbe -PathType Leaf) -or (Get-FileHash $xbe -Algorithm SHA256).Hash -ne $xbeHash) { throw 'Extracted game executable did not match.' }
-        if (-not (Test-Path -LiteralPath $menus -PathType Leaf) -or (Get-FileHash $menus -Algorithm SHA256).Hash -ne '336FD7CA3AEAB01B90421348F9F5C8E6996FC8A25B1D74BA07312F139C1653F4') { throw 'Extracted menu resource did not match.' }
-    }
-    Set-InstallStatus 'Verifying the game files...' 0.45
-    if ($progress) { $label.Text = 'Checking extracted game files...'; $progress.Refresh(); [Windows.Forms.Application]::DoEvents() }
-    $manifest = Get-Content -LiteralPath (Join-Path $sourceRoot 'disc-manifest.json') -Raw | ConvertFrom-Json
-    $verified = 0
-    foreach ($item in $manifest.files) {
-        if ($item.path -match '(^/|(^|/)\.\.(/|$))' -or [IO.Path]::IsPathRooted($item.path)) { throw 'Invalid game manifest path.' }
-        $relative = $item.path -replace '/', '\'
-        $path = Join-Path $game $relative
-        if ($folderInput) {
-            $original = Join-Path $Image $relative
-            if (-not (Test-Path -LiteralPath $original -PathType Leaf)) { throw "The game folder is missing $($item.path)." }
-            [void][IO.Directory]::CreateDirectory((Split-Path -Parent $path))
-            Copy-Item -LiteralPath $original -Destination $path
-        }
-        if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or (Get-Item -LiteralPath $path).Length -ne $item.size -or (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $item.sha256.ToUpperInvariant()) { throw "Extracted game file did not match: $($item.path)" }
-        $verified++
-        if ($verified % 25 -eq 0) { Set-InstallStatus "Verifying game files ($verified / $(@($manifest.files).Count))..." 0.52 }
-    }
-    if (@(Get-ChildItem -LiteralPath $game -File -Recurse -Force).Count -ne @($manifest.files).Count) { throw 'Extracted game file count did not match.' }
     $installedExe = Join-Path $Destination 'Amped-Host\bin\amped_recomp.exe'
     if ($buildFromDisc) {
+        & (Join-Path $sourceRoot 'get-build-tools.ps1') -ReportStatus { param($message) Set-InstallStatus $message 0.58 }
         Set-InstallStatus 'Building AMPEDUP! from your disc. This takes several minutes...' 0.65
         $buildLog = Join-Path $Destination 'setup-build.log'
         try {
@@ -151,5 +179,6 @@ try {
     if (-not $NonInteractive) { [Windows.Forms.MessageBox]::Show($message, 'Amped setup failed', 'OK', 'Error') | Out-Null }
     Write-Error $message
     exit 1
+} finally {
+    if ($discStage) { Remove-Item -LiteralPath $discStage -Recurse -Force }
 }
-
