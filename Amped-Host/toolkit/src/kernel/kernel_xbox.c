@@ -12,6 +12,7 @@
 #include "kernel.h"
 #include "apu.h"                /* mcpx_apu_xc_audio: XC_AUDIO */
 #include "recomp_env.h"         /* RENV_GAME_LANGUAGE: XC_LANGUAGE */
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -148,8 +149,12 @@ ULONG xbox_GetLanguage(void)
     for (i = 0; i < XC_LANGUAGE_COUNT; i++)
         if (!strcmp(v, xbox_language_names[i]))
             return i + 1;
-    i = (ULONG)strtoul(v, NULL, 10);
-    return i >= 1 && i <= XC_LANGUAGE_COUNT ? i : XC_LANGUAGE_ENGLISH;
+    char *end;
+    long number = strtol(v, &end, 10);
+    while (isspace((unsigned char)*end))
+        ++end;
+    return *end == '\0' && number >= 1 && number <= XC_LANGUAGE_COUNT
+           ? (ULONG)number : XC_LANGUAGE_ENGLISH;
 }
 
 NTSTATUS __stdcall xbox_ExQueryNonVolatileSetting(

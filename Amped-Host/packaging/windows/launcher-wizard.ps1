@@ -19,9 +19,31 @@ $title.ForeColor = [Drawing.Color]::FromArgb(128, 216, 241)
 $title.Location = New-Object Drawing.Point(28, 20); $title.Size = New-Object Drawing.Size(510, 56)
 $form.Controls.Add($title)
 $subtitle = New-Object Windows.Forms.Label
-$subtitle.Text = "FREESTYLE SNOWBOARDING  |  VERSION 0.7`n`nF1 or View + Menu opens the in-game settings."
+$subtitle.Text = "FREESTYLE SNOWBOARDING  |  VERSION 0.7.3`n`nF1 or View + Menu opens the in-game settings."
 $subtitle.Location = New-Object Drawing.Point(32, 91); $subtitle.Size = New-Object Drawing.Size(500, 65)
 $form.Controls.Add($subtitle)
+. (Join-Path $PSScriptRoot 'game-language.ps1')
+$languages = [ordered]@{
+    english = 'English'; german = 'Deutsch'; french = "Fran$([char]0xE7)ais"
+    italian = 'Italiano'; spanish = "Espa$([char]0xF1)ol"
+}
+$label = New-Object Windows.Forms.Label
+$label.Text = 'Game language'
+$label.AutoSize = $true
+$label.Location = New-Object Drawing.Point(32, 158)
+$form.Controls.Add($label)
+$language = New-Object Windows.Forms.ComboBox
+$language.DropDownStyle = 'DropDownList'
+$language.AccessibleName = $label.Text
+$language.Location = New-Object Drawing.Point(158, 154)
+$language.Size = New-Object Drawing.Size(180, 28)
+$language.Items.AddRange([object[]]@($languages.Values))
+$codes = @($languages.Keys)
+$reader = Join-Path $PSScriptRoot 'tools\hud_settings_reader.exe'
+$profileFile = Join-Path $PSScriptRoot 'profile\settings.toml'
+$language.SelectedIndex = [array]::IndexOf($codes, (Get-AmpedGameLanguage $reader $profileFile).Language)
+$initialLanguage = $language.SelectedIndex
+$form.Controls.Add($language)
 function New-LauncherButton([string]$text, [int]$x, [int]$w) {
     $button = New-Object Windows.Forms.Button
     $button.Text = $text; $button.Location = New-Object Drawing.Point($x, 195)
@@ -38,6 +60,7 @@ $play.Add_Click({
         $script = Join-Path $PSScriptRoot 'launch.ps1'
         $arguments = @('-NoProfile','-ExecutionPolicy','Bypass','-File',('"' + $script + '"'))
         if ($Managed) { $arguments += '-Managed' }
+        if ($language.SelectedIndex -ne $initialLanguage) { $arguments += @('-GameLanguage', $codes[$language.SelectedIndex]) }
         Start-Process -FilePath $ps -ArgumentList $arguments -WorkingDirectory $PSScriptRoot -WindowStyle Hidden | Out-Null
         $form.Close()
     } catch { [Windows.Forms.MessageBox]::Show($form, $_.Exception.Message, 'AMPEDUP!', 'OK', 'Error') | Out-Null }

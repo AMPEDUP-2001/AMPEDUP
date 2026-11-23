@@ -1,24 +1,24 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.7.2
+# AMPEDUP! 0.7.3
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc, with optional **21:9 ultrawide gameplay**.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.2.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.3.md) · [Credits](#credits)
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.7.2 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.2).
+Choose a Windows installer from the [0.7.3 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.3).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.2-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.2/Setup-AMPEDUP-0.7.2-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.2.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.2/Setup-AMPEDUP-0.7.2.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.3-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.3.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
 3. Click **Install**. Setup checks the disc's SHA-256, extracts the game data and compiles the game on your PC. The build takes several minutes, plus download time with the online installer.
-4. Start `AMPEDUP!.exe` from the shortcut or the installation folder.
+4. Start `AMPEDUP!.exe` from the shortcut or the installation folder. Choose **Game language**, then **Play**. The European release supports English, Deutsch, Français, Italiano and Español. RecompLauncher offers the same choice in the game's settings.
 
 Use your own European multilingual retail disc image. The supported XISO has SHA‑256 `1DCAF6F4C5385B90987A0DB33CBC34ED408982995DFE3A5B68DCFAD70CA91CB0`. Other editions and disc layouts are unverified. The repository contains the runtime, patch recipes and build tools. Bring your own disc to generate the executable and install game content.
 

@@ -1,4 +1,4 @@
-AMPEDUP! 0.7 - WINDOWS
+AMPEDUP! 0.7.3 - WINDOWS
 
 Requirements: 64-bit Windows 10/11, a Vulkan-capable GPU and current driver,
 about 6 GB of free space for installation and compilation, and your matching
@@ -14,6 +14,8 @@ Other editions or differently packaged images have not been validated.
    The online setup needs internet access to download the build tools. The
    all-in-one setup can run offline.
 2. Start AMPEDUP! from the desktop shortcut or installed AMPEDUP!.exe.
+3. Choose Game language and press Play. The launcher remembers your selection.
+   In RecompLauncher, choose Game language in the AMPEDUP! settings.
 
 F1 or Xbox View/Back + Menu/Start opens the graphics settings. The default
 profile uses 16:9, 4x internal resolution, 16x anisotropic filtering, CRT

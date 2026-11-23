@@ -1,0 +1,19 @@
+{
+  "llvm_mingw_release": "https://github.com/mstorsjo/llvm-mingw/releases/tag/20260922",
+  "mingw_w64_source": "https://github.com/mingw-w64/mingw-w64/tree/57b595039040eaa15bece85b7cc71d952281b269/mingw-w64-libraries/winpthreads",
+  "upstream_fix": "https://github.com/mingw-w64/mingw-w64/commit/5528058ea5c3943a29c961fafd694a443428739c",
+  "original_archive_sha256": "0936909a25fb496c1ce8e936d5ee14ab6d3a6ebf051ec4c76cd497788cbe19af",
+  "artifact_sha256": "63d30808fce8feca1575c2d4fc50e9ac1379dd92e93b6085090af8aba2ef0558",
+  "files": {
+    "libwinpthread.a": "63d30808fce8feca1575c2d4fc50e9ac1379dd92e93b6085090af8aba2ef0558",
+    "COPYING": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177",
+    "upstream.patch": "d130a69ec53796560090f8e3648d963f44584ed40646d2ba8dd08db1c34fc152",
+    "rebuild.py": "8e382437c352f86ce0501d39fc1c72fea1d647b73c1a77fb9dff7a4255ba4e20",
+    "original/thread.c": "33138c68ebd83e5d92aeb2373e33301ff43660f31b03b2d25bab0c6da8cfb84f",
+    "original/thread.h": "3c105e10217cabae5a34d1e6e83352fb4eb8a9c2cf048de8053351eb6edf6a25",
+    "original/misc.h": "8bee8d3e680402463950829e8c13b6c6fea223916f4585569d184723b69f2c31",
+    "original/rwlock.h": "6d0a3bd1467599e2b447b3e32d36c4329a6b8e39faf0b13de74a08e6fba4ef81",
+    "patched/thread.c": "36d30844b1a3fc9505c63a67f1ea995ee019810214c5b6504719746fc3a9a290"
+  },
+  "reproduce": "python rebuild.py --toolchain <LLVM-MinGW-20260922-UCRT-root> --out <new-local-directory>"
+}

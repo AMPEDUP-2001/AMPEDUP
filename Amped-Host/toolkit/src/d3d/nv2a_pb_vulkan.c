@@ -60,6 +60,9 @@
 #include <strings.h>
 #include <time.h>
 #include <unistd.h>
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 #include "amped_gather_trace.h"
 #include "amped_gather_fast.h"
@@ -9512,15 +9515,25 @@ static void pcache_prune(const char *keep)
     closedir(d);
 }
 
+static int pcache_publish(const char *temporary, const char *path)
+{
+#if defined(_WIN32)
+    return MoveFileExA(temporary, path, MOVEFILE_REPLACE_EXISTING) != 0;
+#else
+    return rename(temporary, path) == 0;
+#endif
+}
+
 static void pcache_save_locked(void)
 {
     char path[1100], tmp[1200];
     size_t n = 0;
+    uint64_t pending = __atomic_load_n(&s_pso_since_save, __ATOMIC_RELAXED);
     void *data;
     FILE *f;
     int ok;
 
-    if (!s_pcache || !s_pso_since_save)
+    if (!s_pcache || !pending)
         return;
     pcache_path(path, sizeof path, &ok);
     if (!ok || vkGetPipelineCacheData(s_dev, s_pcache, &n, NULL) != VK_SUCCESS || !n)
@@ -9538,11 +9551,14 @@ static void pcache_save_locked(void)
         h.len = (uint32_t)n;
         h.crc = crc32_buf(data, n);
         h.uuid = pcb_uuid4();
-        snprintf(tmp, sizeof tmp, "%s.tmp", path);
+        /* Separate games can share a cache directory. Each publishes only its
+         * own complete file, replacing the previous cache in one operation. */
+        snprintf(tmp, sizeof tmp, "%s.%lu.tmp", path, (unsigned long)getpid());
         if ((f = fopen(tmp, "wb")) != NULL) {
             int good = fwrite(&h, 1, sizeof h, f) == sizeof h && fwrite(data, 1, n, f) == n;
-            if (fclose(f) == 0 && good && rename(tmp, path) == 0) {
-                s_pso_since_save = 0;
+            if (fclose(f) == 0 && good && pcache_publish(tmp, path)) {
+                /* New pipelines can be created while the snapshot is written. */
+                __atomic_fetch_sub(&s_pso_since_save, pending, __ATOMIC_RELAXED);
                 if (vk_trace())
                     fprintf(stderr, LOGP "pipeline cache: %zu bytes to %s\n", n, path);
             } else {
@@ -9679,8 +9695,9 @@ static VkPipelineCache pcache_load(void)
             }
         }
         if (why) {
-            fprintf(stderr, LOGP "pipeline cache: %s is %s: discarded, built again\n", path, why);
-            remove(path);
+            /* Another process may already have replaced the file we read.
+             * Start empty and let our next successful save publish normally. */
+            fprintf(stderr, LOGP "pipeline cache: %s is %s: starting empty\n", path, why);
         }
     }
     memset(&ci, 0, sizeof ci);
@@ -10964,7 +10981,7 @@ static void vk_on_flip(uint32_t surface_offset, uint32_t pitch)
                 s_pa.waits += s_frame_waits - w0;
             }
         }
-        if ((s_pso_since_save && (s_presents % 600) == 599)
+        if (((s_presents % 600) == 599 && __atomic_load_n(&s_pso_since_save, __ATOMIC_RELAXED))
                 || __atomic_exchange_n(&s_pc_save, 0, __ATOMIC_ACQ_REL))
             pcache_save_async();
     }

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <wchar.h>
 
+#include "kernel/kernel.h"
 #include "recomp_save_dir.h"
 #include "xbox_soundtrack.h"
 
@@ -355,6 +356,36 @@ static DWORD WINAPI music_worker(void *chosen)
     return 0;
 }
 
+struct folder_entry_text {
+    const char *hint;
+    const wchar_t *title;
+};
+
+/* Use the Xbox language that selected the guest menu. Keep the native picker
+ * and the UTF-8 overlay on the same wording. */
+#define FOLDER_TEXT(label) { u8"Y   " u8 ## label, L"AMPEDUP! - " L ## label }
+static const struct folder_entry_text folder_text[] = {
+    [1] = FOLDER_TEXT("Add Music Folder"),
+    [3] = FOLDER_TEXT("Musikordner hinzuf\u00fcgen"),
+    [4] = FOLDER_TEXT("Ajouter un dossier musical"),
+    [5] = FOLDER_TEXT("A\u00f1adir carpeta de m\u00fasica"),
+    [6] = FOLDER_TEXT("Aggiungi cartella musicale")
+};
+#undef FOLDER_TEXT
+
+static const struct folder_entry_text *music_folder_text(void)
+{
+    ULONG language = xbox_GetLanguage();
+    if (language >= ARRAYSIZE(folder_text) || !folder_text[language].hint)
+        language = XC_LANGUAGE_ENGLISH;
+    return &folder_text[language];
+}
+
+const char *amped_music_folder_hint(void)
+{
+    return music_folder_text()->hint;
+}
+
 int amped_music_take_restart_prompt(void)
 {
     return InterlockedExchange(&music_restart_pending, 0) != 0;
@@ -373,7 +404,7 @@ void amped_music_pick_folder(void *owner)
         hr = CoCreateInstance(&CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER,
                               &IID_IFileOpenDialog, (void **)&dialog);
     if (SUCCEEDED(hr))
-        hr = IFileOpenDialog_SetTitle(dialog, L"AMPEDUP! - Add Music Folder");
+        hr = IFileOpenDialog_SetTitle(dialog, music_folder_text()->title);
     if (SUCCEEDED(hr))
         hr = IFileOpenDialog_SetOptions(dialog, FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM |
                                         FOS_PATHMUSTEXIST | FOS_NOCHANGEDIR);

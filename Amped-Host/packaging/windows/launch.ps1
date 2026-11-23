@@ -1,4 +1,5 @@
-param([switch]$OverlayTest, [string]$KeyLiveFile, [switch]$Managed, [switch]$Headless)
+param([switch]$OverlayTest, [string]$KeyLiveFile, [switch]$Managed, [switch]$Headless,
+      [ValidateSet('english','german','french','italian','spanish')][string]$GameLanguage)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 $root = $PSScriptRoot
@@ -42,6 +43,10 @@ try {
         $config = "[display]`namped_native_wide = true`n`n[graphics]`nrender_scale = 4`naniso = `"16x`"`naa = `"off`"`namped_crt = true`n"
         $f = [IO.File]::Open($settings, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::None)
         try { $b = [Text.UTF8Encoding]::new($false).GetBytes($config); $f.Write($b,0,$b.Length) } finally { $f.Dispose() }
+    }
+    if ($GameLanguage) {
+        . (Join-Path $root 'game-language.ps1')
+        Set-AmpedGameLanguage $reader $settings $GameLanguage
     }
     if (-not ('AmpedWindow' -as [type])) {
         Add-Type -TypeDefinition @'

@@ -12,6 +12,7 @@
  */
 
 #include "kernel.h"
+#include "kernel_wake.h"
 #include "xbox_memory_layout.h"   /* XBOX_WORKER_STACK_* + worker-stack decls */
 #include "recomp_env.h"           /* RECOMP_GUEST_CPUS */
 #include "platform/android_host.h"  /* the fast core (Android) */
@@ -262,23 +263,39 @@ static LONG win32_priority_to_xbox(int priority)
     }
 }
 
-LONG __stdcall xbox_KeSetBasePriorityThread(PVOID Thread, LONG Increment)
+static INIT_ONCE priority_once = INIT_ONCE_STATIC_INIT;
+static CRITICAL_SECTION priority_lock;
+
+static BOOL CALLBACK init_priority_lock(PINIT_ONCE once, PVOID param, PVOID *context)
 {
-    HANDLE hThread = (HANDLE)Thread;
+    (void)once; (void)param; (void)context;
+    InitializeCriticalSection(&priority_lock);
+    return TRUE;
+}
+
+LONG xbox_SetThreadBasePriority(HANDLE thread, LONG increment, uint32_t guest_object)
+{
+    int native_priority = xbox_priority_to_win32(increment);
     LONG previous;
 
-    /* Get previous priority before setting new one */
-    int prev_win32 = GetThreadPriority(hThread);
-    previous = win32_priority_to_xbox(prev_win32);
-
-    int new_win32 = xbox_priority_to_win32(Increment);
-    SetThreadPriority(hThread, new_win32);
+    /* A setter returns the value it replaced. The guest wake hint must follow
+     * successful writes in the same order, even for simultaneous callers. */
+    InitOnceExecuteOnce(&priority_once, init_priority_lock, NULL, NULL);
+    EnterCriticalSection(&priority_lock);
+    previous = win32_priority_to_xbox(GetThreadPriority(thread));
+    if (SetThreadPriority(thread, native_priority) && guest_object)
+        xbox_WakeSetPriority(guest_object, increment);
+    LeaveCriticalSection(&priority_lock);
 
     xbox_log(XBOX_LOG_DEBUG, XBOX_LOG_THREAD,
         "KeSetBasePriorityThread: thread=%p, increment=%d (win32=%d), prev=%d",
-        Thread, Increment, new_win32, previous);
-
+        thread, increment, native_priority, previous);
     return previous;
+}
+
+LONG __stdcall xbox_KeSetBasePriorityThread(PVOID Thread, LONG Increment)
+{
+    return xbox_SetThreadBasePriority((HANDLE)Thread, Increment, 0);
 }
 
 LONG __stdcall xbox_KeQueryBasePriorityThread(PVOID Thread)

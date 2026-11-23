@@ -60,6 +60,7 @@ $options = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'package-options.js
 $options.snow_gather = [bool]$SnowGather
 $options | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $payload 'package-options.json') -Encoding Ascii
 Copy-Item (Join-Path $PSScriptRoot 'launcher-wizard.ps1') $payload
+Copy-Item (Join-Path $PSScriptRoot 'game-language.ps1') $payload
 Copy-Item (Join-Path $PSScriptRoot 'prepare-assets.ps1') $payload
 Copy-Item (Join-Path $PSScriptRoot 'hud-patches.json') $payload
 if ($sourceSetup) {

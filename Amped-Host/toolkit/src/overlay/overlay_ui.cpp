@@ -40,6 +40,7 @@
 #include <SDL_syswm.h>
 extern "C" void amped_music_pick_folder(void *owner);
 extern "C" const char *amped_music_status(void);
+extern "C" const char *amped_music_folder_hint(void);
 extern "C" int amped_music_take_restart_prompt(void);
 #endif
 
@@ -5512,7 +5513,7 @@ static void draw_title_row(unsigned menu, ImVec2 disp, float dt)
             txt(dl, size, ImVec2(at.x + 1, at.y + 1), IM_COL32_BLACK, text);
             txt(dl, size, at, IM_COL32_WHITE, text);
         };
-        caption("Y   Add Music Folder", 0.943f);
+        caption(amped_music_folder_hint(), 0.943f);
         if (const char *status = amped_music_status())
             caption(status, 0.056f);
         return;

@@ -28,7 +28,16 @@ else()
         # on the POSIX hosts; main.c's pthread/dlfcn needs come from mingw.
         target_compile_definitions(xbox_video PUBLIC XBOXRECOMP_WIN_VULKAN=1)
         # winpthreads (pthread_*, sched_yield, clock_gettime) from llvm-mingw.
-        target_link_libraries(xbox_video PUBLIC "-Wl,-Bstatic -lwinpthread -Wl,-Bdynamic")
+        # Project-private static repair for detached-worker spinlock lifetime.
+        set(_amped_private_pthread "${CMAKE_CURRENT_LIST_DIR}/private-winpthreads/libwinpthread.a")
+        if(NOT EXISTS "${_amped_private_pthread}")
+            message(FATAL_ERROR "Private winpthreads archive is required")
+        endif()
+        file(SHA256 "${_amped_private_pthread}" _amped_private_pthread_hash)
+        if(NOT _amped_private_pthread_hash STREQUAL "63d30808fce8feca1575c2d4fc50e9ac1379dd92e93b6085090af8aba2ef0558")
+            message(FATAL_ERROR "Private winpthreads archive SHA256 mismatch")
+        endif()
+        target_link_libraries(xbox_video PUBLIC "${_amped_private_pthread}")
     endif()
     if(XBOXRECOMP_HAVE_VULKAN)
         # The window's Vulkan swapchain for the Vulkan backend.

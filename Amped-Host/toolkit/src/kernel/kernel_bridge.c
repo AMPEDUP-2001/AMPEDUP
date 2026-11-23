@@ -730,15 +730,13 @@ static void thobj_ref(uint32_t va)
 
 static void thobj_unref(uint32_t va)
 {
-    int s, freed = 0;
+    int s;
 
     thobj_lock();
     s = thobj_slot(va);
     if (s >= 0 && s_thobj_refs[s] > 0 && --s_thobj_refs[s] == 0)
-        freed = 1;
+        ke_shadow_remove(va);   /* finish before the slot can be reused */
     thobj_unlock();
-    if (freed)
-        ke_shadow_remove(va);   /* closes the shadow's host thread handle */
 }
 
 /* The thread has ended: publish ExitStatus, then SignalState, then drop the
@@ -767,13 +765,24 @@ static void thobj_attach_token(uint32_t token, uint32_t va)
         thobj_unref(i);   /* a stale mapping the slot never cleared */
 }
 
-static uint32_t thobj_from_token(uint32_t token)
+/* Acquire a reference before a concurrent NtClose can free and reuse the VA. */
+static uint32_t thobj_reference_token(uint32_t token)
 {
     uint32_t i = token & 0x00FFFFFFu;
+    uint32_t va;
+    int slot;
 
     if ((token & 0xFF000000u) != 0x48000000u || !i || i >= 16384)
         return 0;
-    return s_token_thobj[i];
+    thobj_lock();
+    va = (uint32_t)InterlockedCompareExchange((volatile LONG *)&s_token_thobj[i], 0, 0);
+    slot = thobj_slot(va);
+    if (slot >= 0 && s_thobj_refs[slot] > 0)
+        s_thobj_refs[slot]++;
+    else
+        va = 0;
+    thobj_unlock();
+    return va;
 }
 
 static void thobj_detach_token(uint32_t token)
@@ -791,8 +800,17 @@ static void thobj_detach_token(uint32_t token)
  * keeps it (it never ends while the title runs). */
 static uint32_t thobj_current(void)
 {
-    if (!g_thread_obj_va)
+    if (!g_thread_obj_va) {
+        HANDLE shadow = NULL;
         g_thread_obj_va = thobj_alloc();
+        /* The inline guest main has no creator to publish its host handle.
+         * Other guest workers can obtain a reference to its object. */
+        if (g_thread_obj_va &&
+            DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
+                            &shadow, 0, FALSE, DUPLICATE_SAME_ACCESS) &&
+            shadow != (HANDLE)(intptr_t)-2)
+            ke_shadow_insert(g_thread_obj_va, shadow);
+    }
     return g_thread_obj_va;
 }
 
@@ -851,6 +869,7 @@ static DWORD WINAPI bridge_thread_main(LPVOID param)
     fflush(stderr);
     /* The routine returned instead of calling PsTerminateSystemThread; the
      * stack is still ours to give back. */
+    xbox_crash_thread_unregister();
     xbox_FreeThreadStack(g_thread_stack_top);
     g_thread_stack_top = 0;
     /* The kernel's thread startup ends a returning routine with
@@ -2438,6 +2457,7 @@ static void bridge_PsTerminateSystemThread(void)
         /* The normal exit for a worker, and therefore the one that has to
          * return the stack -- ExitThread never comes back to bridge_thread_main
          * to do it. */
+        xbox_crash_thread_unregister();
         xbox_FreeThreadStack(g_thread_stack_top);
         g_thread_stack_top = 0;
         thobj_exit(g_thread_obj_va, exit_status);
@@ -5489,12 +5509,16 @@ static void bridge_ObReferenceObjectByHandle(void)
     uint32_t obj_type = STACK_ARG(1);
     uint32_t object_ptr = STACK_ARG(2);
     /* Threads have a guest object (see thobj_alloc); -2 is NtCurrentThread. */
-    uint32_t thread = handle == 0xFFFFFFFEu ? thobj_current()
-                                            : thobj_from_token(handle);
+    uint32_t thread;
 
     (void)obj_type;
-    if (thread) {
+    if (handle == 0xFFFFFFFEu) {
+        thread = thobj_current();
         thobj_ref(thread);
+    } else {
+        thread = thobj_reference_token(handle);
+    }
+    if (thread) {
         if (object_ptr) BRIDGE_MEM32(object_ptr) = thread;
         g_eax = 0;
         return;
@@ -5702,22 +5726,18 @@ static void bridge_KeDisconnectInterrupt(void)
         (PXBOX_KINTERRUPT)XBOX_TO_NATIVE(STACK_ARG(0)));
 }
 
-/* ── KeSetBasePriorityThread (ordinal 143, 2 args) */
-/* KeQueryBasePriorityThread (ordinal 124, 1 arg). The implementation has
- * existed in kernel_thread.c all along; only the bridge wrapper was
- * missing, so the thunk fell through to the fallback and returned 0. */
+/* Ordinals 124 and 143 take a guest KTHREAD, not a native handle. */
+static LONG bridge_thread_base_priority(uint32_t object, const LONG *increment);
+
 static void bridge_KeQueryBasePriorityThread(void)
 {
-    g_eax = (uint32_t)xbox_KeQueryBasePriorityThread(
-        XBOX_TO_NATIVE(STACK_ARG(0)));
+    g_eax = (uint32_t)bridge_thread_base_priority(STACK_ARG(0), NULL);
 }
 
 static void bridge_KeSetBasePriorityThread(void)
 {
-    /* The guest priority, for the wake hand-off (kernel_wake.h). */
-    xbox_WakeSetPriority(STACK_ARG(0), (int32_t)STACK_ARG(1));
-    g_eax = (uint32_t)xbox_KeSetBasePriorityThread(
-        XBOX_TO_NATIVE(STACK_ARG(0)), (LONG)STACK_ARG(1));
+    LONG increment = (LONG)STACK_ARG(1);
+    g_eax = (uint32_t)bridge_thread_base_priority(STACK_ARG(0), &increment);
 }
 
 /* ── KeStallExecutionProcessor (ordinal 151, 1 arg) */
@@ -6691,7 +6711,9 @@ static void bridge_NtDuplicateObject(void)
         return;
     }
     BRIDGE_MEM32(target_va) = bridge_handle_token_ex(dup, 1);
-    thobj_attach_token(BRIDGE_MEM32(target_va), thobj_from_token(STACK_ARG(0)));
+    uint32_t thread = thobj_reference_token(STACK_ARG(0));
+    thobj_attach_token(BRIDGE_MEM32(target_va), thread);
+    thobj_unref(thread);
     if (opts & DUPLICATE_CLOSE_SOURCE)
         thobj_detach_token(STACK_ARG(0));
     g_eax = 0;
@@ -7662,16 +7684,18 @@ static void bridge_RtlCaptureStackBackTrace(void)
 typedef struct { uint32_t guest_va; HANDLE host_handle; uint32_t in_use; } KE_SHADOW_SLOT;
 static KE_SHADOW_SLOT g_ke_shadow[KE_SHADOW_SIZE];
 static CRITICAL_SECTION g_ke_shadow_cs;
-static int g_ke_shadow_init;
+static INIT_ONCE g_ke_shadow_once = INIT_ONCE_STATIC_INIT;
+
+static BOOL CALLBACK ke_shadow_init_lock(PINIT_ONCE once, PVOID param, PVOID *context)
+{
+    (void)once; (void)param; (void)context;
+    InitializeCriticalSection(&g_ke_shadow_cs);
+    return TRUE;
+}
 
 static void ke_shadow_init(void)
 {
-    if (g_ke_shadow_init)
-        return;
-    InitializeCriticalSection(&g_ke_shadow_cs);
-    /* Wipe any stale pointers from a prior lifecycle (defensive). */
-    memset(g_ke_shadow, 0, sizeof(g_ke_shadow));
-    g_ke_shadow_init = 1;
+    InitOnceExecuteOnce(&g_ke_shadow_once, ke_shadow_init_lock, NULL, NULL);
 }
 
 /* Insert a mapping guest_va -> host HANDLE. Replaces any prior mapping for
@@ -7717,26 +7741,72 @@ static void ke_shadow_insert(uint32_t guest_va, HANDLE host)
     CloseHandle(host);
 }
 
-/* Look up the host HANDLE for a guest object VA. Returns NULL if not found. */
-static HANDLE ke_shadow_lookup(uint32_t guest_va)
+static HANDLE ke_shadow_find_locked(uint32_t guest_va)
 {
     uint32_t i;
-    HANDLE h = NULL;
+    for (i = 0; i < KE_SHADOW_SIZE; i++)
+        if (g_ke_shadow[i].in_use && g_ke_shadow[i].guest_va == guest_va)
+            return g_ke_shadow[i].host_handle;
+    return NULL;
+}
 
+static HANDLE ke_shadow_lookup(uint32_t guest_va)
+{
+    HANDLE h;
     if (!guest_va)
         return NULL;
-
     ke_shadow_init();
-
     EnterCriticalSection(&g_ke_shadow_cs);
-    for (i = 0; i < KE_SHADOW_SIZE; i++) {
-        if (g_ke_shadow[i].in_use && g_ke_shadow[i].guest_va == guest_va) {
-            h = g_ke_shadow[i].host_handle;
-            break;
-        }
-    }
+    h = ke_shadow_find_locked(guest_va);
     LeaveCriticalSection(&g_ke_shadow_cs);
     return h;
+}
+
+static LONG bridge_thread_base_priority(uint32_t object, const LONG *increment)
+{
+    HANDLE host = NULL;
+    LONG result;
+    int current, slot;
+
+    if (!object)
+        return 0;
+    current = g_thread_obj_va && (object == g_thread_obj_va ||
+              (g_fs_base == XBOX_TIB_MAIN &&
+               object == g_xbox_region_base + XBOX_REGION_TLS_OFF &&
+               BRIDGE_MEM32(XBOX_TIB_MAIN + 0x28) == object));
+    if (current) {
+        object = g_thread_obj_va;
+        host = GetCurrentThread();
+    } else {
+        /* Keep the object generation and its shadow stable until we own a
+         * native reference. A guest event or recycled handle is not a thread. */
+        thobj_lock();
+        slot = thobj_slot(object);
+        if (slot >= 0 && s_thobj_refs[slot] > 0) {
+            HANDLE source;
+            ke_shadow_init();
+            EnterCriticalSection(&g_ke_shadow_cs);
+            source = ke_shadow_find_locked(object);
+            if (source && !DuplicateHandle(GetCurrentProcess(), source, GetCurrentProcess(),
+                                           &host, 0, FALSE, DUPLICATE_SAME_ACCESS))
+                host = NULL;
+            if (host)
+                s_thobj_refs[slot]++;   /* keep the guest wake record in this generation */
+            LeaveCriticalSection(&g_ke_shadow_cs);
+        }
+        thobj_unlock();
+    }
+    if (!host)
+        return 0;
+    if (increment)
+        result = xbox_SetThreadBasePriority(host, *increment, object);
+    else
+        result = xbox_KeQueryBasePriorityThread(host);
+    if (!current) {
+        CloseHandle(host);
+        thobj_unref(object);
+    }
+    return result;
 }
 
 /* Remove (and close) the mapping for a guest object VA. */

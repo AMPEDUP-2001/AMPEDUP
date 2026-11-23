@@ -17,9 +17,16 @@ from make_menu_entries import directory, directory_edits, menu_edits, patched
 
 END = b"\x01\x00\x00\xff"
 SECTION = b"\x00\x00\x00\xff"
-QUIT_LABELS = {"MainMenuButton6": "Quit Game", "MainMenuButton6Help": "Close AMPEDUP!"}
-GRAPHICS_LABELS = (("OptionsMenuButton5", "OptionsMenuButton6", "Graphics"),
-                   ("OptionsMenuButton5Help", "OptionsMenuButton6Help", "Change graphics settings"))
+QUIT_KEYS = ("MainMenuButton6", "MainMenuButton6Help")
+GRAPHICS_KEYS = (("OptionsMenuButton5", "OptionsMenuButton6"),
+                 ("OptionsMenuButton5Help", "OptionsMenuButton6Help"))
+LABELS = {
+    "eng": ("Quit Game", "Close AMPEDUP!", "Graphics", "Change graphics settings"),
+    "fre": ("Quitter", "Quitter AMPEDUP!", "Graphismes", "Changer les paramètres graphiques"),
+    "ger": ("Beenden", "AMPEDUP! beenden", "Grafik", "Grafikeinstellungen ändern"),
+    "ita": ("Esci", "Chiudi AMPEDUP!", "Grafica", "Regola la grafica"),
+    "spa": ("Salir", "Cierra AMPEDUP!", "Gráficos", "Cambia los ajustes gráficos"),
+}
 
 
 def u32(data, position):
@@ -47,7 +54,7 @@ def clone_graphics_button(model):
     start = group["offset"]
     end = min(n["offset"] for n in nodes if n.get("offset", 0) > start and n["depth"] <= group["depth"])
     clone = bytearray(renamed(model[start:end], donor, extra))
-    old_text, new_text, _ = GRAPHICS_LABELS[0]
+    old_text, new_text = GRAPHICS_KEYS[0]
     if clone.count(old_text.encode()) != 1 or len(old_text) != len(new_text):
         raise ValueError("Unexpected text node identifier")
     clone = clone.replace(old_text.encode(), new_text.encode())
@@ -149,7 +156,7 @@ def label_record(source, key, text, scale=1.0):
             struct.pack("<H", len(text)) + text.encode("utf-16le") + metadata)
 
 
-def localized_strings(data):
+def localized_strings(data, locale):
     font_count = u32(data, 0)
     if font_count != 4:
         raise ValueError("Unexpected string table font header")
@@ -172,15 +179,19 @@ def localized_strings(data):
             raise ValueError("Expected a terminated string identifier")
         key = row[1:1 + key_len].decode("ascii")
         records[key] = row
-    for key, text in QUIT_LABELS.items():
+    # The European release's Japanese-named table is a copy of its English table.
+    quit_label, quit_help, graphics_label, graphics_help = LABELS["eng" if locale == "jap" else locale]
+    for key, text in zip(QUIT_KEYS, (quit_label, quit_help), strict=True):
         records[key] = label_record(records[key], key, text)
     added = {}
-    for original, key, text in GRAPHICS_LABELS:
+    # The French label at 0.68 has the same measured advance as English at 0.87.
+    label_scale = 0.68 if locale == "fre" else 0.87
+    for (original, key), text in zip(GRAPHICS_KEYS, (graphics_label, graphics_help), strict=True):
         if key in records:
             raise ValueError("Native label already exists in the source")
         after = original if original.endswith("Help") else original + "Help"
         added.setdefault(after, []).append(label_record(records[original], key, text,
-                                                         scale=1.0 if key.endswith("Help") else 0.87))
+                                                         scale=1.0 if key.endswith("Help") else label_scale))
     offsets = []
     payload = bytearray()
     for key, row in records.items():
@@ -189,7 +200,7 @@ def localized_strings(data):
         for record in added.get(key, []):
             offsets.append(len(payload))
             payload.extend(record)
-    if len(offsets) != count + len(GRAPHICS_LABELS):
+    if len(offsets) != count + len(GRAPHICS_KEYS):
         raise ValueError("The language table did not retain every native string")
     return (data[:header] + struct.pack(f"<{len(offsets) + 2}I", len(offsets), *offsets, len(payload))
             + payload)
@@ -204,7 +215,8 @@ def build_strings(source_path):
     deltas = {}
     for name, (offset, size) in entries.items():
         if name.startswith("stringtable_") and name.endswith(".dat"):
-            result = localized_strings(source[offset:offset + size])
+            locale = name.removeprefix("stringtable_").removesuffix(".dat")
+            result = localized_strings(source[offset:offset + size], locale)
             changes.append((offset, size, result))
             deltas[name] = len(result) - size
     if len(changes) != 6:

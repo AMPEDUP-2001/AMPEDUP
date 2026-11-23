@@ -38,7 +38,7 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "7",
+    "version": "8",
     "done": [
       "{install}/runtime/.ampedup-ready",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe",
@@ -54,6 +54,7 @@
         }
       ],
       "new": {
+        "game/language": "\"english\"",
         "display/amped_native_wide": "true",
         "graphics/render_scale": "4",
         "graphics/aniso": "\"16x\"",
@@ -63,6 +64,19 @@
     }
   ],
   "settings": [
+    {
+      "id": "game-language",
+      "label": "Game language",
+      "help": "Choose the language Amped uses the next time you start it.",
+      "choices": [
+        { "label": "English", "set": { "game/language": "\"english\"" } },
+        { "label": "Deutsch", "set": { "game/language": "\"german\"" } },
+        { "label": "Français", "set": { "game/language": "\"french\"" } },
+        { "label": "Italiano", "set": { "game/language": "\"italian\"" } },
+        { "label": "Español", "set": { "game/language": "\"spanish\"" } }
+      ],
+      "defaults": { "game/language": "\"english\"" }
+    },
     {
       "id": "window",
       "label": "Window mode",
@@ -129,19 +143,19 @@
           }
         },
         {
-          "label": "2\u00c3\u2014",
+          "label": "2\u00d7",
           "set": {
             "graphics/render_scale": "2"
           }
         },
         {
-          "label": "3\u00c3\u2014",
+          "label": "3\u00d7",
           "set": {
             "graphics/render_scale": "3"
           }
         },
         {
-          "label": "4\u00c3\u2014",
+          "label": "4\u00d7",
           "set": {
             "graphics/render_scale": "4"
           }
@@ -213,25 +227,25 @@
           }
         },
         {
-          "label": "2\u00c3\u2014",
+          "label": "2\u00d7",
           "set": {
             "graphics/aniso": "\"2x\""
           }
         },
         {
-          "label": "4\u00c3\u2014",
+          "label": "4\u00d7",
           "set": {
             "graphics/aniso": "\"4x\""
           }
         },
         {
-          "label": "8\u00c3\u2014",
+          "label": "8\u00d7",
           "set": {
             "graphics/aniso": "\"8x\""
           }
         },
         {
-          "label": "16\u00c3\u2014",
+          "label": "16\u00d7",
           "set": {
             "graphics/aniso": "\"16x\""
           }
@@ -316,7 +330,7 @@
   },
   "looks": {
     "allowed": false,
-    "reason": "Use AMPEDUP!\u00e2\u20ac\u2122s built-in CRT scanlines and anti-aliasing."
+    "reason": "Use AMPEDUP!\u2019s built-in CRT scanlines and anti-aliasing."
   },
   "exit_codes": {
     "12": "Prepare your own copy from the AMPEDUP! page before playing."

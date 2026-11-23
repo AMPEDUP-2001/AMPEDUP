@@ -68,6 +68,12 @@ void xbox_crash_set_settings(const char *text);
 /* Name this thread for hang samples. xbox_log_thread_role calls it, so every
  * runtime thread is known; a host calls it for its own threads. */
 void xbox_crash_thread_register(const char *role);
+#if defined(_WIN32)
+/* Finish any in-flight Windows snapshot before releasing this worker's guest stack. */
+void xbox_crash_thread_unregister(void);
+#else
+static inline void xbox_crash_thread_unregister(void) {}
+#endif
 
 /* Open a report: the folder, log.txt and settings.txt, and report.txt with
  * `headline` as its first line. 0 if another report is being written (the

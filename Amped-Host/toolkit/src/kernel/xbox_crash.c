@@ -958,22 +958,23 @@ static uint32_t func_start(uint32_t va)
     return 0;
 }
 
-static void guest_walk(uint32_t esp, int max_frames, int raw_words)
+static void guest_walk_words(uint32_t esp, int max_frames, int raw_words,
+                             const uint32_t *copy, size_t words)
 {
     uint32_t i, slot;
     int depth = 0;
 
-    if (!guest_readable(esp, 4)) {
+    if ((copy && !words) || (!copy && !guest_readable(esp, 4))) {
         xbox_crash_printf("  guest esp %08X is not in guest RAM\n", esp);
         return;
     }
     xbox_crash_printf("  guest call stack from esp %08X (tools/stackwalk.py format):\n", esp);
-    for (i = 0; i < 4096 && depth < max_frames; i++) {
+    for (i = 0; i < words && depth < max_frames; i++) {
         uint32_t w;
         slot = esp + i * 4;
-        if (!guest_readable(slot, 4))
+        if (!copy && !guest_readable(slot, 4))
             break;
-        w = *(const uint32_t *)guest_ptr(slot);
+        w = copy ? copy[i] : *(const uint32_t *)guest_ptr(slot);
         if (w > XBOX_BASE_ADDRESS && in_code(w) && after_call(w)) {
             uint32_t f = func_start(w);
             depth++;
@@ -986,12 +987,17 @@ static void guest_walk(uint32_t esp, int max_frames, int raw_words)
     }
     if (!depth)
         xbox_crash_printf("  no guest return addresses on the stack\n");
-    for (i = 0; i < (uint32_t)raw_words; i++) {
+    for (i = 0; i < (uint32_t)raw_words && i < words; i++) {
         slot = esp + i * 4;
-        if (!guest_readable(slot, 4))
+        if (!copy && !guest_readable(slot, 4))
             break;
-        xbox_crash_printf("    GS %08X %08X\n", slot, *(const uint32_t *)guest_ptr(slot));
+        xbox_crash_printf("    GS %08X %08X\n", slot, copy ? copy[i] : *(const uint32_t *)guest_ptr(slot));
     }
+}
+
+static void guest_walk(uint32_t esp, int max_frames, int raw_words)
+{
+    guest_walk_words(esp, max_frames, raw_words, NULL, 4096);
 }
 
 void xbox_crash_guest_stack(uint32_t esp)
@@ -1033,31 +1039,28 @@ static int guest_ram_addr(uint32_t v, uint32_t *pa)
 }
 
 /* 256 bytes around each register that points into guest RAM, 16 a line. */
-static void reg_windows(const uint32_t r[9])
+static int reg_window_bounds(uint32_t value, uint32_t *pa, uint32_t *lo)
+{
+    uint64_t size = xbox_GetMappedSize();
+    if (size < 256 || !guest_ram_addr(value, pa))
+        return 0;
+    *lo = (*pa & ~15u) >= 0x80 ? (*pa & ~15u) - 0x80 : 0;
+    if ((uint64_t)*lo + 256 > size)
+        *lo = (uint32_t)(size - 256);
+    return 1;
+}
+
+static void print_reg_window(int k, uint32_t value, uint32_t pa, uint32_t lo, const uint32_t *data)
 {
     static const char *const names[9] = { "eax", "ecx", "edx", "ebx", "esp",
                                           "ebp", "esi", "edi", "seh_ebp" };
-    uint64_t size = xbox_GetMappedSize();
-    int k;
-
-    for (k = 0; k < 9; k++) {
-        uint32_t pa, lo, a;
-        int j;
-        if (!r[k] || !guest_ram_addr(r[k], &pa))
-            continue;
-        lo = (pa & ~15u) >= 0x80 ? (pa & ~15u) - 0x80 : 0;
-        if ((uint64_t)lo + 256 > size)
-            lo = (uint32_t)(size - 256);
-        xbox_crash_printf("  mem %s=%08X (ram %08X):\n", names[k], r[k], pa);
-        for (a = lo; a < lo + 256; a += 16) {
-            const uint8_t *b = guest_ptr(a);
-            char line[96];
-            int n = snprintf(line, sizeof line, "    %08X", a);
-            for (j = 0; j < 16; j += 4)
-                n += snprintf(line + n, sizeof line - (size_t)n, " %08X",
-                              *(const uint32_t *)(b + j));
-            xbox_crash_printf("%s%s\n", line, a == (pa & ~15u) ? "  <" : "");
-        }
+    unsigned i;
+    xbox_crash_printf("  mem %s=%08X (ram %08X):\n", names[k], value, pa);
+    for (i = 0; i < 64; i += 4) {
+        uint32_t address = lo + 4 * i;
+        xbox_crash_printf("    %08X %08X %08X %08X %08X%s\n", address,
+                          data[i], data[i+1], data[i+2], data[i+3],
+                          address == (pa & ~15u) ? "  <" : "");
     }
 }
 
@@ -1208,7 +1211,50 @@ typedef struct {
 static CrashThread s_threads[MAX_THREADS];
 static RECOMP_TLS int t_guest_main;
 
-#if !defined(_WIN32)
+#if defined(_WIN32)
+static INIT_ONCE s_registry_init = INIT_ONCE_STATIC_INIT;
+static DWORD s_registry_fls;
+static SRWLOCK s_registry_lock = SRWLOCK_INIT;
+/* The low bits identify a slot. A fresh token prevents a delayed FLS cleanup
+ * from retiring a later occupant, including a recycled Windows thread ID. */
+static ULONG_PTR s_owner_tokens[MAX_THREADS];
+static ULONG_PTR s_generation;
+
+static void CALLBACK retire_thread_slot(void *value)
+{
+    ULONG_PTR token = (ULONG_PTR)value;
+    unsigned i = (unsigned)(token % MAX_THREADS);
+    HANDLE handle = NULL;
+    AcquireSRWLockExclusive(&s_registry_lock);
+    if (token && s_owner_tokens[i] == token) {
+        handle = s_threads[i].handle;
+        memset(&s_threads[i], 0, sizeof s_threads[i]);
+        s_owner_tokens[i] = 0;
+    }
+    ReleaseSRWLockExclusive(&s_registry_lock);
+    if (handle)
+        CloseHandle(handle);
+}
+
+static BOOL CALLBACK init_registry(PINIT_ONCE once, void *arg, void **context)
+{
+    (void)once; (void)arg; (void)context;
+    s_registry_fls = FlsAlloc(retire_thread_slot);
+    return s_registry_fls != FLS_OUT_OF_INDEXES;
+}
+
+void xbox_crash_thread_unregister(void)
+{
+    void *owner;
+    if (!InitOnceExecuteOnce(&s_registry_init, init_registry, NULL, NULL))
+        return;
+    owner = FlsGetValue(s_registry_fls);
+    if (owner) {
+        FlsSetValue(s_registry_fls, NULL);
+        retire_thread_slot(owner);
+    }
+}
+#else
 static pthread_key_t s_thread_key;
 static pthread_once_t s_thread_once = PTHREAD_ONCE_INIT;
 
@@ -1217,6 +1263,13 @@ static void thread_gone(void *slot) { ((CrashThread *)slot)->used = 0; }
 static void thread_key_make(void) { pthread_key_create(&s_thread_key, thread_gone); }
 #endif
 
+static void set_thread_regs(CrashThread *t)
+{
+    t->regs[0] = &g_eax; t->regs[1] = &g_ecx; t->regs[2] = &g_edx;
+    t->regs[3] = &g_ebx; t->regs[4] = &g_esp; t->regs[5] = &g_ebp;
+    t->regs[6] = &g_esi; t->regs[7] = &g_edi; t->regs[8] = &g_seh_ebp;
+}
+
 void xbox_crash_thread_register(const char *role)
 {
     unsigned long me = (unsigned long)GetCurrentThreadId();
@@ -1224,6 +1277,48 @@ void xbox_crash_thread_register(const char *role)
 
     if (role && !strcmp(role, "guest-main"))
         t_guest_main = 1;
+#if defined(_WIN32)
+    CrashThread entry = {0};
+    ULONG_PTR token;
+    if (!InitOnceExecuteOnce(&s_registry_init, init_registry, NULL, NULL))
+        return;
+    snprintf(entry.role, sizeof entry.role, "%s", role ? role : "?");
+    token = (ULONG_PTR)FlsGetValue(s_registry_fls);
+    if (token) {
+        i = (int)(token % MAX_THREADS);
+        AcquireSRWLockExclusive(&s_registry_lock);
+        if (s_owner_tokens[i] == token) {
+            memcpy(s_threads[i].role, entry.role, sizeof entry.role);
+            ReleaseSRWLockExclusive(&s_registry_lock);
+            return;
+        }
+        ReleaseSRWLockExclusive(&s_registry_lock);
+    }
+    if (!DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
+                         &entry.handle, SYNCHRONIZE, FALSE, 0))
+        return;
+    entry.used = 1;
+    entry.tid = me;
+    set_thread_regs(&entry);
+    token = 0;
+    AcquireSRWLockExclusive(&s_registry_lock);
+    for (i = 0; i < MAX_THREADS; i++) {
+        if (!s_threads[i].used) {
+            s_generation += MAX_THREADS;
+            if (!s_generation)
+                s_generation = MAX_THREADS;
+            token = s_generation + (unsigned)i;
+            s_threads[i] = entry;
+            s_owner_tokens[i] = token;
+            break;
+        }
+    }
+    ReleaseSRWLockExclusive(&s_registry_lock);
+    if (!token)
+        CloseHandle(entry.handle);
+    else if (!FlsSetValue(s_registry_fls, (void *)token))
+        retire_thread_slot((void *)token);
+#else
     /* A thread named again (host-main runs the entry point, which names
      * itself guest-main) keeps its slot under the newer name. */
     for (i = 0; i < MAX_THREADS; i++)
@@ -1244,13 +1339,7 @@ void xbox_crash_thread_register(const char *role)
 #endif
         snprintf(t->role, sizeof t->role, "%s", role ? role : "?");
         t->tid = me;
-        t->regs[0] = &g_eax; t->regs[1] = &g_ecx; t->regs[2] = &g_edx;
-        t->regs[3] = &g_ebx; t->regs[4] = &g_esp; t->regs[5] = &g_ebp;
-        t->regs[6] = &g_esi; t->regs[7] = &g_edi; t->regs[8] = &g_seh_ebp;
-#if defined(_WIN32)
-        DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
-                        &t->handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-#else
+        set_thread_regs(t);
         t->th = pthread_self();
 #if defined(__APPLE__)
         t->stk_hi = (uintptr_t)pthread_get_stackaddr_np(t->th);
@@ -1270,10 +1359,10 @@ void xbox_crash_thread_register(const char *role)
 #endif
         pthread_once(&s_thread_once, thread_key_make);
         pthread_setspecific(s_thread_key, t);
-#endif
         t->used = 1;
         return;
     }
+#endif
 }
 
 #if !defined(_WIN32)
@@ -1414,6 +1503,76 @@ static void sample_threads(void)
 static xbox_crash_sampler_fn s_sampler;
 void xbox_crash_set_sampler(xbox_crash_sampler_fn fn) { s_sampler = fn; }
 
+#if defined(_WIN32)
+typedef struct {
+    char role[24];
+    DWORD tid;
+    uint32_t regs[9], stack[4096];
+    size_t stack_words;
+    struct {
+        uint32_t pa, lo, data[64];
+        int valid;
+    } windows[9];
+} CrashThreadSnapshot;
+
+/* The unregister/exit hook must be able to retire the slot even if report
+ * output or symbol lookup stalls. Only copy bounded evidence under the lock. */
+static int snapshot_thread(unsigned index, CrashThreadSnapshot *out)
+{
+    CrashThread *t = &s_threads[index];
+    HANDLE process = GetCurrentProcess();
+    DWORD me = GetCurrentThreadId();
+    int present = 0, k;
+    if (!TryAcquireSRWLockShared(&s_registry_lock))
+        return -1;
+    if (!t->used || t->tid == me || WaitForSingleObject(t->handle, 0) != WAIT_TIMEOUT)
+        goto done;
+    present = 1;
+    out->tid = t->tid;
+    memcpy(out->role, t->role, sizeof out->role);
+    out->stack_words = 0;
+    for (k = 0; k < 9; k++) {
+        out->windows[k].valid = 0;
+        if (!ReadProcessMemory(process, (const void *)t->regs[k], &out->regs[k], sizeof(uint32_t), NULL)) {
+            memset(out->regs, 0, sizeof out->regs);
+            goto done;
+        }
+    }
+    uint32_t esp = out->regs[4];
+    if (guest_readable(esp, sizeof(uint32_t))) {
+        uint64_t available = XBOX_BASE_ADDRESS + (uint64_t)xbox_GetMappedSize() - esp;
+        size_t bytes = available < sizeof out->stack ? (size_t)available : sizeof out->stack;
+        size_t copied = 0;
+        while (copied < bytes) {
+            const uint8_t *source = guest_ptr(esp) + copied;
+            size_t chunk = 4096 - ((uintptr_t)source & 4095);
+            SIZE_T received = 0;
+            if (chunk > bytes - copied)
+                chunk = bytes - copied;
+            ReadProcessMemory(process, source, (uint8_t *)out->stack + copied, chunk, &received);
+            copied += received;
+            if (received != chunk)
+                break;
+        }
+        out->stack_words = copied / sizeof(uint32_t);
+    }
+    if (esp && s_hang_mem) {
+        for (k = 0; k < 9; k++) {
+            uint32_t pa, lo;
+            if (reg_window_bounds(out->regs[k], &pa, &lo) &&
+                ReadProcessMemory(process, guest_ptr(lo), out->windows[k].data, 256, NULL)) {
+                out->windows[k].pa = pa;
+                out->windows[k].lo = lo;
+                out->windows[k].valid = 1;
+            }
+        }
+    }
+done:
+    ReleaseSRWLockShared(&s_registry_lock);
+    return present;
+}
+#endif
+
 /* Every registered thread: role, host frames (POSIX), guest registers and
  * guest stack when it has one. */
 static void report_threads(void)
@@ -1425,34 +1584,52 @@ static void report_threads(void)
     if (s_sampler)
         s_sampler();
     for (i = 0; i < MAX_THREADS; i++) {
+#if defined(_WIN32)
+        CrashThreadSnapshot snapshot;
+        int sampled = snapshot_thread((unsigned)i, &snapshot);
+        if (sampled < 0) {
+            xbox_crash_printf("  (thread registry busy, remaining slots omitted)\n");
+            break;
+        }
+        if (!sampled)
+            continue;
+        xbox_crash_printf("\nthread %s (tid %lu)\n", snapshot.role, snapshot.tid);
+        if (snapshot.regs[4]) {
+            print_regs(snapshot.regs);
+            for (int k = 0; k < 9; k++) {
+                if (snapshot.windows[k].valid)
+                    print_reg_window(k, snapshot.regs[k], snapshot.windows[k].pa,
+                                     snapshot.windows[k].lo, snapshot.windows[k].data);
+            }
+            guest_walk_words(snapshot.regs[4], 24, !strcmp(snapshot.role, "guest-main") ? 256 : 0,
+                             snapshot.stack, snapshot.stack_words);
+        }
+#else
         CrashThread *t = &s_threads[i];
         uint32_t r[9];
         int k;
         if (t->used != 1 || t->tid == (unsigned long)GetCurrentThreadId())
             continue;           /* the watchdog itself */
-#if defined(_WIN32)
-        {
-            DWORD code = 0;
-            if (!GetExitCodeThread(t->handle, &code) || code != STILL_ACTIVE)
-                continue;
-        }
-#endif
         for (k = 0; k < 9; k++)
             r[k] = t->regs[k] ? *t->regs[k] : 0;
         xbox_crash_printf("\nthread %s (tid %lu)\n", t->role, t->tid);
-#if !defined(_WIN32)
         if (t->done)
             for (k = 0; k < t->nframes; k++)
                 xbox_crash_host_symbol(k ? "<-" : "pc", t->frames[k]);
         else
             xbox_crash_printf("  (no host sample: the thread did not answer)\n");
-#endif
         if (r[4]) {
             print_regs(r);
-            if (s_hang_mem)
-                reg_windows(r);
+            if (s_hang_mem) {
+                for (k = 0; k < 9; k++) {
+                    uint32_t pa, lo;
+                    if (reg_window_bounds(r[k], &pa, &lo))
+                        print_reg_window(k, r[k], pa, lo, (const uint32_t *)guest_ptr(lo));
+                }
+            }
             guest_walk(r[4], 24, !strcmp(t->role, "guest-main") ? 256 : 0);
         }
+#endif
     }
 }
 
