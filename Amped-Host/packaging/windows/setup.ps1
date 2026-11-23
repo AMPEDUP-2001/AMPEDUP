@@ -74,7 +74,7 @@ try {
             $reader.UseShellExecute = $false
             $reader.CreateNoWindow = $true
             $reader.RedirectStandardOutput = $true
-            $reader.StandardOutputEncoding = [Text.Encoding]::GetEncoding(1252)
+            $reader.StandardOutputEncoding = [Text.Encoding]::UTF8
             $process = [Diagnostics.Process]::Start($reader)
             try {
                 $table = $process.StandardOutput.ReadToEnd()

@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     }
     const xdvdfs_file *files = xdvdfs_files(image);
     for (unsigned i = 0; i < xdvdfs_count(image); ++i) {
-        /* The reader rejects tabs and newlines in disc names. Keep retail filename bytes. */
+        /* The reader rejects tabs and newlines in disc names. The reader returns UTF-8 paths. */
         printf("%" PRIu64 "\t%" PRIu32 "\t%s\n", files[i].offset, files[i].size, files[i].path);
     }
     xdvdfs_close(image);
