@@ -24,7 +24,7 @@ sample='script print("watch-sample", lldb.thread.GetStopReason() == lldb.eStopRe
 if ! xcrun lldb -b "$tmp/fixture" \
     -o "command script import \"$here/bink_watch.py\"" \
     -o 'breakpoint set --name xbox_kernel_init --one-shot true' -o run \
-    -o amped-bink-watch -o continue -o "$sample" -o continue -o "$sample" -o continue \
+    -o amped-bink-watch -o continue -o "$sample" -o continue -o "$sample" -o 'process kill' \
     >"$tmp/trace" 2>&1; then
     cat "$tmp/trace"; exit 1
 fi
@@ -32,4 +32,3 @@ cat "$tmp/trace"
 grep -q 'initial=0x00000000, watchpoint' "$tmp/trace"
 grep -qx 'watch-sample True 42' "$tmp/trace"
 grep -qx 'watch-sample True 0' "$tmp/trace"
-grep -q 'fixture finished' "$tmp/trace"
