@@ -2,6 +2,8 @@
 
 # AMPEDUP! 0.7.3
 
+**Experimental Mac source for issue #3.** Contributors can use the [Mac handoff and startup tests](experiments/macos/README.md) with their existing native build. Coding agents should start with [AGENTS.md](AGENTS.md).
+
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc, with optional **21:9 ultrawide gameplay**.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>

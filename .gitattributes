@@ -1,2 +1,4 @@
 # The bundled dependency is verified and rebuilt against byte-exact file hashes.
 Amped-Host/toolkit/src/video/private-winpthreads/** -text
+experiments/macos/**/*.sh text eol=lf
+experiments/macos/*.sh text eol=lf
