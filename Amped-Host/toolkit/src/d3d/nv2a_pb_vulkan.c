@@ -2197,6 +2197,8 @@ static VkShaderModule vs_build(const uint32_t *slots, int n, uint32_t hash, uint
     d3d8_vsh_parse(slots, n, parsed);
     extern int nvk_board_powder_enabled(void);
     unsigned flags = D3D8_GLSL_SCREEN_SPACE | (nvk_board_powder_enabled() ? 256u : 0u);
+    if ((flags & 256u) && hash == 0x1cd0b088u && parsed->inputs_read == 7u)
+        flags |= 512u; /* Retail board-powder vertex layout, including prewarm. */
     if (d3d8_vsh_generate_glsl(parsed, flags, glsl, 65536) <= 0) {
         COUNT(s_compile_errors);
         fprintf(stderr, LOGP "%s: no GLSL\n", what);
@@ -2419,6 +2421,8 @@ static int board_powder(const struct nv2a_pb_draw *draw, const struct nv2a_pb_gp
         == 0x0f431568487ba487ull;
 }
 
+static int amped_hd_pack_loaded(void);
+
 /* As Metal's fs_select: the combiners when programmed, else fs_basic; only
  * 2D textures are bound, so every sampling mode goes to the combiners as 2D. */
 static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mask, int powder)
@@ -2456,7 +2460,8 @@ static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mas
     key[32] = v->rc_ctl;
     key[33] = v->rc_fcw0;
     key[34] = v->rc_fcw1;
-    key[35] = modes | (powder ? 0x80000000u : 0u);
+    const int hd_powder = powder && amped_hd_pack_loaded();
+    key[35] = modes | (powder ? 0x80000000u : 0u) | (hd_powder ? 0x40000000u : 0u);
     key[36] = signs;
     key[37] = v->shader_ctl & 0x00FF0000u;  /* stage 2 and 3 input stages */
     key[38] = v->clip_plane_mode | (nv2a_alpha_kill_mask(s_stage, nv2a_pb_gpu_state()->flips) << 16);
@@ -2481,6 +2486,7 @@ static VkShaderModule fs_select(const struct nv2a_pb_vsh *v, uint32_t shadow_mas
     }
     st.alpha_kill = (uint8_t)nv2a_alpha_kill_mask(s_stage, nv2a_pb_gpu_state()->flips);
     if (powder) st.alpha_kill |= 192u;
+    if (hd_powder) st.alpha_kill |= 32u | 16u;
     st.input_tex[2] = (uint8_t)((v->shader_ctl >> 16) & 0xFu);
     st.input_tex[3] = (uint8_t)((v->shader_ctl >> 20) & 0xFu);
     hash = fnv(&st, sizeof st);
@@ -3078,18 +3084,19 @@ static int tex_upload_scaled(const Stage *t, unsigned f, int algo, struct nvk_im
 
 /* Read a bounded local pack. HD1 carries one added mip per entry. HD2 adds
  * a mip count to each entry and stores the new levels from largest to smallest. */
-#define AMPED_HD_MAX_ENTRIES 8
-#define AMPED_HD_MAX_DIM 256u
-#define AMPED_HD_MAX_FILE (12u + AMPED_HD_MAX_ENTRIES * \
-    (16u + AMPED_HD_MAX_DIM * AMPED_HD_MAX_DIM * 161u / 2u))
+#define AMPED_HD_MAX_ENTRIES 22
+#define AMPED_HD_MAX_DIM 512u
+#define AMPED_HD_MAX_FILE (12u + 13u * (16u + 256u * 256u * 161u / 2u))
 
 static struct {
-    uint32_t width, height;
+    uint32_t width, height, format;
     unsigned levels;
     const uint8_t *original, *replacement;
     int logged;
 } s_hd_entries[AMPED_HD_MAX_ENTRIES];
 static unsigned s_hd_count, s_hd_levels;
+
+static int amped_hd_pack_loaded(void) { return s_hd_count != 0; }
 static uint8_t *s_hd_data;
 
 static uint32_t amped_hd_word(const uint8_t *bytes)
@@ -3146,23 +3153,27 @@ static void amped_hd_load(const char *path)
         unsigned levels = version == 2 ? amped_hd_word(data + pos + 12) : 1u;
         pos += header;
         if (w < 16 || h < 16 || w > AMPED_HD_MAX_DIM || h > AMPED_HD_MAX_DIM
-                || (w & (w - 1)) || (h & (h - 1)) || format != 0x0C
-                || levels < 1 || levels > 2)
+                || (w & (w - 1)) || (h & (h - 1)) || (format != 0x0C && !(version == 2 && format == 0x0E && levels == 1))
+                || levels < 1 || levels > 2
+                || ((w > 256 || h > 256) && (version != 2 || format != 0x0C)))
             goto invalid;
-        size_t original_bytes = (size_t)w * h / 2;
+        size_t original_bytes = format == 0x0E ? (size_t)w * h : (size_t)w * h / 2;
         size_t replacement_bytes = (size_t)w * h * (levels == 2 ? 80u : 16u);
         if ((size_t)length - pos < original_bytes + replacement_bytes)
             goto invalid;
-        if (!amped_hd_opaque_bc1(data + pos, original_bytes))
-            goto invalid;
-        for (size_t a = 3; a < replacement_bytes; a += 4)
-            if (data[pos + original_bytes + a] != 255u)
+        if (format == 0x0C) {
+            if (!amped_hd_opaque_bc1(data + pos, original_bytes))
                 goto invalid;
+            for (size_t a = 3; a < replacement_bytes; a += 4)
+                if (data[pos + original_bytes + a] != 255u)
+                    goto invalid;
+        }
         for (unsigned j = 0; j < i; ++j) {
-            if (w == s_hd_entries[j].width && h == s_hd_entries[j].height
+            if (format == s_hd_entries[j].format && w == s_hd_entries[j].width && h == s_hd_entries[j].height
                     && !memcmp(data + pos, s_hd_entries[j].original, original_bytes))
                 goto invalid;
         }
+        s_hd_entries[i].format = format;
         s_hd_entries[i].width = w;
         s_hd_entries[i].height = h;
         s_hd_entries[i].levels = levels;
@@ -3198,7 +3209,7 @@ static int amped_hd_upload(const Stage *t, const uint8_t *bytes, struct nvk_imag
                 amped_hd_load(path);
         }
     }
-    if (!s_hd_count || t->color != 0x0C || t->dims != 2 || t->cube
+    if (!s_hd_count || (t->color != 0x0C && t->color != 0x0E) || t->dims != 2 || t->cube
             || stage_signed(t) || t->levels < 2
             || t->width > AMPED_HD_MAX_DIM || t->height > AMPED_HD_MAX_DIM)
         return 0;
@@ -3206,8 +3217,8 @@ static int amped_hd_upload(const Stage *t, const uint8_t *bytes, struct nvk_imag
         uint32_t w = s_hd_entries[i].width, h = s_hd_entries[i].height;
         unsigned added = s_hd_entries[i].levels;
         uint32_t top_w = w << added, top_h = h << added;
-        if (w != t->width || h != t->height || top_w > s_max_dim || top_h > s_max_dim
-                || memcmp(bytes, s_hd_entries[i].original, (size_t)w * h / 2))
+        if (t->color != s_hd_entries[i].format || w != t->width || h != t->height || top_w > s_max_dim || top_h > s_max_dim
+                || memcmp(bytes, s_hd_entries[i].original, t->color == 0x0E ? (size_t)w * h : (size_t)w * h / 2))
             continue;
         unsigned max_levels = 1;
         for (uint32_t dim = w > h ? w : h; dim > 1u; dim >>= 1)
@@ -7785,6 +7796,7 @@ static void vk_on_draw(const struct nv2a_pb_draw *d)
     if (powder) {
         /* xemu uses the authored programmable point size in host pixels. */
         vc.c[6] = C->props.limits.pointSizeRange[1];
+        vc.c[7] = amped_hd_pack_loaded() ? 1.0f : 0.0f; /* vp_off.w is otherwise zero. */
         static uint64_t last = UINT64_MAX;
         if (last == UINT64_MAX || s_presents - last >= 300) {
             last = s_presents;

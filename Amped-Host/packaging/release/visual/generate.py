@@ -16,24 +16,37 @@ sys.path[:0] = [str(HERE), str(HERE.parents[2] / "research/vrtdrive")]
 from bevel_posts import bevel
 from refine_rail import refine
 from round_funbox import round_lip
-from textures import BC1, decode_xpr, groomed, replace_texture, tile_detail
+from boughs import foliage_level, needle_detail
+from sandstone import CLIFFS, append_cliffs
+from safety_nets import NETS, append_nets
+from powder import wind_powder_levels
+from textures import BC1, BC2, charcoal_levels, decode_xpr, painted_levels, ramp_snow_level, replace_close_texture, replace_texture, tile_detail
 from inspect_directory import directory
 
 COURSE = "Resource/Terrain/SS_EgoTrip"
-GROOMED = "ter_snow_groomed_tracks_5x5.xpr"
-# Order is part of the pack format. The last four entries also identify
-# the original materials for matching the corresponding rail draws.
-DETAILS = (
-    ("ter_snow_packed_4x4.xpr", "packed-snow", 6.0, 0),
-    ("ter_snow_powder_rough_3x3.xpr", "rough-powder", 6.5, 0),
-    ("pinebark.xpr", "pine-bark", 7.5, 0),
-    ("mm_rail_metalpole.xpr", "bare-steel", 7.5, 0),
-    ("mm_rail_metalpole_red.xpr", "red-enamel", 6.0, 0),
-    ("mm_funboxes_silvertop.xpr", "brushed-silver", 6.5, 0),
-    ("mm_funboxes_metaledge.xpr", "bare-steel", 5.5, 90),
+# Keep slots 5–8 stable: the renderer also uses those identities for rail draws.
+RAILS = (
+    ("mm_rail_metalpole.xpr", "bare-steel", 7.5, 0, 2),
+    ("mm_rail_metalpole_red.xpr", "red-enamel", 6.0, 0, 2),
+    ("mm_funboxes_silvertop.xpr", "brushed-silver", 6.5, 0, 2),
+    ("mm_funboxes_metaledge.xpr", "bare-steel", 5.5, 90, 2),
 )
+DETAILS = (
+    ("ter_snow_groomed_tracks_5x5.xpr", "groomed-snow", 5.5, 0, 2),
+    ("ter_snow_packed_4x4.xpr", "packed-snow", 6.0, 0, 2),
+    ("ter_snow_powder_rough_3x3.xpr", "wind-worked-snow", 11.0, 0, 2),
+    ("pinebark.xpr", "pine-bark", 7.5, 0, 2),
+    *RAILS,
+    ("b_wood_siding.xpr", "wood-grain", 5.5, 0, 1),
+    ("rampside_7x1.xpr", "ramp-scrapes", 8.5, 0, 1),
+)
+FOLIAGE = ("dpbrns2.xpr", "ppbough.xpr", "ppboughsnow.xpr")
+CHARCOAL = "mm_generic_color_charcoal.xpr"
+PAINTED_WOOD = "mm_funboxes_red_painted_wood.xpr"
+LIFT_METAL = "mm_metal_green.xpr"
+MATERIAL_COUNT = len(DETAILS) + len(FOLIAGE) + len(CLIFFS) + len(NETS) + 3
 PACK = "snow-summit-visible.ahd"
-PACK_SHA = "e14a1788286718fb2fbb2288b8acd860d172cf9e13efc16c26ce86a2bcbe2467"
+PACK_SHA = "58390653d6aeb09bcc498ac94e1c3a2ca3f933b16503fbf5cc21a9a1772b63df"
 
 # Retail archive locations for vertex data and its triangle strip, followed
 # by the strip's vertex base, the material, the draw identity and the refiner.
@@ -102,25 +115,63 @@ def read_draw(archive, spec):
 def build_pack(game):
     archive = read_verified(game / (COURSE + ".img"),
                             "8b6f987dd2423069badd25ca3df6e375479a2313c7a79aa40f30377a2f83babc")
-    names = (GROOMED,) + tuple(detail[0] for detail in DETAILS)
+    names = {detail[0] for detail in DETAILS} | {CHARCOAL, PAINTED_WOOD, LIFT_METAL}
     originals = {name: decode_xpr(archive[offset:offset + size])
                  for name, offset, size in directory(archive) if name in names}
     materials = {}
-    pack = bytearray(struct.pack("<8sI", b"AMPEDHD2", len(names)))
-    for name, artwork, contrast, rotation in ((GROOMED, "groomed-snow", None, 0),) + DETAILS:
+    pack = bytearray(struct.pack("<8sI", b"AMPEDHD2", MATERIAL_COUNT))
+    for name, artwork, contrast, rotation, added_mips in DETAILS:
         compressed, original = originals[name]
         width, height = original.size
         art = HERE / "art" / (artwork + ".png")
-        if contrast is None:
-            top, middle = groomed(original, art)
+        if artwork == "wind-worked-snow":
+            levels = wind_powder_levels(original, art, rotation, contrast)
         else:
-            detail = tile_detail(art, (width * 4, height * 4), rotation, contrast)
-            top, middle = replace_texture(original, detail)
-        pack.extend(struct.pack("<4I", width, height, BC1, 2))
+            detail = tile_detail(art, (width << added_mips, height << added_mips), rotation, contrast)
+            levels = (replace_close_texture(original, detail),) if added_mips == 1 else replace_texture(original, detail)
+        if name == "rampside_7x1.xpr":
+            # Keep the authored scrapes at midrange. Add fine grain up close.
+            levels = (ramp_snow_level(levels[0], HERE / "art/wind-worked-snow.png"), *levels)
+        pack.extend(struct.pack("<4I", width, height, BC1, len(levels)))
         pack.extend(compressed)
-        pack.extend(top.tobytes("raw", "BGRA"))
-        pack.extend(middle.tobytes("raw", "BGRA"))
+        for level in levels:
+            pack.extend(level.tobytes("raw", "BGRA"))
         materials[name] = compressed
+    trees = read_verified(game / COURSE / "Trees.img",
+                          "5840045ef1ee840af1160be1afd09f383ee03c45afdf8e04d24eacd89c7a4929")
+    branches = {name: decode_xpr(trees[offset:offset + size], color_format=BC2)
+                for name, offset, size in directory(trees) if name in FOLIAGE}
+    needles = needle_detail(HERE / "art/pine-needles.png")
+    for name in FOLIAGE:
+        compressed, original = branches[name]
+        close = foliage_level(original, None if name == "dpbrns2.xpr" else needles)
+        pack.extend(struct.pack("<4I", *original.size, BC2, 1))
+        pack.extend(compressed)
+        pack.extend(close.tobytes("raw", "BGRA"))
+    canyon = read_verified(game / "Resource/Terrain/Fantasy_Southwest.img",
+                          "866abd2fa33bee7fa04b9ba30f9ce758b0714072b4d25d4da818e94fa88c0d91")
+    append_cliffs(pack, canyon, HERE / "art/sandstone-grain.png")
+    compressed, original = originals[CHARCOAL]
+    levels = charcoal_levels(original)
+    pack.extend(struct.pack("<4I", *original.size, BC1, len(levels)))
+    pack.extend(compressed)
+    for level in levels:
+        pack.extend(level.tobytes("raw", "BGRA"))
+    append_nets(pack, game / "Resource/Terrain")
+    compressed, original = originals[PAINTED_WOOD]
+    levels = painted_levels(original, HERE / "art/wood-grain.png")
+    pack.extend(struct.pack("<4I", *original.size, BC1, len(levels)))
+    pack.extend(compressed)
+    for level in levels:
+        pack.extend(level.tobytes("raw", "BGRA"))
+    compressed, original = originals[LIFT_METAL]
+    width, height = original.size
+    detail = tile_detail(HERE / "art/red-enamel.png", (4 * width, 4 * height), 0, 4.5)
+    levels = replace_texture(original, detail)
+    pack.extend(struct.pack("<4I", width, height, BC1, len(levels)))
+    pack.extend(compressed)
+    for level in levels:
+        pack.extend(level.tobytes("raw", "BGRA"))
     if sha256(pack).hexdigest() != PACK_SHA:
         raise ValueError("The generated HD pack did not reproduce the verified output")
     return pack, materials
@@ -136,7 +187,7 @@ def build_header(game, materials):
     archive = read_verified(game / (COURSE + ".res"),
                             "123bfbbde2fba66e19d295c940864b796e0b3622e70bfdd55c80d726dc66835a")
     parts = ["/* Generated from a verified local disc. */\n"]
-    for tag, (name, *_recipe) in zip(("bare", "red", "deck", "trim"), DETAILS[-4:], strict=True):
+    for tag, (name, *_recipe) in zip(("bare", "red", "deck", "trim"), RAILS, strict=True):
         parts.append(c_bytes("rail_texture_" + tag, materials[name]))
     for slot, spec in enumerate(MESHES):
         draw = read_draw(archive, spec)
@@ -157,7 +208,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "amped_visual_data.h").write_text(header, encoding="ascii")
     (args.output / PACK).write_bytes(pack)
-    print(f"Verified eight texture overrides and generated three rail draws ({PACK_SHA})")
+    print(f"Verified {MATERIAL_COUNT} texture overrides and generated {len(MESHES)} rail draws ({PACK_SHA})")
 
 
 if __name__ == "__main__":

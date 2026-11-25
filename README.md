@@ -53,7 +53,9 @@ The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rend
 - Xbox controller and keyboard support with tested Quick Start, Career saving and replay playback.
 - Open **Options → Graphics** or press **F1** or **View + Menu**. The Audio tab has speaker mode, two mixes, and soundtrack, effects and master levels, and spatial width.
 - **Quit Game** replaces **Game Demos** on the Main Menu. Settings that need a restart ask for confirmation.
-- Optional **HD Texture Pack** adds detail to selected snow, pine bark, and metal. It starts Off.
+- Choose **Options → Graphics → Course textures** and confirm the restart. **Original** (the default) uses the disc textures. **HD Pack** adds close-up detail to selected snow, wood, bark, and metal. Look for grain in Stratton's wooden A-frame supports and shallow scrapes in the quarterpipe snow at Gunny's Gulch. Groomed snow keeps the disc's track marks and shading as the camera moves into the distance. On Snow Summit, nearby pine boughs also carry finer needle detail. Distant trees use the original course mipmaps.
+- At Gunny’s Gulch, the HD Pack brings out fine sandstone grain along the canyon wall. Both comparisons show the same disc replay at 4×. [Sandstone beside the rail](docs/screenshots/hd-pack/gunnys-gulch-sandstone-rail.png) · [Sunlit canyon rock](docs/screenshots/hd-pack/gunnys-gulch-sandstone-sunlit.png)
+- The HD Pack adds close-up grain to the rough powder used on all 11 courses and to the snow on quarterpipe sidewalls. The original slope shading comes from the disc. [Altibahn powder](docs/screenshots/hd-pack/altibahn-shared-powder.png) · [Gunny’s Gulch powder](docs/screenshots/hd-pack/gunnys-gulch-shared-powder.png) · [Quarterpipe snow](docs/screenshots/hd-pack/gunnys-gulch-quarterpipe-snow.png)
 - Miracle Mile has rounder rail and funbox details and restored snowboard powder. Brighton 1 / Hawkeye has targeted flicker fixes at Molly’s Lodge.
 
 ## Custom soundtracks

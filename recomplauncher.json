@@ -195,17 +195,17 @@
     },
     {
       "id": "hd-textures",
-      "label": "HD Texture Pack",
-      "help": "Use the optional high-resolution detail for selected snow, bark and metal materials.",
+      "label": "Course textures",
+      "help": "Original uses the disc textures. HD Pack adds close-up detail to selected snow, wood, bark and metal.",
       "choices": [
         {
-          "label": "Off",
+          "label": "Original",
           "set": {
             "graphics/amped_hd_textures": "false"
           }
         },
         {
-          "label": "On",
+          "label": "HD Pack",
           "set": {
             "graphics/amped_hd_textures": "true"
           }

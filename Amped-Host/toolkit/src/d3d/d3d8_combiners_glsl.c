@@ -246,6 +246,25 @@ static int generate(const NV2ACombinerState *state, char *buf, int bufsize, int 
                 EMIT("        if (pc.hdr.w > 0.0)\n"
                      "            hlod = clamp(1.0 - max(textureQueryLod(tex0, uv * pc.tex_scale[0].xy).y, 0.0)"
                      " / pc.hdr.w, 0.0, 1.0);\n");
+            /* The close HD plume redistributes the retail alpha inside each puff.
+             * 0.35068 is the sprite's coverage-weighted mean at the folded UV. */
+            if (powder_sprite && (state->alpha_kill & 32u)) {
+                EMIT("        float coverage = x11.a;\n");
+                EMIT("        float footprint = max(fwidth(uv.x), fwidth(uv.y));\n");
+                EMIT("        float amount = 1.0 - smoothstep(0.014, 0.055, footprint);\n");
+                EMIT("        if (amount > 0.0) {\n");
+                EMIT("            vec2 q = mat2(2.21,-1.17,1.17,2.21) * uv + vec2(0.13,0.37);\n");
+                EMIT("            vec2 folded = abs(fract(q) * 2.0 - 1.0);\n");
+                EMIT("            float detail = textureLod(tex3, folded, 0.0).a - 0.35068;\n");
+                EMIT("            x11.a += 1.421875 * amount * min(coverage, 1.0 - coverage) * detail;\n");
+                EMIT("        }\n");
+                /* Small, still-dense particles are concentrated at the board edge. */
+                if (state->alpha_kill & 16u) {
+                    EMIT("        float edge = i_t3.x * (1.0 - smoothstep(0.28, 0.50, footprint));\n");
+                    EMIT("        x11.a = mix(x11.a, smoothstep(0.13, 0.64, x11.a), edge);\n");
+                    EMIT("        x4.a += 0.45 * edge * (1.0 - x4.a);\n");
+                }
+            }
             EMIT("    }\n");
         }
         if (state->tex_signed[i]) {

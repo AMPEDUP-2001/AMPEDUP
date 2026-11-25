@@ -353,7 +353,7 @@ static constexpr Meta k_meta[XS_COUNT] = {
     /* XS_INPUT_TOUCH_SCALE */  { XS_INPUT_TOUCH_SCALE, "Touch controls size", "100% suits a phone or a 6-7 inch handheld held in both hands.", 0.1, FMT_PERCENT, NULL, 0 },
     /* XS_INPUT_TOUCH_AUTO_GAS */ { XS_INPUT_TOUCH_AUTO_GAS, "Touch: accelerate automatically", "In a race the car accelerates by itself; hold BRAKE to slow down or reverse. Touch controls only.", 1, FMT_PLAIN, NULL, 0 },
 #endif
-    /* XS_AMPED_HD_TEXTURES */ { XS_AMPED_HD_TEXTURES, "HD Texture Pack", "Adds high-resolution detail to selected course materials.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_HD_TEXTURES */ { XS_AMPED_HD_TEXTURES, "Course textures", "Original uses the disc textures. HD Pack adds close-up detail to selected snow, wood, bark and metal.", 1, FMT_PLAIN, NULL, 0 },
 };
 /* One entry per setting, in xbox_settings.h's order: a row shows its own
  * label, help and choices only while k_meta[id] is id's (BO-245: a merge
@@ -1666,7 +1666,10 @@ static void value_text(xs_id id, char *out, size_t n)
 
     switch (s->type) {
     case XS_BOOL:
-        snprintf(out, n, "%s", v != 0.0 ? "On" : "Off");
+        if (id == XS_AMPED_HD_TEXTURES)
+            snprintf(out, n, "%s", v != 0.0 ? "HD Pack" : "Original");
+        else
+            snprintf(out, n, "%s", v != 0.0 ? "On" : "Off");
         break;
     case XS_CHOICE:
         {

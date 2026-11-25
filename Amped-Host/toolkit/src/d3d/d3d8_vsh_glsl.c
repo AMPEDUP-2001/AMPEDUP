@@ -289,9 +289,21 @@ int d3d8_vsh_generate_glsl(const NV2AVshProgram *program, unsigned flags,
         D3D8_GLSL_VS_OUT
         D3D8_GLSL_SATURATE, NV2A_VS_MAX_CONSTANTS);
     for (i = 0, k = 0; i < NV2A_VS_MAX_INPUTS; i++)
-        if (inputs & (1u << i))
-            sb_append(&sb, "layout(location = %d) in vec4 v%d;\n", k++, i);
+        if (inputs & (1u << i)) {
+            if ((flags & 512u) && i == 0)
+                sb_append(&sb, "layout(location = %d) in vec4 powderPosition;\n", k++);
+            else
+                sb_append(&sb, "layout(location = %d) in vec4 v%d;\n", k++, i);
+        }
     sb_append(&sb, "void main() {\n");
+    if (flags & 512u)
+        sb_append(&sb,
+            "    vec4 v0 = powderPosition;\n"
+            "    float fresh = 0.0;\n"
+            "    if (vp.vp_off.w > 0.0) {\n"
+            "        fresh = (1.0 - smoothstep(100.0, 310.0, v2.x)) * smoothstep(0.425, 0.478, v1.a);\n"
+            "        v0.y += 0.22 * fresh * smoothstep(16.0, 110.0, v2.x);\n"
+            "    }\n");
     for (i = 0; i <= 11; i++)
         sb_append(&sb, "    vec4 R%d = vec4(0.0);\n", i);
     sb_append(&sb, "    int a0 = 0;\n");
@@ -366,6 +378,13 @@ int d3d8_vsh_generate_glsl(const NV2AVshProgram *program, unsigned flags,
         "    o_t0 = oT0; o_t1 = oT1; o_t2 = oT2; o_t3 = oT3;\n"
         "    o_fog = oFog.x;\n"
         "");
+    if (flags & 512u)
+        sb_append(&sb,
+            "    if (vp.vp_off.w > 0.0) {\n"
+            "        fresh *= 1.0 - smoothstep(24.0, 70.0, oPts.x);\n"
+            "        o_t3.x = fresh;\n"
+            "        oPts.x *= 1.0 + 0.80 * fresh;\n"
+            "    }\n");
     if (flags & 256u)
         sb_append(&sb, "    gl_PointSize = vp.vp_off.z > 0.0 ? "
                        "clamp(oPts.x, 1.0, vp.vp_off.z) : 1.0;\n");
