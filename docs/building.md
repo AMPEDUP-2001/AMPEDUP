@@ -68,6 +68,11 @@ XISO or extracted game folder. Setup verifies the player's copy and compiles
 the game. `--play` starts it directly. The prepared build is in `runtime/`,
 and settings, saves, and logs are in `profile/` at the top of the installation.
 
+RecompLauncher identifies platform downloads by filename. Include `source`
+in the filename of any developer handoff attached to a player release (for
+example, `AMPEDUP-Linux-source-handoff.zip`). Reserve platform build names
+such as `AMPEDUP-Linux-x64.zip` for tested, playable builds.
+
 The XISO listed for verification in the manifest has CRC32 `922d8f9c` and
 size 2,016,346,112 bytes. Both values were computed from the verified
 European multilingual XISO that matches the project's documented SHA-256.
