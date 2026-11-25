@@ -18,7 +18,7 @@ These are in-game captures at 4× internal resolution. Original is on the left a
 
 ![Brighton 1 woven safety fence, Original and 0.8 HD Pack at 4×](docs/screenshots/hd-pack/brighton-woven-safety-fence.png)
 
-[See all 14 comparison shots and the silent Brighton lift clip](docs/screenshots/hd-pack/README.md).
+[See all 15 comparison shots, including Snow Summit in 21:9, and the silent Brighton lift clip](docs/screenshots/hd-pack/README.md).
 
 ## Play on Windows
 
@@ -56,6 +56,8 @@ The development benchmark measured two 30-second gameplay samples per scale on *
 | 4× | 58.50 | 6.37 ms (38.2%) | 9.56 ms (57.3%) | 42.7% |
 
 The percentages use the 16.67 ms frame budget for 60 FPS. CPU draw measures rendering work on the CPU, and GPU busy measures active GPU time using PresentMon. CPU and GPU work can overlap. The slowest five-second window at 4× averaged 55.94 displayed FPS.
+
+**0.8 HD Pack on the upgraded PC.** An Intel Core i5-12600K, RTX 3070 and 32 GB RAM ran the same 18-second section of the Snow Summit 2 *Air Addict* replay four times. Settings were fullscreen 16:9 on a 100 Hz display, 4×, SMAA, 16× filtering, a 60 FPS cap, CRT off and muted audio. Original averaged 59.91 and 59.92 displayed FPS. The HD Pack averaged 59.92 and 59.94. All four samples had a 99th-percentile display interval near 20.05 ms and zero intervals over 25 ms. With HD enabled, the 95th-percentile GPU busy time was 7.25–8.65 ms, leaving 48–56% of a 60 FPS frame budget in this section.
 
 ## Game features
 

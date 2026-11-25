@@ -20,6 +20,12 @@ The grain runs along the red boards. The paired crop shows it best on the side f
 
 ![Snow Summit painted wood, Original and HD Pack](snow-summit-painted-funbox.png)
 
+### Snow Summit 2 · Pine branches in 21:9
+
+The rider passes a snow-covered bough just after landing in the Air Addict replay. The boxes mark the same branch on the right. The fine needles are easiest to see in the detail crops below the ultrawide views.
+
+![The same Snow Summit 2 landing in Original and HD Pack at 4× and 21:9, with equal-size pine branch crops](snow-summit-ultrawide-pines.jpg)
+
 ### Stratton · Village lodge siding
 
 Watch the building on the rider's right. The close view shows grain following the horizontal boards. The comparison uses a recorded approach through the village in both modes.

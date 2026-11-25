@@ -38,13 +38,23 @@ def append_cliffs(pack, archive, swatch):
 
 
 def close_cliff(middle, swatch):
-    rgb = np.asarray(wrap_resize(middle), dtype=np.float32)[..., :3]
     # Repeat only the finest grain. The authored 1024 mip contains the larger beds.
     micro = tile_detail(swatch, (512, 512), 0, 14)
     smooth = micro
     for axis in (0, 1):
         smooth = (np.roll(smooth, 2, axis) + 2 * smooth + np.roll(smooth, -2, axis)) * .25
-    fine = np.tile(np.clip((micro - smooth) * 1.75, -18, 18), (4, 4))
-    stone = np.clip((rgb[..., 0] - rgb[..., 2] - 8) / 36, 0, 1)
-    delta = np.rint(np.clip(fine * stone, -rgb.min(axis=2), 255 - rgb.max(axis=2)))
-    return Image.fromarray((rgb + delta[..., None]).astype(np.uint8)).convert("RGBA")
+    fine = np.clip((micro - smooth) * 1.75, -18, 18)
+    pixels = np.array(wrap_resize(middle))
+    height, width = pixels.shape[:2]
+    # Each pixel's stone mask is independent. Reuse the grain tile without
+    # allocating full 2048-square floating-point copies of the texture.
+    for y in range(0, height, fine.shape[0]):
+        for x in range(0, width, fine.shape[1]):
+            block = pixels[y:y + fine.shape[0], x:x + fine.shape[1], :3]
+            rgb = block.astype(np.float32)
+            grain = fine[:block.shape[0], :block.shape[1]]
+            stone = np.clip((rgb[..., 0] - rgb[..., 2] - 8) / 36, 0, 1)
+            delta = np.rint(np.clip(grain * stone, -rgb.min(axis=2), 255 - rgb.max(axis=2)))
+            block[:] = rgb + delta[..., None]
+    pixels[..., 3] = 255
+    return Image.fromarray(pixels)
