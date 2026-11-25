@@ -8,6 +8,18 @@ An unofficial static recompilation of the original Xbox version of *Amped: Frees
 
 [Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.8.md) · [HD comparison gallery](docs/screenshots/hd-pack/README.md) · [Credits](#credits)
 
+## Original and 0.8 HD Pack
+
+These are in-game captures at 4× internal resolution. Original is on the left and the optional HD Pack is on the right. Each inset shows the same part of the scene at the same scale.
+
+![Stratton village lodge siding, original disc texture and 0.8 HD Pack at 4×](docs/screenshots/hd-pack/stratton-lodge-siding.jpg)
+
+![Gunny’s Gulch sunlit canyon, Original and 0.8 HD Pack at 4×](docs/screenshots/hd-pack/gunnys-gulch-sandstone-sunlit.png)
+
+![Brighton 1 woven safety fence, Original and 0.8 HD Pack at 4×](docs/screenshots/hd-pack/brighton-woven-safety-fence.png)
+
+[See all 14 comparison shots and the silent Brighton lift clip](docs/screenshots/hd-pack/README.md).
+
 ## Play on Windows
 
 Choose a Windows installer from the [0.8 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.8).
