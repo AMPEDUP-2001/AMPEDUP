@@ -128,6 +128,7 @@ typedef enum {
     XS_INPUT_TOUCH_AUTO_GAS,
 #endif
     XS_AMPED_HD_TEXTURES,
+    XS_AMPED_POTATO_MODE,
     XS_COUNT
 } xs_id;
 

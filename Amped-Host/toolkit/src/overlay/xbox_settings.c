@@ -230,6 +230,7 @@ static xs_setting s_set[XS_COUNT] = {
     [XS_AMPED_EFFECTS_LEVEL] = SETTING("audio.amped_effects_level", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1.5, 1),
     [XS_AMPED_SPATIAL_WIDTH] = SETTING("audio.amped_spatial_width", XS_FLOAT, XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1, 0.25),
     [XS_AMPED_HD_TEXTURES] = SETTING("graphics.amped_hd_textures", XS_BOOL, XS_RESTART | XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1, 0),
+    [XS_AMPED_POTATO_MODE] = SETTING("graphics.amped_potato_mode", XS_BOOL, XS_RESTART | XS_VIRTUAL, RENV_COUNT, NULL, NULL, 0, 1, 0),
     [XS_GAME_LANGUAGE]      = SETTING("game.language", XS_CHOICE, XS_RESTART, RENV_GAME_LANGUAGE, k_language, NULL, 0, 0, 0),
 #if defined(__ANDROID__)
     [XS_INPUT_VIBRATION]    = SETTING("input.vibration", XS_CHOICE, XS_RESTART, RENV_ANDROID_VIBRATION, k_vibration, NULL, 0, 0, 0),
@@ -734,6 +735,29 @@ static void write_texts(FILE *f, const char *sec, int in_section)
     }
 }
 
+/* A preset owns its effective values for this launch. The normal file values
+ * and their user/default status survive unrelated saves while it is active. */
+static unsigned char s_potato_override[XS_COUNT];
+
+static void configure_potato_mode(void)
+{
+    static const struct { xs_id id; double value; } preset[] = {
+        { XS_GRAPHICS_RENDER_SCALE, 1 }, { XS_GRAPHICS_AA, 0 },
+        { XS_GRAPHICS_ANISO, 0 }, { XS_AMPED_HD_TEXTURES, 0 },
+        { XS_AMPED_CRT, 0 }, { XS_AMPED_FPS_CAP, 1 } /* 30 FPS */
+    };
+    memset(s_potato_override, 0, sizeof s_potato_override);
+    if (s_set[XS_AMPED_POTATO_MODE].value != 0.0) {
+        for (size_t i = 0; i < sizeof preset / sizeof preset[0]; ++i) {
+            xs_id id = preset[i].id;
+            if (!s_set[id].locked) {
+                s_potato_override[id] = 1;
+                s_set[id].value = preset[i].value;
+            }
+        }
+    }
+}
+
 void xbox_SettingsFlush(void)
 {
     char tmp[sizeof s_path + 8], sec[32];
@@ -782,7 +806,7 @@ void xbox_SettingsFlush(void)
                 continue;
             fprintf(f, "%s = ", name);
             /* A setting the environment overrides keeps what the file said. */
-            write_value(f, s, s->locked ? s->filev : s->value);
+            write_value(f, s, (s->locked || s_potato_override[j]) ? s->filev : s->value);
             fputc('\n', f);
         }
         write_texts(f, sec, 1);
@@ -979,13 +1003,14 @@ void xbox_SettingsInit(const char *title)
         snprintf(s_path, sizeof s_path, "%s/settings.toml", dir);
     }
     load_file();
+    configure_potato_mode();
 
     /* The file's values into the environment, under what the user set and
      * over what the host defaults (which come after and do not replace). */
     for (i = 0; i < XS_COUNT; i++) {
         const xs_setting *s = &s_set[i];
         char buf[32];
-        if (!s->user || s->locked)
+        if ((!s->user && !s_potato_override[i]) || s->locked)
             continue;
         if (i == XS_POWER_MODE) {
             const char *p, *l;
@@ -1101,7 +1126,7 @@ void xbox_SettingSet(xs_id id, double v)
     if ((unsigned)id >= XS_COUNT)
         return;
     s = &s_set[id];
-    if (s->locked)
+    if (s->locked || s_potato_override[id])
         return;
     v = clampd(s, v);
     if (v == s->value && s->user)
@@ -1118,7 +1143,7 @@ void xbox_SettingReset(xs_id id)
     if ((unsigned)id >= XS_COUNT)
         return;
     s = &s_set[id];
-    if (s->locked)
+    if (s->locked || s_potato_override[id])
         return;
     s->value = s->def;
     if (s->user)

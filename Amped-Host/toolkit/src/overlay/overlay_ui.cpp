@@ -354,6 +354,7 @@ static constexpr Meta k_meta[XS_COUNT] = {
     /* XS_INPUT_TOUCH_AUTO_GAS */ { XS_INPUT_TOUCH_AUTO_GAS, "Touch: accelerate automatically", "In a race the car accelerates by itself; hold BRAKE to slow down or reverse. Touch controls only.", 1, FMT_PLAIN, NULL, 0 },
 #endif
     /* XS_AMPED_HD_TEXTURES */ { XS_AMPED_HD_TEXTURES, "Course textures", "Original uses the disc textures. HD Pack adds close-up detail to selected snow, wood, bark and metal.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_POTATO_MODE */ { XS_AMPED_POTATO_MODE, "Potato Mode", "1x resolution, original textures and a 30 FPS cap. Turns off anti-aliasing, anisotropic filtering and CRT. Switch off to restore your settings.", 1, FMT_PLAIN, NULL, 0 },
 };
 /* One entry per setting, in xbox_settings.h's order: a row shows its own
  * label, help and choices only while k_meta[id] is id's (BO-245: a merge
@@ -1159,18 +1160,22 @@ static int page_rows(int page, Row *r)
     SET(XS_DISPLAY_FULLSCREEN);
     SET(XS_DISPLAY_FILTER);
     SET(XS_DISPLAY_OVERSCAN);
+    SET(XS_AMPED_POTATO_MODE);
+    const bool potato = xbox_SettingGet(XS_AMPED_POTATO_MODE)->launch != 0.0;
+    if (!potato) {
 #if defined(AMPED_GRAPHICS_UI_EXPERIMENT)
-    SET(XS_GRAPHICS_RENDER_SCALE);
-    SET(XS_GRAPHICS_AA);
-    SET(XS_AMPED_HD_TEXTURES);
+        SET(XS_GRAPHICS_RENDER_SCALE);
+        SET(XS_GRAPHICS_AA);
+        SET(XS_AMPED_HD_TEXTURES);
 #if defined(AMPED_UNIFIED_EXPERIMENT)
-    SET(XS_AMPED_CRT);
+        SET(XS_AMPED_CRT);
 #endif
 #endif
-    SET(XS_GRAPHICS_ANISO);
+        SET(XS_GRAPHICS_ANISO);
+    }
     SET(XS_ADVANCED_PERF);
 #if defined(AMPED_FPS_CAP_EXPERIMENT)
-    SET(XS_AMPED_FPS_CAP);
+    if (!potato) SET(XS_AMPED_FPS_CAP);
 #endif
 #if defined(AMPED_NATIVE_WIDE_SETTING_V23)
     SET(XS_AMPED_NATIVE_WIDE);

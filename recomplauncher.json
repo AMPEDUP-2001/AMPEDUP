@@ -38,9 +38,9 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "9",
+    "version": "10",
     "done": [
-      "{install}/runtime/.ampedup-runtime-r9",
+      "{install}/runtime/.ampedup-runtime-r10",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe",
       "{install}/runtime/Amped-Host/bin/snow-summit-visible.ahd"
     ]
@@ -64,6 +64,16 @@
     }
   ],
   "settings": [
+    {
+      "id": "potato-mode",
+      "label": "Potato Mode",
+      "help": "Use 1× resolution, original textures and a 30 FPS cap. AA, anisotropic filtering and CRT turn off. Switch off to restore your graphics settings on the next launch.",
+      "choices": [
+        { "label": "Off", "set": { "graphics/amped_potato_mode": "false" } },
+        { "label": "On", "set": { "graphics/amped_potato_mode": "true" } }
+      ],
+      "defaults": { "graphics/amped_potato_mode": "false" }
+    },
     {
       "id": "game-language",
       "label": "Game language",
