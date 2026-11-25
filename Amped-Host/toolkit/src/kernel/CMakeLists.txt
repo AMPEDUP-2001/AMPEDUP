@@ -112,5 +112,8 @@ target_compile_definitions(xbox_kernel PRIVATE $<$<CONFIG:Debug>:_DEBUG>)
 
 # graphics.texture_upscale (BO-245): a build from source finds the shader
 # files in the tree when no packaged copy is there.
-set_source_files_properties(nv2a_texup.c PROPERTIES COMPILE_DEFINITIONS
-    "XBOXRECOMP_TEXUP_SRC_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/upscale_shaders\"")
+option(XBOXRECOMP_TEXUP_SOURCE_FALLBACK "Look for upscale shaders in the development source tree" ON)
+if(XBOXRECOMP_TEXUP_SOURCE_FALLBACK)
+    set_source_files_properties(nv2a_texup.c PROPERTIES COMPILE_DEFINITIONS
+        "XBOXRECOMP_TEXUP_SRC_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/../../third_party/upscale_shaders\"")
+endif()

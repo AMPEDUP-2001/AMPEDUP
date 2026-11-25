@@ -5,7 +5,8 @@ param(
     [ValidateRange(1,16)][int]$BuildJobs = 4,
     [ValidateRange(1,6)][int]$AnalysisJobs = 2,
     [switch]$ReuseGenerated,
-    [switch]$Installer
+    [switch]$Installer,
+    [switch]$TemporarySource
 )
 $ErrorActionPreference = 'Stop'
 $hostDir = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
@@ -47,6 +48,11 @@ $cmakeArgs = @(
 )
 foreach ($entry in $flags.PSObject.Properties) {
     $cmakeArgs += "-D$($entry.Name):$($entry.Value.type)=$($entry.Value.value)"
+}
+if ($TemporarySource) {
+    # Setup deletes this checkout. Keep its path and build time out of the installed game.
+    $cmakeArgs += '-DXBOXRECOMP_TEXUP_SOURCE_FALLBACK:BOOL=OFF'
+    $cmakeArgs += '-DCMAKE_EXE_LINKER_FLAGS:STRING=-Wl,--no-insert-timestamp'
 }
 & cmake @cmakeArgs
 if ($LASTEXITCODE -ne 0) { throw 'Windows configuration failed.' }

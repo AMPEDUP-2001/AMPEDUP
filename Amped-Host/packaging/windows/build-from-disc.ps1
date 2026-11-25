@@ -40,7 +40,7 @@ try {
     $arguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ('"' + $builder + '"'),
         '-Xbe', ('"' + $Xbe + '"'), '-DependencyRoot', ('"' + $PSScriptRoot + '"'),
         '-Python', ('"' + $python + '"'), '-AnalysisJobs', [Math]::Min(3, $cores),
-        '-BuildJobs', [Math]::Min(8, $cores))
+        '-BuildJobs', [Math]::Min(8, $cores), '-TemporarySource')
     $errors = $BuildLog + '.stderr'
     $process = Start-Process -FilePath $ps -ArgumentList $arguments -WindowStyle Hidden -Wait -PassThru -RedirectStandardOutput $BuildLog -RedirectStandardError $errors
     if ((Get-Item -LiteralPath $errors).Length -gt 0) {
