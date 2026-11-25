@@ -95,6 +95,20 @@ def tile_detail(path, size, rotation, contrast):
     return normalized - normalized.mean()
 
 
+def siding_levels(original, artwork):
+    """Retain the orange boards and put the finest grain along the planks."""
+    middle = wrap_resize(original)
+    top = wrap_resize(middle)
+    rgb = np.asarray(top, dtype=np.float32)[..., :3]
+    luma = np.asarray(top.convert("L"), dtype=np.float32)
+    # The darkest board joints keep their original contrast.
+    strength = np.clip((luma - 35) / 65, 0, 1)
+    grain = tile_detail(artwork, top.size, 90, 8.0) * strength
+    delta = np.rint(np.clip(grain, -rgb.min(axis=2), 255 - rgb.max(axis=2)))
+    close = Image.fromarray((rgb + delta[..., None]).astype(np.uint8)).convert("RGBA")
+    return close, Image.blend(close.resize(middle.size, Image.Resampling.BOX), middle, 0.25)
+
+
 def replace_close_texture(original, detail):
     rgb = np.asarray(wrap_resize(original), dtype=np.float32)[..., :3]
     # Keep the same brightness adjustment on all channels, including saturated paint.

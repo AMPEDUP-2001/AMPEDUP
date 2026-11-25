@@ -3084,7 +3084,7 @@ static int tex_upload_scaled(const Stage *t, unsigned f, int algo, struct nvk_im
 
 /* Read a bounded local pack. HD1 carries one added mip per entry. HD2 adds
  * a mip count to each entry and stores the new levels from largest to smallest. */
-#define AMPED_HD_MAX_ENTRIES 22
+#define AMPED_HD_MAX_ENTRIES 23
 #define AMPED_HD_MAX_DIM 512u
 #define AMPED_HD_MAX_FILE (12u + 13u * (16u + 256u * 256u * 161u / 2u))
 

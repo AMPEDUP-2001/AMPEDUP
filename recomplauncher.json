@@ -38,9 +38,9 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "8",
+    "version": "9",
     "done": [
-      "{install}/runtime/.ampedup-ready",
+      "{install}/runtime/.ampedup-runtime-r9",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe",
       "{install}/runtime/Amped-Host/bin/snow-summit-visible.ahd"
     ]

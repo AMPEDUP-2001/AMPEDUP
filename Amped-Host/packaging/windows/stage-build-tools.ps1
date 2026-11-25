@@ -12,7 +12,7 @@ if (git -C $repo status --porcelain --untracked-files=no) {
 if ($LASTEXITCODE -ne 0) { throw 'A Git checkout is required for source packaging.' }
 $revision = git -C $repo rev-parse HEAD
 if ($LASTEXITCODE -ne 0) { throw 'Could not identify the release source.' }
-& git -C $repo archive --format=zip "-o$(Join-Path $Bundle 'source.zip')" $revision
+& git -C $repo archive --format=zip "-o$(Join-Path $Bundle 'source.zip')" $revision -- . ':(exclude)docs/screenshots/**'
 if ($LASTEXITCODE -ne 0) { throw 'Could not archive the release source.' }
 $revision | Set-Content -LiteralPath (Join-Path $Bundle 'source-revision.txt') -Encoding Ascii
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'build-from-disc.ps1') -Destination $Bundle

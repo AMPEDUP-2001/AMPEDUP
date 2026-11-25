@@ -20,6 +20,7 @@ from boughs import foliage_level, needle_detail
 from sandstone import CLIFFS, append_cliffs
 from safety_nets import NETS, append_nets
 from powder import wind_powder_levels
+from textures import siding_levels
 from textures import BC1, BC2, charcoal_levels, decode_xpr, painted_levels, ramp_snow_level, replace_close_texture, replace_texture, tile_detail
 from inspect_directory import directory
 
@@ -44,9 +45,10 @@ FOLIAGE = ("dpbrns2.xpr", "ppbough.xpr", "ppboughsnow.xpr")
 CHARCOAL = "mm_generic_color_charcoal.xpr"
 PAINTED_WOOD = "mm_funboxes_red_painted_wood.xpr"
 LIFT_METAL = "mm_metal_green.xpr"
-MATERIAL_COUNT = len(DETAILS) + len(FOLIAGE) + len(CLIFFS) + len(NETS) + 3
+LODGE_SIDING = "ss_village_orangeyplanks.xpr"
+MATERIAL_COUNT = len(DETAILS) + len(FOLIAGE) + len(CLIFFS) + len(NETS) + 4
 PACK = "snow-summit-visible.ahd"
-PACK_SHA = "58390653d6aeb09bcc498ac94e1c3a2ca3f933b16503fbf5cc21a9a1772b63df"
+PACK_SHA = "08fc988f1321c89401b35948e2439a97bc6f0ef7f6470e6969bb784b6bff40f6"
 
 # Retail archive locations for vertex data and its triangle strip, followed
 # by the strip's vertex base, the material, the draw identity and the refiner.
@@ -115,7 +117,7 @@ def read_draw(archive, spec):
 def build_pack(game):
     archive = read_verified(game / (COURSE + ".img"),
                             "8b6f987dd2423069badd25ca3df6e375479a2313c7a79aa40f30377a2f83babc")
-    names = {detail[0] for detail in DETAILS} | {CHARCOAL, PAINTED_WOOD, LIFT_METAL}
+    names = {detail[0] for detail in DETAILS} | {CHARCOAL, PAINTED_WOOD, LIFT_METAL, LODGE_SIDING}
     originals = {name: decode_xpr(archive[offset:offset + size])
                  for name, offset, size in directory(archive) if name in names}
     materials = {}
@@ -169,6 +171,12 @@ def build_pack(game):
     detail = tile_detail(HERE / "art/red-enamel.png", (4 * width, 4 * height), 0, 4.5)
     levels = replace_texture(original, detail)
     pack.extend(struct.pack("<4I", width, height, BC1, len(levels)))
+    pack.extend(compressed)
+    for level in levels:
+        pack.extend(level.tobytes("raw", "BGRA"))
+    compressed, original = originals[LODGE_SIDING]
+    levels = siding_levels(original, HERE / "art/wood-grain.png")
+    pack.extend(struct.pack("<4I", *original.size, BC1, len(levels)))
     pack.extend(compressed)
     for level in levels:
         pack.extend(level.tobytes("raw", "BGRA"))

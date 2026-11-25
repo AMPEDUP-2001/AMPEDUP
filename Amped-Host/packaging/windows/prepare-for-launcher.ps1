@@ -18,9 +18,32 @@ function Remove-SetupDirectory([string]$path) {
     }
 }
 
+function Test-RecoverableRuntime([string]$path) {
+    foreach ($name in @('', '.ampedup-ready', 'Amped-Host', 'Amped-Host/bin', 'Amped-Host/bin/amped_recomp.exe')) {
+        $node = if ($name) { Join-Path $path $name } else { $path }
+        $item = Get-Item -LiteralPath $node -Force -ErrorAction SilentlyContinue
+        $directory = $name -in @('', 'Amped-Host', 'Amped-Host/bin')
+        if (-not $item -or $item.PSIsContainer -ne $directory -or
+            ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return $false }
+    }
+    return $true
+}
+
 try {
     try { $held = $mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $held = $true }
     if (-not $held) { throw 'Close the running AMPEDUP! game or setup before preparing another copy.' }
+    # A terminated process cannot run the catch block between the two directory moves.
+    if (-not (Test-Path -LiteralPath $runtime)) {
+        $previous = @(Get-ChildItem -LiteralPath $root -Directory -Force -Filter '.previous-*' |
+            Where-Object { $_.Name -match '^\.previous-[0-9a-f]{8}$' -and (Test-RecoverableRuntime $_.FullName) })
+        if ($previous.Count -gt 1) {
+            Write-Warning 'Multiple previous AMPEDUP! runtimes were found. Keeping all of them and continuing with setup.'
+        }
+        if ($previous.Count -eq 1) {
+            [IO.Directory]::Move($previous[0].FullName, $runtime)
+            [Console]::WriteLine('progress 0.01 Restored the previous AMPEDUP! runtime after an interrupted update.')
+        }
+    }
     if (Test-Path -LiteralPath $runtime) {
         $installed = Get-Item -LiteralPath $runtime -Force
         if (($installed.Attributes -band [IO.FileAttributes]::ReparsePoint) -or
@@ -35,7 +58,14 @@ try {
     Copy-Item -LiteralPath (Join-Path $root 'setup') -Destination $scratch -Recurse
     & (Join-Path $scratch 'setup.ps1') -Image $Game -Destination $stage -NonInteractive -LauncherSetup
     if ($LASTEXITCODE -ne 0) { throw "Game preparation stopped with exit code $LASTEXITCODE." }
+    foreach ($output in @('amped_recomp.exe', 'snow-summit-visible.ahd')) {
+        $path = Join-Path $stage ('Amped-Host/bin/' + $output)
+        if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or (Get-Item -LiteralPath $path).Length -eq 0) {
+            throw "Setup did not produce the required game file $output."
+        }
+    }
     [IO.File]::WriteAllText((Join-Path $stage '.ampedup-ready'), "1`n")
+    [IO.File]::WriteAllText((Join-Path $stage '.ampedup-runtime-r9'), "9`n")
 
     if ([IO.Directory]::Exists($runtime)) { [IO.Directory]::Move($runtime, $backup) }
     try {

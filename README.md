@@ -1,19 +1,19 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.7.3
+# AMPEDUP! 0.8
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc, with optional **21:9 ultrawide gameplay**.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.7.3.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.8.md) · [HD comparison gallery](docs/screenshots/hd-pack/README.md) · [Credits](#credits)
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.7.3 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.7.3).
+Choose a Windows installer from the [0.8 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.8).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.7.3-Online-DiscFix.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3-Online-DiscFix.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.7.3-DiscFix.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.7.3/Setup-AMPEDUP-0.7.3-DiscFix.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.8-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.8/Setup-AMPEDUP-0.8-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.8.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.8/Setup-AMPEDUP-0.8.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.
@@ -30,7 +30,7 @@ For RecompLauncher, use the Windows x64 ZIP and select the reference XISO or the
 - About 6 GB of free disk space for extraction and temporary build files.
 - The matching retail XISO listed above. Internet access is required for the online installer.
 
-**Test PC.** Windows 11 Pro, Intel Core i7-8700K (6 cores, 12 threads), NVIDIA GeForce RTX 3070 (8 GB VRAM), and 48 GB RAM. Minimum CPU, GPU, and RAM requirements are still unverified.
+**Original benchmark PC.** Windows 11 Pro, Intel Core i7-8700K (6 cores, 12 threads), NVIDIA GeForce RTX 3070 (8 GB VRAM), and 48 GB RAM. Minimum CPU, GPU, and RAM requirements are still unverified.
 
 ### Performance on the test PC
 
