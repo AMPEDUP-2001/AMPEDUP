@@ -52,6 +52,7 @@
 #define COBJMACROS
 #include <dxgi1_6.h>
 #include "dxgi_vblank_model.h"
+int xbox_AmpedPotatoPacing(void);
 #endif
 #if defined(__ANDROID__)
 #include <dlfcn.h>
@@ -1982,6 +1983,11 @@ static int make_swapchain(SDL_Window *win)
      * being drawn. */
     s_keep_images = pacing_smooth();
     if (s_keep_images && n < 3) n = 3;
+    /* Leave a FIFO image available when the fullscreen compositor is late.
+     * This does not start the Smooth frame keeper. */
+    if (n < 3 && s_sc_mode == VK_PRESENT_MODE_FIFO_KHR &&
+        xbox_AmpedPotatoPacing() && (SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN))
+        n = 3;
 #endif
     if (caps.maxImageCount && n > caps.maxImageCount) n = caps.maxImageCount;
     if (n > SC_MAX) n = SC_MAX;

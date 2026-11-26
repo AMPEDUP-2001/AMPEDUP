@@ -358,7 +358,7 @@ static constexpr Meta k_meta[XS_COUNT] = {
     /* XS_INPUT_TOUCH_AUTO_GAS */ { XS_INPUT_TOUCH_AUTO_GAS, "Touch: accelerate automatically", "In a race the car accelerates by itself; hold BRAKE to slow down or reverse. Touch controls only.", 1, FMT_PLAIN, NULL, 0 },
 #endif
     /* XS_AMPED_HD_TEXTURES */ { XS_AMPED_HD_TEXTURES, "Course textures", "Original uses the disc textures. HD Pack adds close-up detail to selected snow, wood, bark and metal.", 1, FMT_PLAIN, NULL, 0 },
-    /* XS_AMPED_POTATO_MODE */ { XS_AMPED_POTATO_MODE, "Potato Mode", "1x resolution, original textures and a 30 FPS cap. Turns off anti-aliasing, anisotropic filtering and CRT. Switch off to restore your settings.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_POTATO_MODE */ { XS_AMPED_POTATO_MODE, "Potato Mode", "Targets 30 FPS on slower CPUs. Uses 1x resolution and original textures. Turns off anti-aliasing, anisotropic filtering and CRT. Switch off to restore your settings.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_AMPED_MATCH_REFRESH */ { XS_AMPED_MATCH_REFRESH, "Match fullscreen Hz", "In fullscreen, use the FPS cap or its lowest supported multiple at desktop resolution. Otherwise use the desktop rate.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_AMPED_VSYNC */ { XS_AMPED_VSYNC, "VSync", "Synchronize frames with the display. Switching off permits tearing when supported. Requires a restart.", 1, FMT_PLAIN, NULL, 0 },
 };
@@ -2556,6 +2556,7 @@ static int amped_set_fullscreen(void *window, int requested)
         }
     }
     int result = amped_ApplyFullscreen((SDL_Window *)window, requested, s_fs_match_hz,
+                                       xbox_AmpedPotatoPacing(),
                                        s_fs_error, sizeof s_fs_error);
     if (inject && !strcmp(inject, "1"))
         (fprintf)(stderr, "[AMPED_FULLSCREEN_TEST] attempt=%u requested=%d result=%d\n",

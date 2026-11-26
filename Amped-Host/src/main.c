@@ -47,6 +47,10 @@
 #if defined(AMPED_SETTINGS_EXPERIMENT)
 #include "xbox_settings.h"
 #include "settings_display.h"
+#if defined(_WIN32) && defined(AMPED_POTATO_TIMING_V23)
+#include "kernel_pacing.h"
+void amped_kick_preset_v23(int enabled);
+#endif
 #endif
 #if defined(AMPED_CAREER_TEST_ROOT)
 #include "career_root_guard.h"
@@ -543,6 +547,11 @@ int main(int argc, char **argv)
         xbox_SettingSet(XS_AMPED_FPS_CAP, 2);
 #endif
     xbox_SettingsFinish();
+#if defined(_WIN32) && defined(AMPED_POTATO_TIMING_V23)
+    const int potato = xbox_SettingValue(XS_AMPED_POTATO_MODE) != 0;
+    xbox_AmpedConfigurePotatoTiming(potato);
+    amped_kick_preset_v23(potato);
+#endif
     amped_SettingsApplyInitialDisplay();
 #if defined(AMPED_NATIVE_VIDEO_EXPERIMENT_V23)
     { extern void amped_native_video_startup_v23(void); amped_native_video_startup_v23(); }

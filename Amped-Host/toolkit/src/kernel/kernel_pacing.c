@@ -485,6 +485,17 @@ int xbox_VblankSchedule(XboxVblankSchedule *s, uint64_t now_ns,
 
 volatile int g_xbox_spin_sleep;
 static volatile LONG s_local_spin_site;
+static volatile LONG s_amped_fence_wait;
+
+void xbox_AmpedSetFenceWait(int enabled)
+{
+    InterlockedExchange(&s_amped_fence_wait, enabled != 0);
+}
+
+int xbox_AmpedFenceWait(void)
+{
+    return s_amped_fence_wait != 0;
+}
 
 static CRITICAL_SECTION s_lock;
 static CONDITION_VARIABLE s_cv;
@@ -594,7 +605,8 @@ void xbox_SpinWait(uint32_t va)
      * than at the holder's next preemption. */
     guest_turn_yield();
 #endif
-    if (!g_xbox_spin_sleep && (!s_local_spin_site || (uint32_t)s_local_spin_site != va))
+    if (!g_xbox_spin_sleep && (!s_local_spin_site || (uint32_t)s_local_spin_site != va)
+        && !(va == 0x000feae4u && s_amped_fence_wait))
         return;
     site = site_for(va);
     now = xbox_HostNowNs();
@@ -616,6 +628,11 @@ void xbox_SpinWait(uint32_t va)
     if (xbox_IrqlThisThreadBlocksDpcs()) {
         InterlockedIncrement(&site->dispatch);
         return;
+    }
+    if (va == 0x000feae4u) {
+        static volatile LONG reported;
+        if (!reported && !InterlockedExchange(&reported, 1))
+            (fprintf)(stderr, "[AMPED_POTATO] waiting for a submitted GPU fence\n");
     }
     sample = (InterlockedIncrement(&site->calls) % SPIN_CPU_SAMPLE) == 0;
     if (sample)
@@ -1079,7 +1096,7 @@ int xbox_VblankWaitUntil(uint32_t target, uint32_t timeout_ms)
 
 void xbox_SpinWake(void)
 {
-    if (!g_xbox_spin_sleep && !s_local_spin_site)
+    if (!g_xbox_spin_sleep && !s_local_spin_site && !s_amped_fence_wait)
         return;
     pacing_once();
     EnterCriticalSection(&s_lock);

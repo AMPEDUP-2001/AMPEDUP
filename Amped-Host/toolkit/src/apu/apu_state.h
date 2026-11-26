@@ -63,7 +63,9 @@ typedef struct ApuDspStandIn {
 typedef struct {
     int buf_pos;
     struct {
-        float buf[HRTF_BUFLEN];
+        /* The prefix is mirrored at the end for a contiguous 31-tap read,
+         * including the previous sample used by fractional ear delays. */
+        float buf[HRTF_BUFLEN + HRTF_NUM_TAPS];
         float hrir_coeff_cur[HRTF_NUM_TAPS];
         float hrir_coeff_tar[HRTF_NUM_TAPS];
     } ch[2];
@@ -124,19 +126,25 @@ static inline void hrtf_filter_process(HrtfFilter *f,
             float *buf = f->ch[ch].buf;
             float *coeff = f->ch[ch].hrir_coeff_cur;
             buf[f->buf_pos] = in[n][ch];
+            if (f->buf_pos < HRTF_NUM_TAPS)
+                buf[HRTF_BUFLEN + f->buf_pos] = in[n][ch];
             float d = f->itd_cur * (ch == 0 ? +1.0f : -1.0f);
             if (d < 0.0f) d = 0.0f;
             int di = (int)d;
             float dfrac = d - di;
             float acc = 0.0f;
-            for (int k = 0; k < HRTF_NUM_TAPS; k++) {
-                int idx1 = (f->buf_pos - di - k + HRTF_BUFLEN) % HRTF_BUFLEN;
-                float s = buf[idx1];
-                if (dfrac > 0.0f) {
-                    int idx2 = (idx1 - 1 + HRTF_BUFLEN) % HRTF_BUFLEN;
-                    s = s * (1 - dfrac) + buf[idx2] * dfrac;
+            int head = f->buf_pos - di;
+            if (head < 0) head += HRTF_BUFLEN;
+            if (head < HRTF_NUM_TAPS) head += HRTF_BUFLEN;
+            const float *history = &buf[head];
+            if (dfrac > 0.0f) {
+                for (int k = 0; k < HRTF_NUM_TAPS; k++) {
+                    float s = history[-k] * (1 - dfrac) + history[-k-1] * dfrac;
+                    acc += coeff[k] * s;
                 }
-                acc += coeff[k] * s;
+            } else {
+                for (int k = 0; k < HRTF_NUM_TAPS; k++)
+                    acc += coeff[k] * history[-k];
             }
             out[n][ch] = acc;
         }

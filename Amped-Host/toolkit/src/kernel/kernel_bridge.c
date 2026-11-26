@@ -3044,6 +3044,68 @@ static volatile LONG g_vbl_declined;
 /* Set by the timer thread from just before it raises the vblank bits until
  * the ISR has returned and the watch is re-armed. */
 static volatile LONG g_vbl_tick_busy;
+
+#if defined(_WIN32)
+static SRWLOCK g_direct_ack_lock = SRWLOCK_INIT;
+static int g_amped_direct_ack;
+#endif
+static int g_amped_potato_pacing;
+
+void xbox_AmpedConfigurePotatoTiming(int potato)
+{
+    g_amped_potato_pacing = potato;
+#ifdef _WIN32
+    const char *test = getenv("AMPED_POTATO_VBLANK_ACK");
+    g_amped_direct_ack = test ? !strcmp(test, "1") : potato;
+    const char *fence = getenv("AMPED_POTATO_FENCE_WAIT");
+    xbox_AmpedSetFenceWait(fence ? !strcmp(fence, "1") : potato);
+#endif
+}
+
+int xbox_AmpedPotatoPacing(void)
+{
+    return g_amped_potato_pacing;
+}
+
+int xbox_AmpedDirectAckEnabled(void)
+{
+#ifdef _WIN32
+    return g_amped_direct_ack;
+#else
+    return 0;
+#endif
+}
+
+/* Lower only Amped's identified PCRTC write. A pending, undelivered IRQ
+ * retains its status bits. The lifted code rechecks PMC after this call. */
+int xbox_AmpedVblankWrite(uint32_t base, uint32_t bits)
+{
+#if defined(_WIN32)
+    if (base == XBOX_NV2A_REG_BASE && bits == NV2A_PCRTC_INTR_VBLANK) {
+        int pending;
+        AcquireSRWLockExclusive(&g_direct_ack_lock);
+        pending = g_vbl_tick_busy != 0;
+        if (!pending) {
+            InterlockedAnd((volatile LONG *)&BRIDGE_MEM32(base + NV2A_PCRTC_INTR_0),
+                           (LONG)~NV2A_PCRTC_INTR_VBLANK);
+            InterlockedAnd((volatile LONG *)&BRIDGE_MEM32(base + NV2A_PMC_INTR_0),
+                           (LONG)~NV2A_PMC_INTR_PCRTC);
+        }
+        ReleaseSRWLockExclusive(&g_direct_ack_lock);
+        if (pending) {
+            xbox_IrqSafePoint();
+            SwitchToThread();
+            return 0; /* The existing watcher owns an in-flight interrupt. */
+        } else {
+            static volatile LONG announced;
+            if (!announced && !InterlockedExchange(&announced, 1))
+                (fprintf)(stderr, "[AMPED_POTATO] direct vblank acknowledgement\n");
+        }
+        return 1;
+    }
+#endif
+    return 0;
+}
 /* When the vblank-ack thread last saw the PCRTC bit acked or down: the low
  * 32 bits of kernel_host_ms(), compared by unsigned difference. */
 static volatile LONG g_vbl_ack_seen_ms;
@@ -3255,11 +3317,18 @@ static void kernel_vblank_raise(void)
         return;
     }
 
+#if defined(_WIN32)
+    int direct_ack = g_amped_direct_ack;
+    if (direct_ack) AcquireSRWLockExclusive(&g_direct_ack_lock);
+#endif
     InterlockedExchange(&g_vbl_tick_busy, 1);
     InterlockedOr((volatile LONG *)&BRIDGE_MEM32(XBOX_NV2A_REG_BASE + NV2A_PCRTC_INTR_0),
                   (LONG)NV2A_PCRTC_INTR_VBLANK);
     InterlockedOr((volatile LONG *)&BRIDGE_MEM32(XBOX_NV2A_REG_BASE + NV2A_PMC_INTR_0),
                   (LONG)NV2A_PMC_INTR_PCRTC);
+#if defined(_WIN32)
+    if (direct_ack) ReleaseSRWLockExclusive(&g_direct_ack_lock);
+#endif
 
     /* Under the one-CPU gate when it is free; never waits for it (this is
      * the frame clock). Held, the ISR is posted to the holder and runs at

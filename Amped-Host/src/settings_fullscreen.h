@@ -18,7 +18,7 @@ int amped_FullscreenSync(amped_fullscreen_state *state, int requested,
                          int actual, int (*set_mode)(void *, int), void *ctx);
 
 struct SDL_Window;
-int amped_ApplyFullscreen(struct SDL_Window *window, int enabled, int match_hz,
+int amped_ApplyFullscreen(struct SDL_Window *window, int enabled, int match_hz, int potato,
                           char *notice, size_t notice_size);
 
 #ifdef __cplusplus

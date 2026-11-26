@@ -7215,13 +7215,17 @@ void nv2a_pb_exec_method(uint32_t subch, uint32_t method, uint32_t param)
 #if defined(AMPED_CAP_PHASE_TEST)
                 static uint64_t phase_release;
                 static int phase_mode = -1;
+                static int potato_grid;
                 if (phase_mode < 0) {
                     const char *e = getenv("AMPED_CAP_PHASE");
                     phase_mode = e && !strcmp(e, "2") ? 2 : e && !strcmp(e, "1");
+                    potato_grid = !e && xbox_AmpedPotatoPacing();
                     if (phase_mode)
                         (fprintf)(stderr, "[AMPED_CAP_PHASE] diagnostic enabled mode=%d\n", phase_mode);
                 }
-                due = phase_mode ? amped_flip_cap_due_phase(&cap_state, s_gpu.flips, now,
+                /* At 30 Hz an occasional late frame can recover its place
+                 * on the original grid. A full period missed starts afresh. */
+                due = (phase_mode || (potato_grid && cap_hz == 30)) ? amped_flip_cap_due_phase(&cap_state, s_gpu.flips, now,
                                        cap_hz, phase_mode == 2 ? phase_release : 0)
                                  : amped_flip_cap_due(&cap_state,s_gpu.flips,now,cap_hz);
 #else

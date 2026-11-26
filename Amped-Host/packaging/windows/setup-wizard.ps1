@@ -15,7 +15,8 @@ $script:outputFile = $null
 $script:installPath = $null
 
 $form = New-Object Windows.Forms.Form
-$form.Text = 'AMPEDUP! 0.7 Setup'
+$releaseVersion = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $PSScriptRoot 'payload/AMPEDUP!.exe')).Version.ToString(3)
+$form.Text = "AMPEDUP! $releaseVersion Setup"
 $form.Icon = New-Object Drawing.Icon((Join-Path $PSScriptRoot 'ampedup.ico'))
 $form.Name = 'AmpedSetup'
 $form.StartPosition = 'CenterScreen'
@@ -42,7 +43,7 @@ function Button([string]$text, [int]$x, [int]$y, [int]$w) {
     $v.BackColor = [Drawing.Color]::FromArgb(26, 53, 78); $v.ForeColor = [Drawing.Color]::White
     return $v
 }
-$title = Label 'Install AMPEDUP! 0.7' 24 18 650 35
+$title = Label "Install AMPEDUP! $releaseVersion" 24 18 650 35
 $title.Font = New-Object Drawing.Font('Segoe UI', 16, [Drawing.FontStyle]::Bold)
 $title.ForeColor = [Drawing.Color]::FromArgb(128, 216, 241)
 $form.Controls.Add($title)

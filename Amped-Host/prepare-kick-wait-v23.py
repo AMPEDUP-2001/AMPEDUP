@@ -1,4 +1,4 @@
-"""Create a v23-only KickOff backedge experiment without editing generated code."""
+"""Prepare Amped's matched v23 submission, fence and IRQ hooks from the original generated code."""
 from pathlib import Path
 
 root = Path(__file__).resolve().parent
@@ -29,10 +29,35 @@ body = body.replace(write_anchor,
 body = body.replace(exit_anchor,
     "\n    xbox_KickProfEnd(amped_kick_profile_start, amped_kick_profile_seq);\n" + exit_anchor, 1)
 text = text[:start] + body.replace(before, after, 1) + text[end:]
+fence_entry = "void sub_000FEA30(void)\n{\n"
+fence_branch = "    if (CMP_B(_fa, _fb)) goto loc_000FEAE4; /* jb: below (unsigned <) */"
+if text.count(fence_entry) != 1 or text.count(fence_branch) != 1:
+    raise SystemExit("Expected the Amped fence polling backedge exactly once")
+text = text.replace(fence_entry, fence_entry + "    const int wait_fence = xbox_AmpedFenceWait();\n", 1)
+text = text.replace(fence_branch, "    if (CMP_B(_fa, _fb)) {\n"
+                    "        if (wait_fence) xbox_SpinWait(0x000FEAE4u);\n"
+                    "        goto loc_000FEAE4;\n    }", 1)
 header = '#include "recomp_funcs.h"\n'
 if text.count(header) != 1:
     raise SystemExit("generated include anchor did not match exactly once")
 text = text.replace(header, header + '#include "kick_profile.h"\n' +
-                    "extern int amped_kick_wait_enabled_v23(void);\n", 1)
+                    "extern int amped_kick_wait_enabled_v23(void);\nextern int xbox_AmpedFenceWait(void);\n", 1)
+target.write_text(text, encoding="utf-8")
+print(f"Wrote {target}")
+
+# The title acknowledges the vertical blank with a write-one-to-clear MMIO
+# store, then reads the master interrupt register until it sees the change.
+source = source.with_name("recomp_0059.c")
+target = target.with_name("recomp_0059_ack_v23.c")
+text = source.read_text(encoding="utf-8")
+ack = "loc_00103D30: ;\n    MEM32(edi + 0x600100) = ebx;\n"
+entry = "void sub_00103C50(void)\n{\n"
+if text.count(ack) != 1 or text.count(entry) != 1 or text.count(header) != 1:
+    raise SystemExit("Expected v23 PCRTC acknowledge instruction exactly once")
+text = text.replace(header, header + "extern int xbox_AmpedDirectAckEnabled(void);\n"
+                    "extern int xbox_AmpedVblankWrite(uint32_t, uint32_t);\n", 1)
+text = text.replace(entry, entry + "    const int direct_ack = xbox_AmpedDirectAckEnabled();\n", 1)
+text = text.replace(ack, "loc_00103D30: ;\n"
+                    "    if (!direct_ack || !xbox_AmpedVblankWrite(edi, ebx)) MEM32(edi + 0x600100) = ebx;\n", 1)
 target.write_text(text, encoding="utf-8")
 print(f"Wrote {target}")

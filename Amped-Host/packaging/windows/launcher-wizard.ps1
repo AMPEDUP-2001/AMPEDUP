@@ -19,7 +19,8 @@ $title.ForeColor = [Drawing.Color]::FromArgb(128, 216, 241)
 $title.Location = New-Object Drawing.Point(28, 20); $title.Size = New-Object Drawing.Size(510, 56)
 $form.Controls.Add($title)
 $subtitle = New-Object Windows.Forms.Label
-$subtitle.Text = "FREESTYLE SNOWBOARDING  |  VERSION 0.8.2`n`nF1 or View + Menu opens the in-game settings."
+$releaseVersion = [Reflection.AssemblyName]::GetAssemblyName((Join-Path $PSScriptRoot 'AMPEDUP!.exe')).Version.ToString(3)
+$subtitle.Text = "FREESTYLE SNOWBOARDING  |  VERSION $releaseVersion`n`nF1 or View + Menu opens the in-game settings."
 $subtitle.Location = New-Object Drawing.Point(32, 91); $subtitle.Size = New-Object Drawing.Size(500, 65)
 $form.Controls.Add($subtitle)
 . (Join-Path $PSScriptRoot 'game-language.ps1')

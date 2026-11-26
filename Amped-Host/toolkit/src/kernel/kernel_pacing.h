@@ -231,6 +231,14 @@ void xbox_PacingVblank(uint64_t now_ns);
 uint64_t xbox_ThreadCpuNs(void);
 uint64_t xbox_ProcessCpuNs(void);
 
+/* Fixed from the saved AMPEDUP! graphics preset before guest startup. */
+void xbox_AmpedConfigurePotatoTiming(int enabled);
+int xbox_AmpedPotatoPacing(void);
+int xbox_AmpedDirectAckEnabled(void);
+int xbox_AmpedVblankWrite(uint32_t base, uint32_t bits);
+void xbox_AmpedSetFenceWait(int enabled);
+int xbox_AmpedFenceWait(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,13 +4,16 @@
 
 /* SDL owns the temporary display change and restores the desktop on exit.
  * Enumerate this monitor's modes so a refresh request cannot lower resolution. */
-static int matching_mode(int display, int cap, SDL_DisplayMode *mode)
+static int matching_mode(int display, int cap, int potato, SDL_DisplayMode *mode)
 {
     if (SDL_GetDesktopDisplayMode(display, mode) < 0)
         return -1;
     if (cap == 0)
         return 0;
     int best = 0;
+    /* At 30 Hz a missed refresh holds a frame for 67 ms. Prefer a second
+     * presentation opportunity when the panel offers a compatible rate. */
+    const int preferred = potato && cap == 30 ? 60 : cap;
     int count = SDL_GetNumDisplayModes(display);
     if (count < 0)
         return -1;
@@ -19,8 +22,11 @@ static int matching_mode(int display, int cap, SDL_DisplayMode *mode)
         if (SDL_GetDisplayMode(display, i, &candidate) < 0)
             continue;
         int hz = candidate.refresh_rate;
-        if (candidate.w == mode->w && candidate.h == mode->h && candidate.format == mode->format &&
-            hz >= cap && hz % cap == 0 && (!best || hz < best)) {
+        if (candidate.w != mode->w || candidate.h != mode->h || candidate.format != mode->format ||
+            hz < cap || hz % cap != 0)
+            continue;
+        if (!best || (hz >= preferred && best < preferred) ||
+            ((hz >= preferred) == (best >= preferred) && hz < best)) {
             *mode = candidate;
             best = hz;
         }
@@ -28,7 +34,7 @@ static int matching_mode(int display, int cap, SDL_DisplayMode *mode)
     return 0;
 }
 
-int amped_ApplyFullscreen(SDL_Window *window, int enabled, int match_hz,
+int amped_ApplyFullscreen(SDL_Window *window, int enabled, int match_hz, int potato,
                           char *notice, size_t notice_size)
 {
     if (!enabled || match_hz < 0)
@@ -36,7 +42,7 @@ int amped_ApplyFullscreen(SDL_Window *window, int enabled, int match_hz,
 
     int display = SDL_GetWindowDisplayIndex(window);
     SDL_DisplayMode mode, actual;
-    if (display >= 0 && matching_mode(display, match_hz, &mode) == 0 &&
+    if (display >= 0 && matching_mode(display, match_hz, potato, &mode) == 0 &&
         SDL_SetWindowDisplayMode(window, &mode) == 0 &&
         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN) == 0 &&
         (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP) == SDL_WINDOW_FULLSCREEN &&
