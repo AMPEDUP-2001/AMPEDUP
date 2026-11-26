@@ -1,4 +1,4 @@
-AMPEDUP! 0.8.1 - WINDOWS
+AMPEDUP! 0.8.2 - WINDOWS
 
 Requirements: 64-bit Windows 10/11, a Vulkan-capable GPU and current driver,
 about 6 GB of free space for installation and compilation, and your matching
@@ -27,6 +27,10 @@ to cancel the change. In the resolution prompt, use left/right to choose
 the scale and up/down to choose No or Yes. Restarting loses unsaved progress.
 Choose Quit Game at the bottom of settings and press the select button again
 to exit.
+
+To match the monitor to the frame cap, open Options > Graphics, turn on
+Fullscreen and Match fullscreen Hz, and choose your FPS cap. VSync starts on.
+Changing VSync asks to restart. Leaving fullscreen restores the desktop rate.
 
 For custom music, open Options > Soundtracks and press Y or Ctrl. Select
 a folder with MP3, FLAC, WAV, or Ogg Vorbis files. After restart it appears

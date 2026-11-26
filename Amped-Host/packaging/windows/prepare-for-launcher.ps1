@@ -65,7 +65,7 @@ try {
         }
     }
     [IO.File]::WriteAllText((Join-Path $stage '.ampedup-ready'), "1`n")
-    [IO.File]::WriteAllText((Join-Path $stage '.ampedup-runtime-r10'), "10`n")
+    [IO.File]::WriteAllText((Join-Path $stage '.ampedup-runtime-r11'), "11`n")
 
     if ([IO.Directory]::Exists($runtime)) { [IO.Directory]::Move($runtime, $backup) }
     try {

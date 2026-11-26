@@ -29,6 +29,9 @@
 #include "recomp_env.h"
 #if defined(AMPED_SETTINGS_EXPERIMENT)
 #include "settings_fullscreen.h"
+#if defined(AMPED_FPS_CAP_EXPERIMENT)
+#include "fps_cap_control.h"
+#endif
 #endif
 
 #include "imgui.h"
@@ -164,6 +167,7 @@ static uint32_t s_save_at;
 #if defined(AMPED_SETTINGS_EXPERIMENT)
 static amped_fullscreen_state s_fs_state = { -1, 0 };
 static char s_fs_error[256];
+static int s_fs_match_hz = -1; /* -1 for borderless/windowed, 0 for an uncapped game */
 #else
 static int s_fs_applied = -1;
 #endif
@@ -258,7 +262,7 @@ static bool on_steam_deck()
 }
 
 static constexpr Meta k_meta[XS_COUNT] = {
-    /* XS_DISPLAY_FULLSCREEN */ { XS_DISPLAY_FULLSCREEN, "Fullscreen", "Borderless fullscreen on the desktop.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_DISPLAY_FULLSCREEN */ { XS_DISPLAY_FULLSCREEN, "Fullscreen", "Fill the current display. Enable Match fullscreen Hz to switch its refresh rate.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_DISPLAY_ASPECT */     { XS_DISPLAY_ASPECT, "Aspect ratio", "16:9 draws the game in widescreen.", 1, FMT_PLAIN, n_aspect, 0 },
     /* XS_DISPLAY_FILTER */     { XS_DISPLAY_FILTER, "Filter", "How the picture is scaled to the window.", 1, FMT_PLAIN, n_filter, 0 },
 #if defined(AMPED_SETTINGS_EXPERIMENT)
@@ -355,6 +359,8 @@ static constexpr Meta k_meta[XS_COUNT] = {
 #endif
     /* XS_AMPED_HD_TEXTURES */ { XS_AMPED_HD_TEXTURES, "Course textures", "Original uses the disc textures. HD Pack adds close-up detail to selected snow, wood, bark and metal.", 1, FMT_PLAIN, NULL, 0 },
     /* XS_AMPED_POTATO_MODE */ { XS_AMPED_POTATO_MODE, "Potato Mode", "1x resolution, original textures and a 30 FPS cap. Turns off anti-aliasing, anisotropic filtering and CRT. Switch off to restore your settings.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_MATCH_REFRESH */ { XS_AMPED_MATCH_REFRESH, "Match fullscreen Hz", "In fullscreen, use the FPS cap or its lowest supported multiple at desktop resolution. Otherwise use the desktop rate.", 1, FMT_PLAIN, NULL, 0 },
+    /* XS_AMPED_VSYNC */ { XS_AMPED_VSYNC, "VSync", "Synchronize frames with the display. Switching off permits tearing when supported. Requires a restart.", 1, FMT_PLAIN, NULL, 0 },
 };
 /* One entry per setting, in xbox_settings.h's order: a row shows its own
  * label, help and choices only while k_meta[id] is id's (BO-245: a merge
@@ -1158,6 +1164,10 @@ static int page_rows(int page, Row *r)
         return n;
     }
     SET(XS_DISPLAY_FULLSCREEN);
+#if defined(_WIN32) && defined(AMPED_FPS_CAP_EXPERIMENT)
+    SET(XS_AMPED_MATCH_REFRESH);
+    SET(XS_AMPED_VSYNC);
+#endif
     SET(XS_DISPLAY_FILTER);
     SET(XS_DISPLAY_OVERSCAN);
     SET(XS_AMPED_POTATO_MODE);
@@ -2544,14 +2554,13 @@ static int amped_set_fullscreen(void *window, int requested)
                       test_attempts, requested);
             return -1;
         }
-        int result = SDL_SetWindowFullscreen((SDL_Window *)window,
-                                            requested ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    }
+    int result = amped_ApplyFullscreen((SDL_Window *)window, requested, s_fs_match_hz,
+                                       s_fs_error, sizeof s_fs_error);
+    if (inject && !strcmp(inject, "1"))
         (fprintf)(stderr, "[AMPED_FULLSCREEN_TEST] attempt=%u requested=%d result=%d\n",
                   test_attempts, requested, result);
-        return result;
-    }
-    return SDL_SetWindowFullscreen((SDL_Window *)window,
-                                   requested ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    return result;
 }
 #endif
 
@@ -2664,10 +2673,21 @@ void xbox_OverlayPoll(void)
     if (s_win) {
         int fs = xbox_SettingValue(XS_DISPLAY_FULLSCREEN) != 0.0;
 #if defined(AMPED_SETTINGS_EXPERIMENT)
+        int match_hz = -1;
+#if defined(_WIN32) && defined(AMPED_FPS_CAP_EXPERIMENT)
+        if (fs && xbox_SettingValue(XS_AMPED_MATCH_REFRESH) != 0.0)
+            match_hz = (int)amped_fps_cap_get();
+#endif
+        bool rate_changed = s_fs_match_hz != match_hz;
+        if (rate_changed) {
+            s_fs_match_hz = match_hz;
+            s_fs_state.last_requested = -1;
+        }
         if (s_fs_state.last_requested != fs) {
-            Uint32 flags = SDL_GetWindowFlags(s_win);
-            int actual = fs ? (flags & SDL_WINDOW_FULLSCREEN_DESKTOP) == SDL_WINDOW_FULLSCREEN_DESKTOP
-                            : (flags & SDL_WINDOW_FULLSCREEN) != 0;
+            Uint32 flags = SDL_GetWindowFlags(s_win) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+            Uint32 wanted = match_hz >= 0 ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_FULLSCREEN_DESKTOP;
+            int actual = fs ? flags == wanted && !(match_hz >= 0 && rate_changed) : flags != 0;
+            s_fs_error[0] = 0;
             int result = amped_FullscreenSync(&s_fs_state, fs, actual,
                                               amped_set_fullscreen, s_win);
             if (result < 0) {
@@ -2676,8 +2696,6 @@ void xbox_OverlayPoll(void)
                          "Fullscreen change failed: %.90s. Setting kept; change it away and back to retry.",
                          error && *error ? error : "unknown SDL error");
                 (fprintf)(stderr, "[AMPED_SETTINGS] %s\n", s_fs_error);
-            } else if (result > 0) {
-                s_fs_error[0] = 0;
             }
         }
 #else

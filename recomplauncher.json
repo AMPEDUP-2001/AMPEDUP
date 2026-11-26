@@ -38,9 +38,9 @@
     ],
     "label": "Download the build tools and compile AMPEDUP! from your copy. This takes several minutes.",
     "timeout": 2400,
-    "version": "10",
+    "version": "11",
     "done": [
-      "{install}/runtime/.ampedup-runtime-r10",
+      "{install}/runtime/.ampedup-runtime-r11",
       "{install}/runtime/Amped-Host/bin/amped_recomp.exe",
       "{install}/runtime/Amped-Host/bin/snow-summit-visible.ahd"
     ]
@@ -108,6 +108,26 @@
       "defaults": {
         "display/fullscreen": "false"
       }
+    },
+    {
+      "id": "match-fullscreen-refresh",
+      "label": "Match fullscreen Hz",
+      "help": "When Fullscreen is on, switch the display to the FPS cap or its lowest supported multiple at desktop resolution. With no match or no cap, use the desktop refresh rate.",
+      "choices": [
+        { "label": "Off", "set": { "display/amped_match_refresh": "false" } },
+        { "label": "On", "set": { "display/amped_match_refresh": "true" } }
+      ],
+      "defaults": { "display/amped_match_refresh": "false" }
+    },
+    {
+      "id": "vsync",
+      "label": "VSync",
+      "help": "Synchronize presentation with the display. Turning VSync off permits tearing on supported systems.",
+      "choices": [
+        { "label": "On", "set": { "display/vsync": "true" } },
+        { "label": "Off", "set": { "display/vsync": "false" } }
+      ],
+      "defaults": { "display/vsync": "true" }
     },
     {
       "id": "aspect",

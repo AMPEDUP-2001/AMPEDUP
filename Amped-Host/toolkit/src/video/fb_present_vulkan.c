@@ -2191,7 +2191,7 @@ int fbv_create(SDL_Window *win, int vsync, int shots, char *err, size_t errn)
         xbox_AndroidVsyncStart();
     }
 #endif
-    fprintf(stderr, LOGP "Vulkan swapchain: %ux%u, %u images, %s, %s%s\n", s_sc_ext.width,
+    XR_NOTICE(LOGP "Vulkan swapchain: %ux%u, %u images, %s, %s%s\n", s_sc_ext.width,
             s_sc_ext.height, s_sc_n, s_hdr_sc ? "10-bit HDR10" : s_sc_fmt == VK_FORMAT_B8G8R8A8_UNORM ? "BGRA8" : "RGBA8",
             s_sc_mode == VK_PRESENT_MODE_FIFO_KHR ? "FIFO (vsync)"
             : s_sc_mode == VK_PRESENT_MODE_MAILBOX_KHR ? "MAILBOX" : "IMMEDIATE",

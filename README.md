@@ -1,14 +1,16 @@
 <p align="center"><img src="docs/ampedup.png" width="112" alt="AMPEDUP! mountain and snowboard emblem"></p>
 
-# AMPEDUP! 0.8.1
+# AMPEDUP! 0.8.2
 
 An unofficial static recompilation of the original Xbox version of *Amped: Freestyle Snowboarding* for Windows x64. It runs the original courses, physics, music and menus using data from your own disc, with optional **21:9 ultrawide gameplay**.
 
 <a href="https://recomplauncher.com/game/ampedup"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
-[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.8.1.md) · [HD comparison gallery](docs/screenshots/hd-pack/README.md) · [Credits](#credits)
+[Download for Windows](https://github.com/AMPEDUP-2001/AMPEDUP/releases/latest) · [System requirements](#system-requirements) · [Build from source](docs/building.md) · [Release notes](docs/release-0.8.2.md) · [HD comparison gallery](docs/screenshots/hd-pack/README.md) · [Credits](#credits)
 
 **On a slower PC?** Open **Options → Graphics → Potato Mode**, switch it on and confirm the restart. You can turn it off to restore your graphics settings.
+
+**Choppy while riding?** In **Options → Graphics**, try **Fullscreen On**, **Match fullscreen Hz On**, **VSync On** and a **60 FPS cap**. The game uses a supported refresh rate and restores your desktop rate when you leave fullscreen.
 
 ## Original and 0.8 HD Pack
 
@@ -24,10 +26,10 @@ These are in-game captures at 4× internal resolution. Original is on the left a
 
 ## Play on Windows
 
-Choose a Windows installer from the [0.8.1 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.8.1).
+Choose a Windows installer from the [0.8.2 release](https://github.com/AMPEDUP-2001/AMPEDUP/releases/tag/v0.8.2).
 
-- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.8.1-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.8.1/Setup-AMPEDUP-0.8.1-Online.exe)
-- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.8.1.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.8.1/Setup-AMPEDUP-0.8.1.exe)
+- **Online** downloads the build tools during setup. [Setup-AMPEDUP-0.8.2-Online.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.8.2/Setup-AMPEDUP-0.8.2-Online.exe)
+- **All-in-one** includes the build tools and installs offline. [Setup-AMPEDUP-0.8.2.exe](https://github.com/AMPEDUP-2001/AMPEDUP/releases/download/v0.8.2/Setup-AMPEDUP-0.8.2.exe)
 
 1. Open the installer you downloaded.
 2. Choose your matching XISO, a new installation folder, and whether to create a desktop shortcut.

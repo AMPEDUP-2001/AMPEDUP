@@ -129,6 +129,8 @@ typedef enum {
 #endif
     XS_AMPED_HD_TEXTURES,
     XS_AMPED_POTATO_MODE,
+    XS_AMPED_MATCH_REFRESH,
+    XS_AMPED_VSYNC,
     XS_COUNT
 } xs_id;
 

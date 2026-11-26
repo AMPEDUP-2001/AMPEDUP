@@ -98,7 +98,8 @@ if(AMPED_SETTINGS_EXPERIMENT)
   target_include_directories(xbox_d3d8 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
   target_sources(amped_recomp PRIVATE src/settings_display.c)
   target_include_directories(amped_recomp PRIVATE "${XBOXRECOMP_DIR}/src/kernel")
-  target_sources(xbox_overlay PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/settings_fullscreen.c")
+  target_sources(xbox_overlay PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/settings_fullscreen.c"
+                                      "${CMAKE_CURRENT_SOURCE_DIR}/src/settings_fullscreen_sdl.c")
   target_include_directories(xbox_overlay PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 endif()
 
